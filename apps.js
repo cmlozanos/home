@@ -32,26 +32,8 @@ const APPS = [
   // },
 ];
 
-// ── Estado en tiempo real ─────────────────────────────────────────────────────
-async function getStatus(gistId) {
-  try {
-    const res  = await fetch(`https://api.github.com/gists/${gistId}`, { cache: "no-store" });
-    if (!res.ok) return "offline";
-    const data = await res.json();
-    const raw  = data.files["tunnel-url.json"]?.content;
-    const { url } = JSON.parse(raw);
-    if (!url || url.includes("placeholder")) return "offline";
-
-    // Ping rápido para ver si el servidor responde
-    const ping = await fetch(url, { method: "HEAD", mode: "no-cors", signal: AbortSignal.timeout(4000) });
-    return "online";
-  } catch {
-    return "offline";
-  }
-}
-
-// ── Render ────────────────────────────────────────────────────────────────────
-async function render() {
+// ── Render (estático) ─────────────────────────────────────────────────────────
+function render() {
   const grid = document.getElementById("grid");
 
   for (const app of APPS) {
@@ -69,15 +51,32 @@ async function render() {
         <span class="status-label" id="lbl-${app.slug}">Verificando…</span>
       </div>`;
     grid.appendChild(card);
-
-    // Actualiza el indicador de estado de forma asíncrona
-    getStatus(app.gistId).then(status => {
-      const dot = document.getElementById(`dot-${app.slug}`);
-      const lbl = document.getElementById(`lbl-${app.slug}`);
-      dot.className = `status-dot ${status}`;
-      lbl.textContent = status === "online" ? "En línea" : "Servidor apagado";
-    });
   }
 }
 
+// ── Web Worker — polling continuo cada 30 s ───────────────────────────────────
+function startStatusWorker() {
+  if (!window.Worker) return; // fallback: sin actualización de estado
+
+  const worker = new Worker("./status-worker.js");
+
+  // Enviar lista de apps al worker para que empiece a hacer polling
+  worker.postMessage({
+    type: "init",
+    apps: APPS.map(({ slug, gistId }) => ({ slug, gistId })),
+  });
+
+  // Recibir actualizaciones y pintarlas en el DOM
+  worker.onmessage = ({ data: { slug, status } }) => {
+    const dot = document.getElementById(`dot-${slug}`);
+    const lbl = document.getElementById(`lbl-${slug}`);
+    if (!dot || !lbl) return;
+    dot.className = `status-dot ${status}`;
+    lbl.textContent = status === "online" ? "En línea ✓" : "Servidor apagado";
+  };
+
+  worker.onerror = (e) => console.warn("[status-worker] error:", e.message);
+}
+
 render();
+startStatusWorker();
