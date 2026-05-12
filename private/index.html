@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cmlozanos · Servicios privados</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f0f13; --surface: #1a1a24; --border: #2e2e40;
+      --text: #f1f5f9; --muted: #94a3b8; --radius: 16px;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; padding: 3rem 1rem 2rem;
+    }
+    .hero { text-align: center; margin-bottom: 2.5rem; }
+    .lock { font-size: 2.5rem; margin-bottom: .6rem; }
+    h1 { font-size: 1.6rem; font-weight: 800; }
+    .subtitle { color: var(--muted); margin-top: .4rem; font-size: .9rem; }
+    .warn {
+      display: inline-block; margin-top: .8rem;
+      background: rgba(234,179,8,.15); color: #fbbf24;
+      border: 1px solid rgba(234,179,8,.3); border-radius: 8px;
+      padding: .4rem 1rem; font-size: .78rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem; width: min(800px, 100%);
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.4rem;
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: .5rem;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      position: relative; overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--accent-color, #dc2626) 0%, transparent 60%);
+      opacity: 0; transition: opacity .25s;
+    }
+    .card:hover { border-color: var(--accent-color, #dc2626); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.4); }
+    .card:hover::before { opacity: .06; }
+    .card-icon  { font-size: 1.8rem; }
+    .card-title { font-size: 1rem; font-weight: 700; }
+    .card-desc  { font-size: .8rem; color: var(--muted); line-height: 1.5; flex: 1; }
+    .badge {
+      align-self: flex-start; font-size: .65rem; font-weight: 700;
+      padding: .2rem .55rem; border-radius: 999px;
+      background: color-mix(in srgb, var(--accent-color, #dc2626) 20%, transparent);
+      color: var(--accent-color, #dc2626);
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: .4rem; }
+    .status-dot.online  { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .status-dot.offline { background: #ef4444; }
+    .status-dot.soon    { background: #f59e0b; }
+    .status-label { font-size: .72rem; color: var(--muted); }
+    .back { margin-top: 2.5rem; color: var(--muted); font-size: .82rem; text-decoration: none; }
+    .back:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="lock">🔒</div>
+    <h1>Servicios privados</h1>
+    <p class="subtitle">Solo accesibles para ti · No indexados públicamente</p>
+    <span class="warn">⚠️ No compartas esta URL</span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <a class="back" href="../">← Volver a la home pública</a>
+
+  <script>
+    const PRIVATE_APPS = [
+      {
+        slug:    "stirling-pdf",
+        icon:    "📄",
+        title:   "Stirling PDF",
+        desc:    "Suite completa de herramientas PDF: merge, split, OCR, firma, compresión.",
+        badge:   "Documentos",
+        color:   "#dc2626",
+        urlFile: "../urls/stirling-pdf.json",
+      },
+      {
+        slug:    "beszel",
+        icon:    "📊",
+        title:   "Beszel",
+        desc:    "Monitor en tiempo real del servidor DELL: CPU, RAM, disco, red y contenedores.",
+        badge:   "Monitorización",
+        color:   "#0369a1",
+        urlFile: "../urls/beszel.json",
+      },
+      {
+        slug:    "paperless",
+        icon:    "🗂️",
+        title:   "Paperless-ngx",
+        desc:    "Archivo digital de documentos con OCR automático, etiquetas y búsqueda.",
+        badge:   "Documentos",
+        color:   "#059669",
+        urlFile: "../urls/paperless.json",
+      },
+    ];
+
+    function render() {
+      const grid = document.getElementById("grid");
+      for (const app of PRIVATE_APPS) {
+        const card = document.createElement("a");
+        card.href      = `../${app.slug}/`;
+        card.target    = "_blank";
+        card.rel       = "noopener";
+        card.className = "card";
+        card.style.setProperty("--accent-color", app.color);
+        card.innerHTML = `
+          <div class="card-icon">${app.icon}</div>
+          <div class="card-title">${app.title}</div>
+          <div class="card-desc">${app.desc}</div>
+          <span class="badge">${app.badge}</span>
+          <div>
+            <span class="status-dot soon" id="dot-${app.slug}"></span>
+            <span class="status-label" id="lbl-${app.slug}">Verificando…</span>
+          </div>`;
+        grid.appendChild(card);
+      }
+    }
+
+    async function checkStatus() {
+      for (const app of PRIVATE_APPS) {
+        try {
+          const res = await fetch(app.urlFile, { cache: "no-store" });
+          const { url } = await res.json();
+          const alive = url && !url.includes("placeholder");
+          const dot = document.getElementById(`dot-${app.slug}`);
+          const lbl = document.getElementById(`lbl-${app.slug}`);
+          if (dot && lbl) {
+            dot.className = `status-dot ${alive ? "online" : "offline"}`;
+            lbl.textContent = alive ? "En línea ✓" : "Servidor apagado";
+          }
+        } catch { /* sin cambios */ }
+      }
+    }
+
+    render();
+    checkStatus();
+    setInterval(checkStatus, 30000);
+  </script>
+</body>
+</html>
