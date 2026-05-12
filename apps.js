@@ -38,7 +38,7 @@ async function getStatus(gistId) {
     const res  = await fetch(`https://api.github.com/gists/${gistId}`, { cache: "no-store" });
     if (!res.ok) return "offline";
     const data = await res.json();
-    const raw  = Object.values(data.files)[0]?.content;
+    const raw  = data.files["tunnel-url.json"]?.content;
     const { url } = JSON.parse(raw);
     if (!url || url.includes("placeholder")) return "offline";
 
