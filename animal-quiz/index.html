@@ -37,7 +37,7 @@
         const res=await fetch(`https://api.github.com/gists/${GIST_ID}`,{cache:"no-store"});
         if(!res.ok)throw new Error();
         const data=await res.json();
-        const {url}=JSON.parse(Object.values(data.files)[0].content);
+        const {url}=JSON.parse(data.files["tunnel-url.json"].content);
         if(!url||url.includes("placeholder"))throw new Error();
         document.getElementById("spinner").style.display="none";
         const link=document.getElementById("link");
