@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz de Animales 🐾 · Conectando…</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff}
+    .card{background:rgba(255,255,255,.13);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3rem 2.5rem;text-align:center;max-width:420px;width:90%}
+    .logo{font-size:3rem;margin-bottom:1rem}
+    h1{font-size:1.6rem;font-weight:800;margin-bottom:.5rem}
+    p{opacity:.85;margin-bottom:1.8rem;font-size:.95rem;line-height:1.6}
+    .spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.5rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .btn{display:inline-block;padding:.65rem 1.6rem;background:#fff;color:#16a34a;border-radius:999px;font-weight:700;text-decoration:none;font-size:.95rem;transition:opacity .2s}
+    .btn:hover{opacity:.88}
+    .back{display:block;margin-top:1.2rem;opacity:.7;font-size:.82rem;color:#fff;text-decoration:none}
+    .back:hover{opacity:1}
+    .error{color:#fca5a5;margin-top:1rem;font-size:.85rem}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">🐾</div>
+    <h1>Quiz de Animales</h1>
+    <p>Juego 3D para Miguel Angel y Alejandro Manuel.<br>Conectando con el servidor…</p>
+    <div class="spinner" id="spinner"></div>
+    <a class="btn" id="link" href="#" style="display:none">¡Jugar ahora! →</a>
+    <p class="error" id="err" style="display:none">Servidor apagado en este momento.</p>
+    <a class="back" href="../">← Volver a proyectos</a>
+  </div>
+  <script>
+    const GIST_ID="832e18462de60c3c94b4d2bf5db79386";
+    async function redirect(){
+      try{
+        const res=await fetch(`https://api.github.com/gists/${GIST_ID}`,{cache:"no-store"});
+        if(!res.ok)throw new Error();
+        const data=await res.json();
+        const {url}=JSON.parse(Object.values(data.files)[0].content);
+        if(!url||url.includes("placeholder"))throw new Error();
+        document.getElementById("spinner").style.display="none";
+        const link=document.getElementById("link");
+        link.href=url;link.style.display="inline-block";
+        setTimeout(()=>{window.location.href=url;},1000);
+      }catch{
+        document.getElementById("spinner").style.display="none";
+        document.getElementById("err").style.display="block";
+      }
+    }
+    redirect();
+  </script>
+</body>
+</html>
