@@ -9,16 +9,16 @@ const APPS = [
     desc:    "SPA con Flask + MongoDB. Busca y filtra productos con actualización en tiempo real.",
     badge:   "Flask · MongoDB",
     color:   "#4f46e5",
-    gistId:  "22e1aa2424c8fc9c1d341154de4c71eb",
+    urlFile: "./urls/catalog.json",
   },
   {
-    slug:   "animal-quiz",
-    icon:   "🐾",
-    title:  "Quiz de Animales",
-    desc:   "Juego 3D educativo para Miguel Angel y Alejandro Manuel. Identifica animales y aprende a escribir su nombre.",
-    badge:  "Flask · MongoDB · Three.js",
-    color:  "#16a34a",
-    gistId: "832e18462de60c3c94b4d2bf5db79386",
+    slug:    "animal-quiz",
+    icon:    "🐾",
+    title:   "Quiz de Animales",
+    desc:    "Juego 3D educativo para Miguel Angel y Alejandro Manuel. Identifica animales y aprende a escribir su nombre.",
+    badge:   "Flask · MongoDB · Three.js",
+    color:   "#16a34a",
+    urlFile: "./urls/animal-quiz.json",
   },
   // Próximas apps — descomenta y rellena cuando estén listas:
   // {
@@ -63,7 +63,7 @@ function startStatusWorker() {
   // Enviar lista de apps al worker para que empiece a hacer polling
   worker.postMessage({
     type: "init",
-    apps: APPS.map(({ slug, gistId }) => ({ slug, gistId })),
+    apps: APPS.map(({ slug, urlFile }) => ({ slug, urlFile })),
   });
 
   // Recibir actualizaciones y pintarlas en el DOM

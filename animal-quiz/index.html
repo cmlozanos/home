@@ -31,13 +31,11 @@
     <a class="back" href="../">← Volver a proyectos</a>
   </div>
   <script>
-    const GIST_ID="832e18462de60c3c94b4d2bf5db79386";
     async function redirect(){
       try{
-        const res=await fetch(`https://api.github.com/gists/${GIST_ID}`,{cache:"no-store"});
+        const res=await fetch("../urls/animal-quiz.json",{cache:"no-store"});
         if(!res.ok)throw new Error();
-        const data=await res.json();
-        const {url}=JSON.parse(data.files["tunnel-url.json"].content);
+        const {url}=await res.json();
         if(!url||url.includes("placeholder"))throw new Error();
         document.getElementById("spinner").style.display="none";
         const link=document.getElementById("link");

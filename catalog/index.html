@@ -65,13 +65,11 @@
     <a class="back" href="../">← Volver a proyectos</a>
   </div>
   <script>
-    const GIST_ID = "22e1aa2424c8fc9c1d341154de4c71eb";
     async function redirect() {
       try {
-        const res  = await fetch(`https://api.github.com/gists/${GIST_ID}`, { cache: "no-store" });
+        const res = await fetch("../urls/catalog.json", { cache: "no-store" });
         if (!res.ok) throw new Error();
-        const data = await res.json();
-        const { url } = JSON.parse(data.files["tunnel-url.json"].content);
+        const { url } = await res.json();
         if (!url || url.includes("placeholder")) throw new Error();
         document.getElementById("spinner").style.display = "none";
         const link = document.getElementById("link");
