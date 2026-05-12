@@ -83,7 +83,8 @@ function render() {
     const card      = document.createElement("a");
     card.href       = app.href || `./${app.slug}/`;
     card.className  = "card";
-    if (app.href) { card.target = "_blank"; card.rel = "noopener"; }
+    card.target     = "_blank";
+    card.rel        = "noopener";
     card.style.setProperty("--accent-color", app.color);
 
     const statusInit = app.alwaysOnline ? "online" : "soon";

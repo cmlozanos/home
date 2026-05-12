@@ -216,6 +216,21 @@ make install && make up
 
 ---
 
+### Regla 10 — Todas las tarjetas de la home abren en pestaña nueva
+
+Todas las entradas del array `APPS` en `apps.js` abren en `target="_blank"` (con `rel="noopener"`), independientemente de si son apps locales con túnel o juegos estáticos en GitHub Pages.
+
+Esto permite al usuario mantener la home abierta como punto de partida mientras navega por las apps.
+
+```js
+card.target = "_blank";
+card.rel    = "noopener";
+```
+
+No añadir `target="_self"` ni omitir el target en ningún caso.
+
+---
+
 ### Regla 9 — Los personajes visuales se representan con emojis, nunca con geometría 3D
 
 Three.js se usa **solo para fondos y efectos** (escenarios, partículas, plataformas giratorias). Los personajes o elementos principales de la UI se muestran siempre como **emojis CSS**, porque:
