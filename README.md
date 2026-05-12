@@ -105,7 +105,7 @@ GIST_ID=<id_del_gist_del_proyecto>
 
 > ⚠️ `.env` **nunca** se commitea. Está en `.gitignore`.
 
-### Regla 7 — El script `cloudflared-start.sh` es estándar
+### Regla 8 — El script `cloudflared-start.sh` es estándar
 
 El script en `scripts/cloudflared-start.sh` es idéntico en todos los proyectos salvo la URL en el mensaje de log. No modificar la lógica central. Si se mejora, propagar el cambio a todos los proyectos.
 
@@ -183,3 +183,30 @@ home/
 | Túnel | Cloudflare Tunnel (quick tunnel) |
 | Enrutador | GitHub Pages + GitHub Gist |
 | CI/CD | — (deploy = `make up`) |
+
+---
+
+### Regla 8 — Cada servicio tiene su propio `docker-compose`
+
+Cada proyecto usa **3 ficheros compose independientes** para poder gestionar cada capa sin afectar a las demás:
+
+| Fichero | Servicio | Cuándo reiniciar |
+|---------|----------|-----------------|
+| `docker-compose.mongo.yml` | MongoDB + seed | Cambios de datos o schema |
+| `docker-compose.web.yml` | App (Flask/etc.) | Cambios en el código |
+| `docker-compose.cloudflared.yml` | Cloudflare Tunnel | Problemas de red/túnel |
+
+Todos comparten una **red Docker externa** (`<proyecto>-net`) creada con `make network`.
+
+```bash
+# Reiniciar solo la app sin tocar la BBDD ni el túnel
+make restart-web
+
+# Reiniciar solo el túnel sin tirar la app
+make restart-tunnel
+
+# Arranque completo desde cero
+make install && make up
+```
+
+**Nunca** usar un único `docker-compose.yml` monolítico — reiniciar un servicio no debe tirar los demás.
