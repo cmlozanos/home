@@ -3,95 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Catálogo de Productos · Redirigiendo…</title>
+  <title>cmlozanos · Proyectos</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #4f46e5;
+      --bg: #0f0f13;
+      --surface: #1a1a24;
+      --border: #2e2e40;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --radius: 16px;
+    }
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
-      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      color: #fff;
+      padding: 4rem 1rem 2rem;
     }
+    .hero { text-align: center; margin-bottom: 3rem; }
+    .avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 3px solid var(--accent);
+      margin-bottom: 1rem;
+    }
+    h1 { font-size: 2rem; font-weight: 800; }
+    .subtitle { color: var(--muted); margin-top: .4rem; font-size: 1rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+      width: min(960px, 100%);
+    }
+
     .card {
-      background: rgba(255,255,255,.12);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 20px;
-      padding: 3rem 2.5rem;
-      text-align: center;
-      max-width: 420px;
-      width: 90%;
-    }
-    .logo { font-size: 3rem; margin-bottom: 1rem; }
-    h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: .5rem; }
-    p  { opacity: .85; margin-bottom: 1.8rem; font-size: .95rem; line-height: 1.6; }
-    .spinner {
-      width: 40px; height: 40px;
-      border: 4px solid rgba(255,255,255,.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-      margin: 0 auto 1.5rem;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .btn {
-      display: inline-block;
-      padding: .65rem 1.6rem;
-      background: #fff;
-      color: #4f46e5;
-      border-radius: 999px;
-      font-weight: 700;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
       text-decoration: none;
-      font-size: .95rem;
-      transition: opacity .2s;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      position: relative;
+      overflow: hidden;
     }
-    .btn:hover { opacity: .88; }
-    .error { color: #fca5a5; margin-top: 1rem; font-size: .85rem; }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-color, #4f46e5) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .25s;
+    }
+    .card:hover { border-color: var(--accent-color, #4f46e5); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.4); }
+    .card:hover::before { opacity: .06; }
+
+    .card-icon { font-size: 2rem; }
+    .card-title { font-size: 1.1rem; font-weight: 700; }
+    .card-desc  { font-size: .85rem; color: var(--muted); line-height: 1.5; flex: 1; }
+
+    .badge {
+      align-self: flex-start;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .2rem .6rem;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent-color, #4f46e5) 20%, transparent);
+      color: var(--accent-color, #4f46e5);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      display: inline-block; margin-right: .4rem;
+    }
+    .status-dot.online  { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .status-dot.offline { background: #ef4444; }
+    .status-dot.soon    { background: #f59e0b; }
+    .status-label { font-size: .75rem; color: var(--muted); }
+
+    footer { margin-top: 4rem; color: var(--muted); font-size: .8rem; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">🛍️</div>
-    <h1>MiTienda</h1>
-    <p>Catálogo de productos.<br>Conectando con el servidor…</p>
-    <div class="spinner" id="spinner"></div>
-    <a class="btn" id="link" href="#" style="display:none">Ir al catálogo →</a>
-    <p class="error" id="err" style="display:none">
-      El servidor está apagado en este momento.<br>Inténtalo más tarde.
-    </p>
+  <div class="hero">
+    <img class="avatar" src="https://github.com/cmlozanos.png" alt="cmlozanos" />
+    <h1>cmlozanos</h1>
+    <p class="subtitle">Proyectos en vivo · Elige uno para empezar</p>
   </div>
 
-  <script>
-    const GIST_ID  = "22e1aa2424c8fc9c1d341154de4c71eb";
-    const GIST_API = `https://api.github.com/gists/${GIST_ID}`;
+  <div class="grid" id="grid">
+    <!-- Las tarjetas se renderizan desde apps.js -->
+  </div>
 
-    async function redirect() {
-      try {
-        const res  = await fetch(GIST_API, { cache: "no-store" });
-        if (!res.ok) throw new Error("gist fetch failed");
-        const data = await res.json();
-        const raw  = data.files["tunnel-url.json"].content;
-        const { url } = JSON.parse(raw);
+  <footer>© 2026 cmlozanos · Todos los proyectos corren localmente vía Cloudflare Tunnel</footer>
 
-        if (!url || url.includes("placeholder")) throw new Error("no tunnel");
-
-        document.getElementById("spinner").style.display = "none";
-        const link = document.getElementById("link");
-        link.href = url;
-        link.style.display = "inline-block";
-
-        // Auto-redirect after 1 s
-        setTimeout(() => { window.location.href = url; }, 1000);
-      } catch {
-        document.getElementById("spinner").style.display = "none";
-        document.getElementById("err").style.display     = "block";
-      }
-    }
-
-    redirect();
-  </script>
+  <script src="apps.js"></script>
 </body>
 </html>
