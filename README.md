@@ -35,28 +35,31 @@ cmlozanos.github.io/home          ← Este repo (público, GitHub Pages)
 
 ## Reglas del paradigma
 
-### Regla 1 — Cada proyecto tiene su propio Gist
+### Regla 1 — Cada proyecto publica su URL en `urls/<slug>.json`
 
-Cada app publica su URL de túnel en un **Gist público separado** con este formato exacto:
+Cuando el túnel arranca, el script `cloudflared-start.sh` actualiza el fichero `urls/<slug>.json` de **este mismo repo** mediante la GitHub Contents API:
 
 ```json
 {"url":"https://xxxx.trycloudflare.com"}
 ```
 
-- Nombre del archivo en el Gist: `tunnel-url.json`
-- El Gist **nunca se borra**: si el servidor está apagado, el Gist conserva la última URL y la página de redirect muestra "Servidor apagado".
+- Nombre del archivo: `urls/<slug>.json` (ej: `urls/catalog.json`)
+- Si el servidor está apagado, el fichero conserva la última URL y la página de redirect muestra "Servidor apagado".
+- **No se usan Gists** — el fichero es estático, público y sin rate limit.
 
 ### Regla 2 — Cada proyecto tiene su carpeta en este repo
 
 ```
 home/
+├── urls/
+│   └── <slug>.json       ← URL del túnel (actualizada por cloudflared-start.sh)
 └── <slug>/
-    └── index.html    ← copia de template/index.html con el GIST_ID correcto
+    └── index.html        ← copia de template/index.html apuntando a ../urls/<slug>.json
 ```
 
 El `slug` debe ser:
 - En minúsculas, sin espacios, con guiones si es necesario (`my-game`, `catalog`)
-- Igual al campo `slug` registrado en `apps.js`
+- Igual al campo `slug` registrado en `apps.js` y al `APP_SLUG` del `.env`
 
 ### Regla 3 — Registrar el proyecto en `apps.js`
 
@@ -64,13 +67,13 @@ Añadir un objeto al array `APPS` en `apps.js`:
 
 ```js
 {
-  slug:   "my-project",          // carpeta en home/ y URL: /home/my-project/
-  icon:   "🎮",                  // emoji representativo
-  title:  "Nombre del Proyecto", // título en la landing
-  desc:   "Descripción corta.",  // 1-2 frases
-  badge:  "Flask · MongoDB",     // stack tecnológico
-  color:  "#0ea5e9",             // color de acento (hex)
-  gistId: "abc123...",           // ID del Gist del proyecto
+  slug:    "my-project",          // carpeta en home/ y URL: /home/my-project/
+  icon:    "🎮",                  // emoji representativo
+  title:   "Nombre del Proyecto", // título en la landing
+  desc:    "Descripción corta.",  // 1-2 frases
+  badge:   "Flask · MongoDB",     // stack tecnológico
+  color:   "#0ea5e9",             // color de acento (hex)
+  urlFile: "./urls/my-project.json", // fichero JSON con la URL del túnel
 }
 ```
 
@@ -87,7 +90,7 @@ Todo proyecto debe incluir:
 | `Dockerfile` | Imagen de la app |
 | `Dockerfile.cloudflared` | Alpine + cloudflared + shell |
 | `docker-compose.yml` | Orquesta: app + mongo + seed + cloudflared |
-| `scripts/cloudflared-start.sh` | Arranca el túnel y actualiza el Gist |
+| `scripts/cloudflared-start.sh` | Arranca el túnel y actualiza `urls/<slug>.json` en home |
 | `Makefile` | `install`, `up`, `down`, `logs`, `seed`, `shell`, `clean` |
 | `seed.py` | Datos iniciales para MongoDB |
 | `.env` | Variables locales (nunca commiteadas) |
@@ -99,8 +102,8 @@ Todo proyecto debe incluir:
 ```env
 MONGO_URI=mongodb://mongo:27017/<nombre_db>
 FLASK_SECRET_KEY=<clave_secreta>
-GITHUB_TOKEN=<token_con_scope_gist>
-GIST_ID=<id_del_gist_del_proyecto>
+GITHUB_TOKEN=<token_con_scope_contents>
+APP_SLUG=<slug_del_proyecto>   # debe coincidir con urls/<slug>.json en home
 ```
 
 > ⚠️ `.env` **nunca** se commitea. Está en `.gitignore`.
@@ -210,3 +213,23 @@ make install && make up
 ```
 
 **Nunca** usar un único `docker-compose.yml` monolítico — reiniciar un servicio no debe tirar los demás.
+
+---
+
+### Regla 9 — Los personajes visuales se representan con emojis, nunca con geometría 3D
+
+Three.js se usa **solo para fondos y efectos** (escenarios, partículas, plataformas giratorias). Los personajes o elementos principales de la UI se muestran siempre como **emojis CSS**, porque:
+
+- Son instantáneamente reconocibles por cualquier usuario (especialmente niños)
+- No requieren modelos, texturas ni geometría personalizada
+- Escalan perfectamente con `font-size` / `clamp()`
+- Se animan fácilmente con keyframes CSS (`float`, `shake`, `bounce`)
+
+```css
+/* ✅ Correcto */
+.personaje { font-size: clamp(7rem, 18vw, 13rem); animation: emojiFloat 3s ease-in-out infinite; }
+
+/* ❌ Nunca hacer */
+/* createAnimal() con SphereGeometry + CylinderGeometry → parece un muñeco roto */
+```
+
