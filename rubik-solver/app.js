@@ -1,0 +1,730 @@
+(function () {
+  "use strict";
+
+  const FACE_ORDER = ["U", "R", "F", "D", "L", "B"];
+  const STORAGE_KEY = "rubik-solver-state-v1";
+
+  const FACES = {
+    U: {
+      label: "Arriba",
+      short: "U",
+      hint: "Foto desde arriba: deja la cara frontal (verde/F) en la parte inferior de la imagen.",
+    },
+    R: {
+      label: "Derecha",
+      short: "R",
+      hint: "Foto de la derecha: cara superior arriba y cara frontal (verde/F) a la izquierda.",
+    },
+    F: {
+      label: "Frontal",
+      short: "F",
+      hint: "Foto frontal: cara superior arriba y cara derecha (rojo/R) a la derecha.",
+    },
+    D: {
+      label: "Abajo",
+      short: "D",
+      hint: "Foto desde abajo: deja la cara frontal (verde/F) en la parte superior de la imagen.",
+    },
+    L: {
+      label: "Izquierda",
+      short: "L",
+      hint: "Foto de la izquierda: cara superior arriba y cara frontal (verde/F) a la derecha.",
+    },
+    B: {
+      label: "Trasera",
+      short: "B",
+      hint: "Foto trasera: cara superior arriba; revisa manualmente la orientación porque es la cara más fácil de invertir.",
+    },
+  };
+
+  const COLORS = {
+    U: { name: "Blanco", hex: "#f8fafc", rgb: [248, 250, 252] },
+    R: { name: "Rojo", hex: "#ef4444", rgb: [239, 68, 68] },
+    F: { name: "Verde", hex: "#22c55e", rgb: [34, 197, 94] },
+    D: { name: "Amarillo", hex: "#facc15", rgb: [250, 204, 21] },
+    L: { name: "Naranja", hex: "#f97316", rgb: [249, 115, 22] },
+    B: { name: "Azul", hex: "#2563eb", rgb: [37, 99, 235] },
+  };
+
+  const MOVE_FACES = {
+    U: "cara superior",
+    R: "cara derecha",
+    F: "cara frontal",
+    D: "cara inferior",
+    L: "cara izquierda",
+    B: "cara trasera",
+  };
+
+  const elements = {
+    palette: document.getElementById("palette"),
+    countsGrid: document.getElementById("countsGrid"),
+    cubeEditor: document.getElementById("cubeEditor"),
+    photoFaceSelect: document.getElementById("photoFaceSelect"),
+    photoFaceHint: document.getElementById("photoFaceHint"),
+    photoInput: document.getElementById("photoInput"),
+    photoCanvas: document.getElementById("photoCanvas"),
+    samplePhotoBtn: document.getElementById("samplePhotoBtn"),
+    solveBtn: document.getElementById("solveBtn"),
+    validationBox: document.getElementById("validationBox"),
+    loadSolvedBtn: document.getElementById("loadSolvedBtn"),
+    clearBtn: document.getElementById("clearBtn"),
+    engineDot: document.getElementById("engineDot"),
+    engineTitle: document.getElementById("engineTitle"),
+    engineStatus: document.getElementById("engineStatus"),
+    solutionPanel: document.getElementById("solutionPanel"),
+    solutionTitle: document.getElementById("solutionTitle"),
+    movesList: document.getElementById("movesList"),
+    currentStep: document.getElementById("currentStep"),
+    prevStepBtn: document.getElementById("prevStepBtn"),
+    nextStepBtn: document.getElementById("nextStepBtn"),
+    copySolutionBtn: document.getElementById("copySolutionBtn"),
+  };
+
+  let cubeState = createSolvedState();
+  let activeColor = "U";
+  let selectedFace = "F";
+  let currentPhoto = null;
+  let currentPhotoUrl = null;
+  let solverWorker = null;
+  let solverReady = false;
+  let workerFailed = false;
+  let mainSolverReady = false;
+  let solverReadyResolve;
+  let solverReadyReject;
+  let solutionMoves = [];
+  let currentStepIndex = 0;
+  const pendingSolves = new Map();
+  const solverReadyPromise = new Promise((resolve, reject) => {
+    solverReadyResolve = resolve;
+    solverReadyReject = reject;
+  });
+
+  init();
+
+  function init() {
+    loadSavedState();
+    renderPalette();
+    renderPhotoFaceOptions();
+    renderEditor();
+    renderCounts();
+    bindEvents();
+    updatePhotoHint();
+    drawEmptyPhotoCanvas();
+    initSolverWorker();
+  }
+
+  function bindEvents() {
+    elements.palette.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-color]");
+      if (!button) return;
+      activeColor = button.dataset.color;
+      renderPalette();
+    });
+
+    elements.cubeEditor.addEventListener("click", (event) => {
+      const faceCard = event.target.closest("[data-face-card]");
+      if (faceCard) {
+        selectedFace = faceCard.dataset.faceCard;
+        elements.photoFaceSelect.value = selectedFace;
+        updatePhotoHint();
+      }
+
+      const sticker = event.target.closest("[data-face][data-index]");
+      if (!sticker || sticker.disabled) {
+        renderEditor();
+        return;
+      }
+
+      const face = sticker.dataset.face;
+      const index = Number(sticker.dataset.index);
+      cubeState[face][index] = activeColor;
+      selectedFace = face;
+      elements.photoFaceSelect.value = selectedFace;
+      saveState();
+      renderEditor();
+      renderCounts();
+      clearValidation();
+    });
+
+    elements.photoFaceSelect.addEventListener("change", () => {
+      selectedFace = elements.photoFaceSelect.value;
+      updatePhotoHint();
+      renderEditor();
+    });
+
+    elements.photoInput.addEventListener("change", handlePhotoInput);
+    elements.samplePhotoBtn.addEventListener("click", samplePhotoFace);
+    elements.solveBtn.addEventListener("click", solveCurrentCube);
+    elements.loadSolvedBtn.addEventListener("click", () => {
+      cubeState = createSolvedState();
+      saveState();
+      renderEditor();
+      renderCounts();
+      showValidation("ok", "Cubo resuelto cargado. Puedes pintar encima para registrar el caos actual.");
+      resetSolution();
+    });
+
+    elements.clearBtn.addEventListener("click", () => {
+      cubeState = createEmptyState();
+      saveState();
+      renderEditor();
+      renderCounts();
+      showValidation("warn", "Caras vaciadas. Los centros quedan fijados porque definen la orientación del cubo.");
+      resetSolution();
+    });
+
+    elements.prevStepBtn.addEventListener("click", () => {
+      if (currentStepIndex > 0) {
+        currentStepIndex -= 1;
+        renderCurrentStep();
+      }
+    });
+
+    elements.nextStepBtn.addEventListener("click", () => {
+      if (currentStepIndex < solutionMoves.length - 1) {
+        currentStepIndex += 1;
+        renderCurrentStep();
+      }
+    });
+
+    elements.copySolutionBtn.addEventListener("click", async () => {
+      const algorithm = solutionMoves.join(" ");
+      if (!algorithm) return;
+      if (!navigator.clipboard) {
+        showValidation("warn", "Tu navegador no permite copiar automáticamente. Selecciona los movimientos desde la lista.");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(algorithm);
+        showValidation("ok", "Algoritmo copiado al portapapeles.");
+      } catch (error) {
+        showValidation("error", `No se pudo copiar el algoritmo: ${error.message || error}`);
+      }
+    });
+  }
+
+  function createSolvedState() {
+    return FACE_ORDER.reduce((state, face) => {
+      state[face] = Array(9).fill(face);
+      return state;
+    }, {});
+  }
+
+  function createEmptyState() {
+    return FACE_ORDER.reduce((state, face) => {
+      state[face] = Array(9).fill(null);
+      state[face][4] = face;
+      return state;
+    }, {});
+  }
+
+  function loadSavedState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!saved || typeof saved !== "object") return;
+      const isValidShape = FACE_ORDER.every((face) => Array.isArray(saved[face]) && saved[face].length === 9);
+      if (!isValidShape) return;
+      cubeState = createEmptyState();
+      for (const face of FACE_ORDER) {
+        cubeState[face] = saved[face].map((color, index) => {
+          if (index === 4) return face;
+          return COLORS[color] ? color : null;
+        });
+      }
+    } catch {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cubeState));
+  }
+
+  function renderPalette() {
+    elements.palette.innerHTML = FACE_ORDER.map((face) => `
+      <button class="color-button ${face === activeColor ? "active" : ""}" type="button" data-color="${face}">
+        <span class="swatch" style="background:${COLORS[face].hex}"></span>
+        <span><strong>${COLORS[face].name}</strong><br><small>${face} · ${FACES[face].label}</small></span>
+      </button>
+    `).join("");
+  }
+
+  function renderPhotoFaceOptions() {
+    elements.photoFaceSelect.innerHTML = FACE_ORDER.map((face) => (
+      `<option value="${face}" ${face === selectedFace ? "selected" : ""}>${face} · ${FACES[face].label}</option>`
+    )).join("");
+  }
+
+  function renderEditor() {
+    elements.cubeEditor.innerHTML = FACE_ORDER.map((face) => {
+      const stickers = cubeState[face].map((color, index) => {
+        const isCenter = index === 4;
+        const background = color ? COLORS[color].hex : "transparent";
+        const label = `${FACES[face].label} ${index + 1}: ${color ? COLORS[color].name : "sin asignar"}`;
+        return `
+          <button
+            class="sticker ${isCenter ? "center" : ""} ${color ? "" : "empty"}"
+            type="button"
+            data-face="${face}"
+            data-index="${index}"
+            style="background:${background}"
+            aria-label="${label}"
+            ${isCenter ? "disabled" : ""}
+          ></button>
+        `;
+      }).join("");
+
+      return `
+        <article class="face-card ${face === selectedFace ? "selected" : ""}" data-face-card="${face}">
+          <div class="face-title">
+            <strong>${face} · ${FACES[face].label}</strong>
+            <span>${COLORS[face].name} al centro</span>
+          </div>
+          <div class="face-grid">${stickers}</div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function renderCounts() {
+    const counts = getColorCounts();
+    elements.countsGrid.innerHTML = FACE_ORDER.map((face) => {
+      const count = counts[face] || 0;
+      const className = count === 9 ? "good" : "bad";
+      return `
+        <div class="count-chip ${className}">
+          <span><span class="swatch" style="background:${COLORS[face].hex}"></span>${COLORS[face].name}</span>
+          <strong>${count}/9</strong>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function getColorCounts() {
+    const counts = Object.fromEntries(FACE_ORDER.map((face) => [face, 0]));
+    for (const face of FACE_ORDER) {
+      for (const color of cubeState[face]) {
+        if (COLORS[color]) counts[color] += 1;
+      }
+    }
+    return counts;
+  }
+
+  function updatePhotoHint() {
+    elements.photoFaceHint.textContent = FACES[selectedFace].hint;
+  }
+
+  async function handlePhotoInput(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (currentPhotoUrl) {
+      URL.revokeObjectURL(currentPhotoUrl);
+    }
+
+    currentPhotoUrl = URL.createObjectURL(file);
+    currentPhoto = new Image();
+    currentPhoto.onload = () => {
+      drawPhoto(true);
+      showValidation("ok", "Foto cargada. Alinea mentalmente la cara con la cuadrícula y lee la cara seleccionada.");
+    };
+    currentPhoto.onerror = () => {
+      drawEmptyPhotoCanvas();
+      showValidation("error", "No se pudo leer la imagen seleccionada.");
+    };
+    currentPhoto.src = currentPhotoUrl;
+  }
+
+  function drawEmptyPhotoCanvas() {
+    const canvas = elements.photoCanvas;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "600 24px system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText("Carga una foto de una cara", canvas.width / 2, canvas.height / 2 - 8);
+    ctx.font = "400 16px system-ui";
+    ctx.fillText("La cuadrícula aparecerá aquí", canvas.width / 2, canvas.height / 2 + 24);
+  }
+
+  function drawPhoto(withOverlay) {
+    if (!currentPhoto) return;
+    const canvas = elements.photoCanvas;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const side = 720;
+    canvas.width = side;
+    canvas.height = side;
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(0, 0, side, side);
+
+    const scale = Math.min(side / currentPhoto.width, side / currentPhoto.height);
+    const width = currentPhoto.width * scale;
+    const height = currentPhoto.height * scale;
+    const left = (side - width) / 2;
+    const top = (side - height) / 2;
+    ctx.drawImage(currentPhoto, left, top, width, height);
+
+    if (!withOverlay) return;
+
+    const grid = getPhotoGrid();
+    ctx.strokeStyle = "rgba(255,255,255,0.92)";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(grid.left, grid.top, grid.size, grid.size);
+    ctx.lineWidth = 2;
+    for (let i = 1; i < 3; i += 1) {
+      const offset = grid.cell * i;
+      ctx.beginPath();
+      ctx.moveTo(grid.left + offset, grid.top);
+      ctx.lineTo(grid.left + offset, grid.top + grid.size);
+      ctx.moveTo(grid.left, grid.top + offset);
+      ctx.lineTo(grid.left + grid.size, grid.top + offset);
+      ctx.stroke();
+    }
+
+    getPhotoSamplePoints().forEach((point, index) => {
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(2,6,23,0.78)";
+      ctx.strokeStyle = "#67e8f9";
+      ctx.lineWidth = 3;
+      ctx.arc(point.x, point.y, 15, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 14px system-ui";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(index + 1), point.x, point.y);
+    });
+  }
+
+  function getPhotoGrid() {
+    const side = elements.photoCanvas.width;
+    const size = side * 0.72;
+    return {
+      size,
+      cell: size / 3,
+      left: (side - size) / 2,
+      top: (side - size) / 2,
+    };
+  }
+
+  function getPhotoSamplePoints() {
+    const grid = getPhotoGrid();
+    const points = [];
+    for (let row = 0; row < 3; row += 1) {
+      for (let col = 0; col < 3; col += 1) {
+        points.push({
+          x: Math.round(grid.left + grid.cell * (col + 0.5)),
+          y: Math.round(grid.top + grid.cell * (row + 0.5)),
+        });
+      }
+    }
+    return points;
+  }
+
+  function samplePhotoFace() {
+    if (!currentPhoto) {
+      showValidation("warn", "Primero carga o toma una foto de la cara.");
+      return;
+    }
+
+    drawPhoto(false);
+    const ctx = elements.photoCanvas.getContext("2d", { willReadFrequently: true });
+    const sampled = getPhotoSamplePoints().map((point) => nearestCubeColor(averagePatch(ctx, point.x, point.y, 12)));
+    sampled[4] = selectedFace;
+    cubeState[selectedFace] = sampled;
+    saveState();
+    drawPhoto(true);
+    renderEditor();
+    renderCounts();
+    showValidation("ok", `Cara ${selectedFace} rellenada desde la foto. Revisa y corrige las pegatinas que no coincidan.`);
+    resetSolution();
+  }
+
+  function averagePatch(ctx, x, y, radius) {
+    const size = radius * 2 + 1;
+    const imageData = ctx.getImageData(x - radius, y - radius, size, size).data;
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let count = 0;
+    for (let i = 0; i < imageData.length; i += 4) {
+      const alpha = imageData[i + 3];
+      if (alpha < 10) continue;
+      r += imageData[i];
+      g += imageData[i + 1];
+      b += imageData[i + 2];
+      count += 1;
+    }
+    return [r / count, g / count, b / count];
+  }
+
+  function nearestCubeColor(rgb) {
+    let bestFace = "U";
+    let bestDistance = Number.POSITIVE_INFINITY;
+    const normalized = normalizeRgb(rgb);
+
+    for (const face of FACE_ORDER) {
+      const distance = colorDistance(normalized, normalizeRgb(COLORS[face].rgb));
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestFace = face;
+      }
+    }
+
+    return bestFace;
+  }
+
+  function normalizeRgb(rgb) {
+    const maxValue = Math.max(rgb[0], rgb[1], rgb[2], 1);
+    return rgb.map((value) => value / maxValue);
+  }
+
+  function colorDistance(a, b) {
+    const redMean = (a[0] + b[0]) / 2;
+    const red = a[0] - b[0];
+    const green = a[1] - b[1];
+    const blue = a[2] - b[2];
+    return (2 + redMean) * red * red + 4 * green * green + (3 - redMean) * blue * blue;
+  }
+
+  async function solveCurrentCube() {
+    resetSolution();
+    const validation = validateCubeState();
+    if (!validation.ok) {
+      showValidation("error", validation.errors.join("<br>"));
+      return;
+    }
+
+    if (validation.cube.isSolved()) {
+      showValidation("ok", "El cubo ya está resuelto.");
+      renderSolution([]);
+      return;
+    }
+
+    elements.solveBtn.disabled = true;
+    showValidation("warn", "Resolviendo. Si es la primera vez, espera a que terminen las tablas del motor.");
+
+    try {
+      const algorithm = await requestSolution(validation.facelets);
+      solutionMoves = algorithm.trim() ? algorithm.trim().split(/\s+/) : [];
+      showValidation("ok", `Solución calculada con ${solutionMoves.length} movimientos.`);
+      renderSolution(solutionMoves);
+    } catch (error) {
+      showValidation("error", `No se pudo resolver este estado: ${error.message || error}`);
+    } finally {
+      elements.solveBtn.disabled = false;
+    }
+  }
+
+  function validateCubeState() {
+    const errors = [];
+    const facelets = buildFaceletString();
+    const counts = getColorCounts();
+
+    for (const face of FACE_ORDER) {
+      if (cubeState[face][4] !== face) {
+        errors.push(`El centro de ${face} debe ser ${COLORS[face].name}.`);
+      }
+    }
+
+    const emptyCount = FACE_ORDER.flatMap((face) => cubeState[face]).filter((color) => !color).length;
+    if (emptyCount > 0) {
+      errors.push(`Faltan ${emptyCount} pegatinas por asignar.`);
+    }
+
+    for (const face of FACE_ORDER) {
+      if (counts[face] !== 9) {
+        errors.push(`${COLORS[face].name}: hay ${counts[face]} pegatinas, deben ser 9.`);
+      }
+    }
+
+    if (errors.length > 0) {
+      return { ok: false, errors };
+    }
+
+    try {
+      const cube = Cube.fromString(facelets);
+      const normalized = cube.asString();
+      const cornerSet = new Set(cube.cp);
+      const edgeSet = new Set(cube.ep);
+      const cornerOrientation = cube.co.reduce((sum, value) => sum + value, 0);
+      const edgeOrientation = cube.eo.reduce((sum, value) => sum + value, 0);
+
+      if (normalized !== facelets || cornerSet.size !== 8 || edgeSet.size !== 12) {
+        errors.push("Las pegatinas no forman piezas válidas. Revisa esquinas y aristas repetidas.");
+      }
+
+      if (cornerOrientation % 3 !== 0) {
+        errors.push("La orientación de las esquinas es imposible en un cubo físico.");
+      }
+
+      if (edgeOrientation % 2 !== 0) {
+        errors.push("La orientación de las aristas es imposible en un cubo físico.");
+      }
+
+      if (cube.cornerParity() !== cube.edgeParity()) {
+        errors.push("La paridad de esquinas y aristas no coincide. Probablemente hay dos piezas intercambiadas.");
+      }
+
+      return { ok: errors.length === 0, errors, cube, facelets };
+    } catch (error) {
+      return {
+        ok: false,
+        errors: [`No se pudo interpretar el cubo: ${error.message || error}`],
+      };
+    }
+  }
+
+  function buildFaceletString() {
+    return FACE_ORDER.map((face) => cubeState[face].map((color) => color || "?").join("")).join("");
+  }
+
+  function initSolverWorker() {
+    if (!window.Worker) {
+      setEngineState("warn", "Motor en hilo principal", "Este navegador no soporta Web Workers; la primera resolución puede bloquear la pantalla.");
+      solverReadyResolve();
+      return;
+    }
+
+    solverWorker = new Worker("./solver-worker.js");
+    solverWorker.addEventListener("message", (event) => {
+      const message = event.data;
+      if (message.type === "ready") {
+        solverReady = true;
+        setEngineState("ready", "Motor listo", "Tablas de Kociemba preparadas en segundo plano.");
+        solverReadyResolve();
+        return;
+      }
+
+      if (message.type === "error" && !message.id) {
+        workerFailed = true;
+        setEngineState("error", "Worker no disponible", "Se usará el motor en el hilo principal al resolver.");
+        solverReadyReject(new Error(message.error));
+        return;
+      }
+
+      const pending = pendingSolves.get(message.id);
+      if (!pending) return;
+      pendingSolves.delete(message.id);
+
+      if (message.type === "solution") {
+        pending.resolve(message.algorithm || "");
+      } else if (message.type === "error") {
+        pending.reject(new Error(message.error));
+      }
+    });
+
+    solverWorker.addEventListener("error", (event) => {
+      workerFailed = true;
+      setEngineState("error", "Worker no disponible", "Se usará el motor en el hilo principal al resolver.");
+      solverReadyReject(new Error(event.message));
+    });
+  }
+
+  async function requestSolution(facelets) {
+    if (solverWorker && !workerFailed) {
+      await solverReadyPromise.catch(() => null);
+      if (solverReady) {
+        return solveWithWorker(facelets);
+      }
+    }
+
+    if (!mainSolverReady) {
+      setEngineState("warn", "Preparando motor", "Inicializando tablas en el hilo principal...");
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      Cube.initSolver();
+      mainSolverReady = true;
+      setEngineState("ready", "Motor listo", "Tablas de Kociemba preparadas.");
+    }
+
+    return Cube.fromString(facelets).solve();
+  }
+
+  function solveWithWorker(facelets) {
+    const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    return new Promise((resolve, reject) => {
+      pendingSolves.set(id, { resolve, reject });
+      solverWorker.postMessage({ type: "solve", id, facelets });
+    });
+  }
+
+  function setEngineState(state, title, status) {
+    elements.engineDot.classList.toggle("ready", state === "ready");
+    elements.engineDot.classList.toggle("error", state === "error");
+    elements.engineTitle.textContent = title;
+    elements.engineStatus.textContent = status;
+  }
+
+  function renderSolution(moves) {
+    elements.solutionPanel.hidden = false;
+    elements.solutionTitle.textContent = moves.length > 0 ? `${moves.length} movimientos` : "Sin movimientos necesarios";
+    elements.movesList.innerHTML = moves.length > 0
+      ? moves.map((move, index) => `<span class="move-pill ${index === 0 ? "active" : ""}" data-move-index="${index}">${move}</span>`).join("")
+      : `<span class="move-pill active">OK</span>`;
+    currentStepIndex = 0;
+    renderCurrentStep();
+    elements.solutionPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function renderCurrentStep() {
+    const pills = elements.movesList.querySelectorAll("[data-move-index]");
+    pills.forEach((pill, index) => {
+      pill.classList.toggle("active", index === currentStepIndex);
+    });
+
+    if (solutionMoves.length === 0) {
+      elements.currentStep.innerHTML = `
+        <div class="step-number">Estado final</div>
+        <div class="step-move">✓</div>
+        <div class="step-text">El cubo ya está resuelto.</div>
+      `;
+      elements.prevStepBtn.disabled = true;
+      elements.nextStepBtn.disabled = true;
+      return;
+    }
+
+    const move = solutionMoves[currentStepIndex];
+    elements.currentStep.innerHTML = `
+      <div class="step-number">Paso ${currentStepIndex + 1} de ${solutionMoves.length}</div>
+      <div class="step-move">${move}</div>
+      <div class="step-text">${describeMove(move)}</div>
+    `;
+    elements.prevStepBtn.disabled = currentStepIndex === 0;
+    elements.nextStepBtn.disabled = currentStepIndex === solutionMoves.length - 1;
+  }
+
+  function describeMove(move) {
+    const face = move[0];
+    const suffix = move.slice(1);
+    const faceName = MOVE_FACES[face] || "cara indicada";
+    if (suffix === "2") {
+      return `Gira la ${faceName} media vuelta, 180 grados.`;
+    }
+    if (suffix === "'") {
+      return `Gira la ${faceName} 90 grados en sentido antihorario mirando directamente esa cara.`;
+    }
+    return `Gira la ${faceName} 90 grados en sentido horario mirando directamente esa cara.`;
+  }
+
+  function resetSolution() {
+    solutionMoves = [];
+    currentStepIndex = 0;
+    elements.solutionPanel.hidden = true;
+    elements.movesList.innerHTML = "";
+    elements.currentStep.innerHTML = "";
+  }
+
+  function showValidation(type, message) {
+    elements.validationBox.className = `validation-box show ${type}`;
+    elements.validationBox.innerHTML = message;
+  }
+
+  function clearValidation() {
+    elements.validationBox.className = "validation-box";
+    elements.validationBox.innerHTML = "";
+  }
+})();

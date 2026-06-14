@@ -24,6 +24,16 @@ const APPS = [
 
   // ── Juegos estáticos (GitHub Pages) ──────────────────────────────────────
   {
+    slug:         "rubik-solver",
+    icon:         "🧩",
+    title:        "Rubik Solver",
+    desc:         "Solucionador 3x3: dibuja el cubo, usa foto como ayuda y sigue movimientos paso a paso.",
+    badge:        "HTML · CSS · JS",
+    color:        "#38bdf8",
+    href:         "https://cmlozanos.github.io/home/rubik-solver/",
+    alwaysOnline: true,
+  },
+  {
     slug:         "banana-party",
     icon:         "🐵",
     title:        "Banana Party",
