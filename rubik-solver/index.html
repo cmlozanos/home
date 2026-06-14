@@ -19,7 +19,7 @@
         <p class="eyebrow">Solucionador 3x3</p>
         <h1>Rubik Solver</h1>
         <p class="hero-copy">
-          Dibuja los colores de tu cubo, usa una foto como ayuda para cada cara y recibe la solución paso a paso con notación Singmaster.
+          Toca el cubo 3D para cambiar colores, usa una foto como ayuda para cada cara y recibe la solución paso a paso con notación Singmaster.
         </p>
       </div>
       <div class="engine-card" aria-live="polite">
@@ -37,7 +37,7 @@
           <div class="section-heading">
             <div>
               <p class="eyebrow">1 · Estado actual</p>
-              <h2>Asigna los colores de las 6 caras</h2>
+              <h2>Asigna colores tocando el cubo</h2>
             </div>
             <div class="actions-row">
               <button class="btn btn-outline-light btn-sm" id="loadSolvedBtn" type="button">Cubo resuelto</button>
@@ -48,11 +48,29 @@
           <div class="orientation-alert">
             <strong>Orientación recomendada:</strong>
             usa blanco arriba (U), verde al frente (F), rojo a la derecha (R), amarillo abajo (D), naranja a la izquierda (L) y azul detrás (B).
-            Corrige cualquier lectura de foto tocando las pegatinas manualmente.
+            Corrige cualquier lectura de foto tocando las pegatinas del cubo 3D o del editor plano.
           </div>
 
           <div class="palette" id="palette" aria-label="Paleta de colores"></div>
           <div class="counts-grid" id="countsGrid" aria-live="polite"></div>
+          <div class="cube-viewer">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Vista 3D táctil</p>
+                <h3>Cubo interactivo</h3>
+              </div>
+              <div class="view-controls" id="viewControls" aria-label="Controles de vista 3D">
+                <button class="btn btn-outline-light btn-sm" type="button" data-view="front">Frente</button>
+                <button class="btn btn-outline-light btn-sm" type="button" data-view="right">Derecha</button>
+                <button class="btn btn-outline-light btn-sm" type="button" data-view="top">Arriba</button>
+                <button class="btn btn-outline-light btn-sm" type="button" data-view="back">Detrás</button>
+              </div>
+            </div>
+            <div class="cube-stage" id="cubeStage" aria-label="Cubo 3D interactivo">
+              <div class="cube3d" id="cube3d"></div>
+            </div>
+            <p class="viewer-help">Arrastra para rotar. Toca una pegatina visible para pintarla con el color seleccionado.</p>
+          </div>
           <div class="cube-net" id="cubeEditor" aria-label="Editor manual del cubo"></div>
         </section>
       </div>

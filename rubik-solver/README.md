@@ -6,7 +6,8 @@ Aplicación web estática servida desde GitHub Pages en:
 
 ## Funcionalidad
 
-- Editor manual de las 54 pegatinas en orden `U R F D L B`.
+- Cubo 3D interactivo con rotación táctil/ratón y pintado directo de pegatinas.
+- Editor plano de las 54 pegatinas en orden `U R F D L B`.
 - Entrada asistida por foto/cámara para muestrear una cara cada vez.
 - Validación de conteos, piezas, orientaciones y paridad antes de resolver.
 - Solución paso a paso con movimientos Singmaster.

@@ -55,9 +55,19 @@
     B: "cara trasera",
   };
 
+  const VIEW_PRESETS = {
+    front: { x: -28, y: -35 },
+    right: { x: -22, y: -125 },
+    top: { x: -78, y: -35 },
+    back: { x: -20, y: -215 },
+  };
+
   const elements = {
     palette: document.getElementById("palette"),
     countsGrid: document.getElementById("countsGrid"),
+    cubeStage: document.getElementById("cubeStage"),
+    cube3d: document.getElementById("cube3d"),
+    viewControls: document.getElementById("viewControls"),
     cubeEditor: document.getElementById("cubeEditor"),
     photoFaceSelect: document.getElementById("photoFaceSelect"),
     photoFaceHint: document.getElementById("photoFaceHint"),
@@ -89,6 +99,10 @@
   let solverReady = false;
   let workerFailed = false;
   let mainSolverReady = false;
+  let cubeRotation = { ...VIEW_PRESETS.front };
+  let dragState = null;
+  let cubeWasDragged = false;
+  let cubeTapHandled = false;
   let solverReadyResolve;
   let solverReadyReject;
   let solutionMoves = [];
@@ -105,6 +119,7 @@
     loadSavedState();
     renderPalette();
     renderPhotoFaceOptions();
+    renderCube3d();
     renderEditor();
     renderCounts();
     bindEvents();
@@ -122,34 +137,47 @@
     });
 
     elements.cubeEditor.addEventListener("click", (event) => {
-      const faceCard = event.target.closest("[data-face-card]");
-      if (faceCard) {
-        selectedFace = faceCard.dataset.faceCard;
-        elements.photoFaceSelect.value = selectedFace;
-        updatePhotoHint();
-      }
-
       const sticker = event.target.closest("[data-face][data-index]");
-      if (!sticker || sticker.disabled) {
-        renderEditor();
+      if (sticker && !sticker.disabled) {
+        paintSticker(sticker.dataset.face, Number(sticker.dataset.index));
         return;
       }
 
-      const face = sticker.dataset.face;
-      const index = Number(sticker.dataset.index);
-      cubeState[face][index] = activeColor;
-      selectedFace = face;
-      elements.photoFaceSelect.value = selectedFace;
-      saveState();
-      renderEditor();
-      renderCounts();
-      clearValidation();
+      const faceCard = event.target.closest("[data-face-card]");
+      if (faceCard) {
+        selectFace(faceCard.dataset.faceCard);
+      }
+    });
+
+    elements.cube3d.addEventListener("click", (event) => {
+      if (cubeWasDragged || cubeTapHandled) return;
+
+      const sticker = event.target.closest("[data-cube-face][data-index]");
+      if (sticker && !sticker.disabled) {
+        paintSticker(sticker.dataset.cubeFace, Number(sticker.dataset.index));
+        return;
+      }
+
+      const face = event.target.closest("[data-cube-face-card]");
+      if (face) {
+        selectFace(face.dataset.cubeFaceCard);
+      }
+    });
+
+    elements.cubeStage.addEventListener("pointerdown", startCubeDrag);
+    elements.cubeStage.addEventListener("pointermove", dragCube);
+    elements.cubeStage.addEventListener("pointerup", stopCubeDrag);
+    elements.cubeStage.addEventListener("pointercancel", stopCubeDrag);
+
+    elements.viewControls.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-view]");
+      if (!button) return;
+      cubeRotation = { ...VIEW_PRESETS[button.dataset.view] };
+      updateCubeRotation();
     });
 
     elements.photoFaceSelect.addEventListener("change", () => {
-      selectedFace = elements.photoFaceSelect.value;
-      updatePhotoHint();
-      renderEditor();
+      selectFace(elements.photoFaceSelect.value);
     });
 
     elements.photoInput.addEventListener("change", handlePhotoInput);
@@ -158,6 +186,7 @@
     elements.loadSolvedBtn.addEventListener("click", () => {
       cubeState = createSolvedState();
       saveState();
+      renderCube3d();
       renderEditor();
       renderCounts();
       showValidation("ok", "Cubo resuelto cargado. Puedes pintar encima para registrar el caos actual.");
@@ -167,6 +196,7 @@
     elements.clearBtn.addEventListener("click", () => {
       cubeState = createEmptyState();
       saveState();
+      renderCube3d();
       renderEditor();
       renderCounts();
       showValidation("warn", "Caras vaciadas. Los centros quedan fijados porque definen la orientación del cubo.");
@@ -256,6 +286,35 @@
     )).join("");
   }
 
+  function renderCube3d() {
+    elements.cube3d.innerHTML = FACE_ORDER.map((face) => {
+      const stickers = cubeState[face].map((color, index) => {
+        const isCenter = index === 4;
+        const background = color ? COLORS[color].hex : "transparent";
+        const label = `${FACES[face].label} ${index + 1}: ${color ? COLORS[color].name : "sin asignar"}`;
+        return `
+          <button
+            class="cube3d-sticker ${isCenter ? "center" : ""} ${color ? "" : "empty"}"
+            type="button"
+            data-cube-face="${face}"
+            data-index="${index}"
+            data-center="${face}"
+            style="background:${background}"
+            aria-label="${label}"
+            ${isCenter ? "disabled" : ""}
+          ></button>
+        `;
+      }).join("");
+
+      return `
+        <div class="cube-face-3d face-${face} ${face === selectedFace ? "selected" : ""}" data-cube-face-card="${face}">
+          ${stickers}
+        </div>
+      `;
+    }).join("");
+    updateCubeRotation();
+  }
+
   function renderEditor() {
     elements.cubeEditor.innerHTML = FACE_ORDER.map((face) => {
       const stickers = cubeState[face].map((color, index) => {
@@ -285,6 +344,92 @@
         </article>
       `;
     }).join("");
+  }
+
+  function selectFace(face) {
+    selectedFace = face;
+    elements.photoFaceSelect.value = selectedFace;
+    updatePhotoHint();
+    renderCube3d();
+    renderEditor();
+  }
+
+  function paintSticker(face, index) {
+    if (index === 4) return;
+    cubeState[face][index] = activeColor;
+    selectedFace = face;
+    elements.photoFaceSelect.value = selectedFace;
+    updatePhotoHint();
+    saveState();
+    renderCube3d();
+    renderEditor();
+    renderCounts();
+    clearValidation();
+    resetSolution();
+  }
+
+  function startCubeDrag(event) {
+    dragState = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      rotationX: cubeRotation.x,
+      rotationY: cubeRotation.y,
+      tapSticker: event.target.closest("[data-cube-face][data-index]"),
+      tapFace: event.target.closest("[data-cube-face-card]"),
+    };
+    cubeWasDragged = false;
+    cubeTapHandled = false;
+    elements.cube3d.classList.add("dragging");
+    elements.cubeStage.setPointerCapture(event.pointerId);
+  }
+
+  function dragCube(event) {
+    if (!dragState || dragState.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - dragState.startX;
+    const deltaY = event.clientY - dragState.startY;
+    if (Math.abs(deltaX) + Math.abs(deltaY) > 4) {
+      cubeWasDragged = true;
+    }
+
+    cubeRotation = {
+      x: clamp(dragState.rotationX - deltaY * 0.45, -88, 88),
+      y: dragState.rotationY + deltaX * 0.45,
+    };
+    updateCubeRotation();
+  }
+
+  function stopCubeDrag(event) {
+    if (!dragState || dragState.pointerId !== event.pointerId) return;
+    const wasTap = !cubeWasDragged;
+    const tapSticker = dragState.tapSticker;
+    const tapFace = dragState.tapFace;
+    if (elements.cubeStage.hasPointerCapture(event.pointerId)) {
+      elements.cubeStage.releasePointerCapture(event.pointerId);
+    }
+    dragState = null;
+    elements.cube3d.classList.remove("dragging");
+    if (wasTap && tapSticker && !tapSticker.disabled) {
+      paintSticker(tapSticker.dataset.cubeFace, Number(tapSticker.dataset.index));
+      cubeTapHandled = true;
+    } else if (wasTap && tapFace) {
+      selectFace(tapFace.dataset.cubeFaceCard);
+      cubeTapHandled = true;
+    }
+    window.setTimeout(() => {
+      cubeWasDragged = false;
+      cubeTapHandled = false;
+    }, 80);
+  }
+
+  function updateCubeRotation() {
+    elements.cube3d.style.setProperty("--rx", `${cubeRotation.x}deg`);
+    elements.cube3d.style.setProperty("--ry", `${cubeRotation.y}deg`);
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
   }
 
   function renderCounts() {
@@ -438,6 +583,7 @@
     cubeState[selectedFace] = sampled;
     saveState();
     drawPhoto(true);
+    renderCube3d();
     renderEditor();
     renderCounts();
     showValidation("ok", `Cara ${selectedFace} rellenada desde la foto. Revisa y corrige las pegatinas que no coincidan.`);
