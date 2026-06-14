@@ -51,8 +51,11 @@
             Corrige cualquier lectura de foto tocando las pegatinas del cubo 3D o del editor plano.
           </div>
 
-          <div class="palette" id="palette" aria-label="Paleta de colores"></div>
-          <div class="counts-grid" id="countsGrid" aria-live="polite"></div>
+          <div class="mobile-paint-tray">
+            <p class="tray-label">Color para pintar</p>
+            <div class="palette" id="palette" aria-label="Paleta de colores"></div>
+          </div>
+
           <div class="cube-viewer">
             <div class="section-heading compact">
               <div>
@@ -71,13 +74,29 @@
             </div>
             <p class="viewer-help">Arrastra para rotar. Toca una pegatina visible para pintarla con el color seleccionado.</p>
           </div>
-          <div class="cube-net" id="cubeEditor" aria-label="Editor manual del cubo"></div>
+
+          <div class="counts-grid" id="countsGrid" aria-live="polite"></div>
+
+          <details class="flat-editor">
+            <summary>Editar en plano las 6 caras</summary>
+            <div class="cube-net" id="cubeEditor" aria-label="Editor manual del cubo"></div>
+          </details>
         </section>
       </div>
 
-      <div class="col-12 col-xl-4">
+      <div class="col-12 col-xl-4 side-column">
+        <section class="card-panel solve-panel">
+          <p class="eyebrow">2 · Resolver</p>
+          <h2>Genera los movimientos</h2>
+          <p class="muted">
+            El motor usa el algoritmo de dos fases de Herbert Kociemba mediante la implementación MIT de <code>cube.js</code>.
+          </p>
+          <button class="btn btn-success btn-lg w-100" id="solveBtn" type="button">Resolver puzzle</button>
+          <div class="validation-box" id="validationBox" role="status" aria-live="polite"></div>
+        </section>
+
         <section class="card-panel photo-panel">
-          <p class="eyebrow">2 · Foto opcional</p>
+          <p class="eyebrow">Opcional · Foto/cámara</p>
           <h2>Rellena una cara desde imagen</h2>
           <p class="muted">
             Haz una foto frontal de una cara, alinea las pegatinas con la cuadrícula y pulsa leer. La detección compara colores localmente en tu navegador.
@@ -92,16 +111,6 @@
 
           <canvas id="photoCanvas" class="photo-canvas" width="720" height="720" aria-label="Vista previa de foto"></canvas>
           <button class="btn btn-primary w-100" id="samplePhotoBtn" type="button">Leer cara seleccionada</button>
-        </section>
-
-        <section class="card-panel mt-4">
-          <p class="eyebrow">3 · Resolver</p>
-          <h2>Genera los movimientos</h2>
-          <p class="muted">
-            El motor usa el algoritmo de dos fases de Herbert Kociemba mediante la implementación MIT de <code>cube.js</code>.
-          </p>
-          <button class="btn btn-success btn-lg w-100" id="solveBtn" type="button">Resolver puzzle</button>
-          <div class="validation-box" id="validationBox" role="status" aria-live="polite"></div>
         </section>
       </div>
     </section>

@@ -16,6 +16,10 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   min-height: 100vh;
   margin: 0;
@@ -38,27 +42,27 @@ code {
 .app-shell {
   width: min(1440px, 100%);
   margin: 0 auto;
-  padding: clamp(1rem, 3vw, 2.5rem);
+  padding: 0.75rem;
 }
 
 .card-panel {
   background: var(--panel);
   border: 1px solid var(--panel-border);
-  border-radius: 1.5rem;
+  border-radius: 1.1rem;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-  padding: clamp(1rem, 3vw, 1.75rem);
+  padding: 0.9rem;
   backdrop-filter: blur(18px);
 }
 
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 0.8rem;
+  margin-bottom: 0.9rem;
 }
 
 .hero h1 {
-  font-size: clamp(2.4rem, 7vw, 5.25rem);
+  font-size: clamp(2.2rem, 13vw, 4rem);
   font-weight: 900;
   letter-spacing: -0.06em;
   line-height: 0.95;
@@ -67,9 +71,10 @@ code {
 
 .hero-copy {
   max-width: 58rem;
-  margin: 1rem 0 0;
+  margin: 0.7rem 0 0;
   color: var(--muted);
-  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-size: 0.98rem;
+  line-height: 1.45;
 }
 
 .eyebrow {
@@ -84,10 +89,10 @@ code {
 .section-heading {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .section-heading h2,
@@ -112,14 +117,30 @@ code {
 .view-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.5rem;
+}
+
+.btn,
+.form-control,
+.form-select {
+  min-height: 44px;
+}
+
+.btn-sm {
+  min-height: 44px;
+}
+
+.actions-row .btn,
+.step-controls .btn,
+.view-controls .btn {
+  flex: 1 1 8rem;
 }
 
 .engine-card {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
   padding: 0.85rem 1rem;
   background: var(--panel-soft);
@@ -162,20 +183,58 @@ code {
 }
 
 .orientation-alert {
-  margin-bottom: 1rem;
-  padding: 0.9rem 1rem;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 0.85rem;
   color: #dbeafe;
   background: rgba(59, 130, 246, 0.14);
   border: 1px solid rgba(147, 197, 253, 0.28);
   border-radius: 1rem;
+  font-size: 0.92rem;
   line-height: 1.5;
 }
 
-.palette,
+.side-column {
+  display: grid;
+  gap: 1rem;
+}
+
+.solve-panel .btn-lg {
+  min-height: 54px;
+  font-weight: 800;
+}
+
+.mobile-paint-tray {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 20;
+  margin: 0.8rem -0.15rem 0.9rem;
+  padding: 0.55rem;
+  background: rgba(2, 6, 23, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  border-radius: 1rem;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(16px);
+}
+
+.tray-label {
+  margin: 0 0 0.45rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.palette {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
 .counts-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.65rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
   margin-bottom: 1rem;
 }
 
@@ -183,9 +242,9 @@ code {
 .count-chip {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  min-height: 3rem;
-  padding: 0.6rem 0.75rem;
+  gap: 0.45rem;
+  min-height: 3.3rem;
+  padding: 0.55rem;
   color: var(--text);
   background: var(--panel-soft);
   border: 1px solid var(--panel-border);
@@ -193,8 +252,14 @@ code {
 }
 
 .color-button {
-  justify-content: flex-start;
-  text-align: left;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.color-button small {
+  display: none;
 }
 
 .color-button.active {
@@ -204,8 +269,8 @@ code {
 
 .swatch {
   display: inline-block;
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 1.45rem;
+  height: 1.45rem;
   flex: 0 0 auto;
   vertical-align: middle;
   border: 2px solid rgba(255, 255, 255, 0.55);
@@ -214,9 +279,12 @@ code {
 }
 
 .count-chip {
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.78rem;
+  line-height: 1.1;
+  text-align: center;
 }
 
 .count-chip.good {
@@ -230,8 +298,8 @@ code {
 }
 
 .cube-viewer {
-  margin: 1.25rem 0;
-  padding: clamp(1rem, 3vw, 1.4rem);
+  margin: 0.75rem -0.15rem 1rem;
+  padding: 0.85rem 0.65rem 1rem;
   background:
     radial-gradient(circle at 30% 15%, rgba(56, 189, 248, 0.16), transparent 16rem),
     rgba(15, 23, 42, 0.68);
@@ -240,12 +308,12 @@ code {
 }
 
 .cube-stage {
-  --cube-size: min(62vw, 19rem);
+  --cube-size: min(82vw, 21rem);
   --half-cube: calc(var(--cube-size) / 2);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(var(--cube-size) + 5.5rem);
+  min-height: calc(var(--cube-size) + 3.8rem);
   perspective: 1000px;
   touch-action: none;
   user-select: none;
@@ -278,7 +346,7 @@ code {
   padding: 4%;
   background: linear-gradient(145deg, #020617, #111827);
   border: clamp(3px, 1vw, 6px) solid #020617;
-  border-radius: 1rem;
+  border-radius: 0.85rem;
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.06),
     0 22px 48px rgba(0, 0, 0, 0.38);
@@ -361,9 +429,28 @@ code {
 .viewer-help {
   margin: 0;
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   line-height: 1.55;
   text-align: center;
+}
+
+.flat-editor {
+  margin-top: 0.9rem;
+}
+
+.flat-editor summary {
+  min-height: 44px;
+  padding: 0.75rem 0.85rem;
+  color: #e0f2fe;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 0.95rem;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.flat-editor[open] summary {
+  margin-bottom: 0.75rem;
 }
 
 .cube-net {
@@ -373,7 +460,7 @@ code {
 }
 
 .face-card {
-  padding: 0.85rem;
+  padding: 0.7rem;
   background: rgba(15, 23, 42, 0.7);
   border: 1px solid var(--panel-border);
   border-radius: 1rem;
@@ -389,7 +476,7 @@ code {
   align-items: baseline;
   justify-content: space-between;
   gap: 0.5rem;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.5rem;
 }
 
 .face-title strong {
@@ -410,7 +497,7 @@ code {
 .sticker {
   position: relative;
   aspect-ratio: 1;
-  min-height: 3.1rem;
+  min-height: 3.35rem;
   padding: 0;
   appearance: none;
   border: 2px solid rgba(15, 23, 42, 0.88);
@@ -453,7 +540,7 @@ code {
 }
 
 .face-hint {
-  min-height: 3rem;
+  min-height: auto;
   margin: 0.65rem 0 0;
   font-size: 0.92rem;
 }
@@ -477,7 +564,7 @@ code {
   display: block;
   width: 100%;
   aspect-ratio: 1;
-  margin: 1rem 0;
+  margin: 0.85rem 0;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
     rgba(15, 23, 42, 0.85);
@@ -516,7 +603,7 @@ code {
 }
 
 .solution-panel {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .moves-list {
@@ -544,8 +631,8 @@ code {
 }
 
 .current-step {
-  min-height: 8rem;
-  padding: 1.25rem;
+  min-height: 7rem;
+  padding: 1rem;
   background: rgba(15, 23, 42, 0.75);
   border: 1px solid var(--panel-border);
   border-radius: 1.2rem;
@@ -571,12 +658,12 @@ code {
 }
 
 .step-controls {
-  justify-content: flex-end;
+  justify-content: stretch;
   margin-top: 1rem;
 }
 
 .references-panel {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .references-panel ul {
@@ -590,23 +677,148 @@ code {
 }
 
 @media (min-width: 576px) {
-  .palette {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .counts-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .cube-net {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 992px) {
+  .app-shell {
+    padding: clamp(1rem, 3vw, 2.5rem);
+  }
+
+  .card-panel {
+    border-radius: 1.5rem;
+    padding: clamp(1rem, 3vw, 1.75rem);
+  }
+
   .hero {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.4rem, 7vw, 5.25rem);
+  }
+
+  .hero-copy {
+    margin-top: 1rem;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+  }
+
+  .section-heading {
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .actions-row .btn,
+  .step-controls .btn,
+  .view-controls .btn {
+    flex: 0 0 auto;
+  }
+
+  .engine-card {
+    width: fit-content;
+  }
+
+  .orientation-alert {
+    margin-bottom: 1rem;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+  }
+
+  .mobile-paint-tray {
+    position: static;
+    margin: 1rem 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .tray-label {
+    display: none;
+  }
+
+  .palette,
+  .counts-grid {
+    gap: 0.65rem;
+  }
+
+  .color-button,
+  .count-chip {
+    gap: 0.55rem;
+    min-height: 3rem;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .color-button {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .color-button small {
+    display: inline;
+  }
+
+  .swatch {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .count-chip {
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 0.92rem;
+    text-align: left;
+  }
+
+  .cube-viewer {
+    margin: 1.25rem 0;
+    padding: clamp(1rem, 3vw, 1.4rem);
+  }
+
+  .cube-stage {
+    --cube-size: min(62vw, 19rem);
+    min-height: calc(var(--cube-size) + 5.5rem);
+  }
+
+  .cube-face-3d {
+    border-radius: 1rem;
+  }
+
+  .flat-editor {
+    margin-top: 1rem;
+  }
+
+  .flat-editor summary {
+    width: fit-content;
+  }
+
+  .face-card {
+    padding: 0.85rem;
+  }
+
+  .face-title {
+    margin-bottom: 0.65rem;
+  }
+
+  .sticker {
+    min-height: 3.1rem;
+  }
+
+  .current-step {
+    min-height: 8rem;
+    padding: 1.25rem;
+  }
+
+  .step-controls {
+    justify-content: flex-end;
   }
 
   .cube-net {
