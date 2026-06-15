@@ -13,6 +13,7 @@ Aplicación web estática servida desde GitHub Pages en:
 - Entrada asistida por foto/cámara para muestrear una cara cada vez.
 - Validación de conteos, piezas, orientaciones y paridad antes de resolver.
 - Solución paso a paso con movimientos Singmaster y cubo 3D volumétrico que anima la capa completa de cada giro.
+- Slider de velocidad visual persistente para ralentizar o acelerar giros, cambios de vista y transiciones del cubo.
 
 ## Algoritmo
 

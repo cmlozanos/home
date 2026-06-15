@@ -22,12 +22,37 @@
           Primero registra el patrón real de tu cubo: píntalo a mano por colores o detecta cada cara con cámara. Después genera la solución paso a paso.
         </p>
       </div>
-      <div class="engine-card" aria-live="polite">
-        <span class="engine-dot" id="engineDot"></span>
-        <div>
-          <strong id="engineTitle">Preparando motor</strong>
-          <small id="engineStatus">Inicializando tablas del algoritmo de dos fases...</small>
+      <div class="hero-tools">
+        <div class="engine-card" aria-live="polite">
+          <span class="engine-dot" id="engineDot"></span>
+          <div>
+            <strong id="engineTitle">Preparando motor</strong>
+            <small id="engineStatus">Inicializando tablas del algoritmo de dos fases...</small>
+          </div>
         </div>
+        <section class="speed-card" aria-labelledby="motionSpeedLabel">
+          <div class="speed-head">
+            <div>
+              <strong id="motionSpeedLabel">Velocidad visual</strong>
+              <small id="motionSpeedHelp">Afecta a giros, cambios de vista y transiciones del cubo.</small>
+            </div>
+            <output id="motionSpeedValue" for="motionSpeedRange">0,7x</output>
+          </div>
+          <input
+            class="speed-range"
+            id="motionSpeedRange"
+            type="range"
+            min="0.4"
+            max="1.4"
+            step="0.1"
+            value="0.7"
+            aria-describedby="motionSpeedHelp"
+          />
+          <div class="speed-scale" aria-hidden="true">
+            <span>Más lento</span>
+            <span>Más rápido</span>
+          </div>
+        </section>
       </div>
     </section>
 

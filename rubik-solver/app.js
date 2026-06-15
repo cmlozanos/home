@@ -3,8 +3,15 @@
 
   const FACE_ORDER = ["U", "R", "F", "D", "L", "B"];
   const STORAGE_KEY = "rubik-solver-state-v1";
-  const QUARTER_TURN_DURATION_MS = 1250;
-  const HALF_TURN_DURATION_MS = 1800;
+  const SPEED_STORAGE_KEY = "rubik-solver-motion-speed-v1";
+  const MIN_ANIMATION_SPEED = 0.4;
+  const MAX_ANIMATION_SPEED = 1.4;
+  const DEFAULT_ANIMATION_SPEED = 0.7;
+  const BASE_QUARTER_TURN_DURATION_MS = 1250;
+  const BASE_HALF_TURN_DURATION_MS = 1800;
+  const BASE_CUBE_VIEW_DURATION_MS = 720;
+  const BASE_SOLUTION_VIEW_DURATION_MS = 840;
+  const BASE_STICKER_TRANSITION_MS = 170;
 
   const FACES = {
     U: {
@@ -111,6 +118,8 @@
     prevStepBtn: document.getElementById("prevStepBtn"),
     nextStepBtn: document.getElementById("nextStepBtn"),
     copySolutionBtn: document.getElementById("copySolutionBtn"),
+    motionSpeedRange: document.getElementById("motionSpeedRange"),
+    motionSpeedValue: document.getElementById("motionSpeedValue"),
   };
 
   let cubeState = createEmptyState();
@@ -135,6 +144,7 @@
   let solutionInitialFacelets = "";
   let solutionAnimating = false;
   let currentStepIndex = 0;
+  let animationSpeed = DEFAULT_ANIMATION_SPEED;
   const pendingSolves = new Map();
   const solverReadyPromise = new Promise((resolve, reject) => {
     solverReadyResolve = resolve;
@@ -145,6 +155,8 @@
 
   function init() {
     loadSavedState();
+    loadSavedSpeed();
+    applyMotionSpeed();
     renderPalette();
     renderPhotoFaceOptions();
     renderCube3d();
@@ -282,6 +294,10 @@
         showValidation("error", `No se pudo copiar el algoritmo: ${error.message || error}`);
       }
     });
+
+    elements.motionSpeedRange.addEventListener("input", () => {
+      setAnimationSpeed(elements.motionSpeedRange.value);
+    });
   }
 
   function createSolvedState() {
@@ -319,6 +335,38 @@
 
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cubeState));
+  }
+
+  function loadSavedSpeed() {
+    const savedSpeed = Number.parseFloat(localStorage.getItem(SPEED_STORAGE_KEY));
+    if (Number.isFinite(savedSpeed)) {
+      animationSpeed = clamp(savedSpeed, MIN_ANIMATION_SPEED, MAX_ANIMATION_SPEED);
+    }
+  }
+
+  function setAnimationSpeed(value) {
+    const nextSpeed = clamp(Number.parseFloat(value), MIN_ANIMATION_SPEED, MAX_ANIMATION_SPEED);
+    animationSpeed = Number.isFinite(nextSpeed) ? nextSpeed : DEFAULT_ANIMATION_SPEED;
+    applyMotionSpeed();
+    localStorage.setItem(SPEED_STORAGE_KEY, String(animationSpeed));
+  }
+
+  function applyMotionSpeed() {
+    const rootStyle = document.documentElement.style;
+    rootStyle.setProperty("--cube-view-transition-duration", `${getAnimationDuration(BASE_CUBE_VIEW_DURATION_MS)}ms`);
+    rootStyle.setProperty("--solution-view-transition-duration", `${getAnimationDuration(BASE_SOLUTION_VIEW_DURATION_MS)}ms`);
+    rootStyle.setProperty("--sticker-transition-duration", `${getAnimationDuration(BASE_STICKER_TRANSITION_MS)}ms`);
+    rootStyle.setProperty("--turn-duration", `${getAnimationDuration(BASE_QUARTER_TURN_DURATION_MS)}ms`);
+    elements.motionSpeedRange.value = String(animationSpeed);
+    elements.motionSpeedValue.textContent = formatSpeed(animationSpeed);
+  }
+
+  function getAnimationDuration(baseDurationMs) {
+    return Math.round(baseDurationMs / animationSpeed);
+  }
+
+  function formatSpeed(speed) {
+    return `${speed.toFixed(1).replace(".", ",")}x`;
   }
 
   function setInputMode(mode) {
@@ -1220,7 +1268,8 @@
     const face = move[0];
     const suffix = move.slice(1);
     const angle = suffix === "'" ? -90 : suffix === "2" ? 180 : 90;
-    const duration = suffix === "2" ? HALF_TURN_DURATION_MS : QUARTER_TURN_DURATION_MS;
+    const baseDuration = suffix === "2" ? BASE_HALF_TURN_DURATION_MS : BASE_QUARTER_TURN_DURATION_MS;
+    const duration = getAnimationDuration(baseDuration);
     const cssAngleByFace = {
       U: -angle,
       D: angle,
