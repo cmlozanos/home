@@ -170,11 +170,22 @@
         <button class="btn btn-outline-light btn-sm" id="copySolutionBtn" type="button">Copiar algoritmo</button>
       </div>
 
-      <div class="moves-list" id="movesList"></div>
-      <div class="current-step" id="currentStep"></div>
-      <div class="step-controls">
-        <button class="btn btn-outline-light" id="prevStepBtn" type="button">Anterior</button>
-        <button class="btn btn-light" id="nextStepBtn" type="button">Siguiente</button>
+      <div class="solution-layout">
+        <div class="solution-visual">
+          <div class="solution-stage cube-stage" aria-label="Representación 3D de los movimientos">
+            <div class="cube3d solution-cube" id="solutionCube3d"></div>
+          </div>
+          <div class="solution-move-badge" id="solutionMoveBadge">Listo para ejecutar el primer giro</div>
+        </div>
+
+        <div class="solution-details">
+          <div class="moves-list" id="movesList"></div>
+          <div class="current-step" id="currentStep"></div>
+          <div class="step-controls">
+            <button class="btn btn-outline-light" id="prevStepBtn" type="button">Volver paso</button>
+            <button class="btn btn-light" id="nextStepBtn" type="button">Ejecutar paso</button>
+          </div>
+        </div>
       </div>
     </section>
 

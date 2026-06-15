@@ -92,6 +92,8 @@
     engineStatus: document.getElementById("engineStatus"),
     solutionPanel: document.getElementById("solutionPanel"),
     solutionTitle: document.getElementById("solutionTitle"),
+    solutionCube3d: document.getElementById("solutionCube3d"),
+    solutionMoveBadge: document.getElementById("solutionMoveBadge"),
     movesList: document.getElementById("movesList"),
     currentStep: document.getElementById("currentStep"),
     prevStepBtn: document.getElementById("prevStepBtn"),
@@ -118,6 +120,8 @@
   let solverReadyResolve;
   let solverReadyReject;
   let solutionMoves = [];
+  let solutionInitialFacelets = "";
+  let solutionAnimating = false;
   let currentStepIndex = 0;
   const pendingSolves = new Map();
   const solverReadyPromise = new Promise((resolve, reject) => {
@@ -239,17 +243,16 @@
     });
 
     elements.prevStepBtn.addEventListener("click", () => {
-      if (currentStepIndex > 0) {
-        currentStepIndex -= 1;
-        renderCurrentStep();
-      }
+      if (solutionAnimating || currentStepIndex <= 0) return;
+      currentStepIndex -= 1;
+      renderCurrentStep();
     });
 
-    elements.nextStepBtn.addEventListener("click", () => {
-      if (currentStepIndex < solutionMoves.length - 1) {
-        currentStepIndex += 1;
-        renderCurrentStep();
-      }
+    elements.nextStepBtn.addEventListener("click", async () => {
+      if (solutionAnimating || currentStepIndex >= solutionMoves.length) return;
+      await executeCurrentSolutionMove();
+      currentStepIndex += 1;
+      renderCurrentStep();
     });
 
     elements.copySolutionBtn.addEventListener("click", async () => {
@@ -355,32 +358,52 @@
   }
 
   function renderCube3d() {
-    elements.cube3d.innerHTML = FACE_ORDER.map((face) => {
-      const stickers = cubeState[face].map((color, index) => {
+    elements.cube3d.innerHTML = renderCube3dMarkup(cubeState, {
+      selectedFace,
+      interactive: true,
+    });
+    updateCubeRotation();
+  }
+
+  function renderCube3dMarkup(state, options = {}) {
+    const selected = options.selectedFace || null;
+    const interactive = options.interactive !== false;
+    const turningMove = options.turningMove || null;
+
+    return FACE_ORDER.map((face) => {
+      const stickers = state[face].map((stickerColor, index) => {
         const isCenter = index === 4;
-        const background = color ? COLORS[color].hex : "transparent";
-        const label = `${FACES[face].label} ${index + 1}: ${color ? COLORS[color].name : "sin asignar"}`;
+        const background = stickerColor ? COLORS[stickerColor].hex : "transparent";
+        const label = `${FACES[face].label} ${index + 1}: ${stickerColor ? COLORS[stickerColor].name : "sin asignar"}`;
+        const tag = interactive ? "button" : "span";
+        const interactiveAttrs = interactive
+          ? `type="button" data-cube-face="${face}" data-index="${index}" ${isCenter ? "disabled" : ""}`
+          : `role="img"`;
         return `
-          <button
-            class="cube3d-sticker ${isCenter ? "center" : ""} ${color ? "" : "empty"}"
-            type="button"
-            data-cube-face="${face}"
-            data-index="${index}"
+          <${tag}
+            class="cube3d-sticker ${isCenter ? "center" : ""} ${stickerColor ? "" : "empty"}"
             data-center="${face}"
             style="background:${background}"
             aria-label="${label}"
-            ${isCenter ? "disabled" : ""}
-          ></button>
+            ${interactiveAttrs}
+          ></${tag}>
         `;
       }).join("");
+      const turnClass = turningMove?.face === face ? "turning" : "";
+      const turnStyle = turningMove?.face === face
+        ? `style="--turn-angle:${turningMove.angle}deg; --turn-duration:${turningMove.duration}ms"`
+        : "";
+      const selectedClass = face === selected ? "selected" : "";
+      const cardAttr = interactive ? `data-cube-face-card="${face}"` : "";
 
       return `
-        <div class="cube-face-3d face-${face} ${face === selectedFace ? "selected" : ""}" data-cube-face-card="${face}">
-          ${stickers}
+        <div class="cube-face-shell face-${face}" ${cardAttr}>
+          <div class="cube-face-3d ${selectedClass} ${turnClass}" ${turnStyle}>
+            ${stickers}
+          </div>
         </div>
       `;
     }).join("");
-    updateCubeRotation();
   }
 
   function renderEditor() {
@@ -803,7 +826,7 @@
 
     if (validation.cube.isSolved()) {
       showValidation("ok", "El cubo ya está resuelto.");
-      renderSolution([]);
+      renderSolution([], validation.facelets);
       return;
     }
 
@@ -814,7 +837,7 @@
       const algorithm = await requestSolution(validation.facelets);
       solutionMoves = algorithm.trim() ? algorithm.trim().split(/\s+/) : [];
       showValidation("ok", `Solución calculada con ${solutionMoves.length} movimientos.`);
-      renderSolution(solutionMoves);
+      renderSolution(solutionMoves, validation.facelets);
     } catch (error) {
       showValidation("error", `No se pudo resolver este estado: ${error.message || error}`);
     } finally {
@@ -961,7 +984,9 @@
     elements.engineStatus.textContent = status;
   }
 
-  function renderSolution(moves) {
+  function renderSolution(moves, initialFacelets) {
+    solutionInitialFacelets = initialFacelets || buildFaceletString();
+    solutionAnimating = false;
     elements.solutionPanel.hidden = false;
     elements.solutionTitle.textContent = moves.length > 0 ? `${moves.length} movimientos` : "Sin movimientos necesarios";
     elements.movesList.innerHTML = moves.length > 0
@@ -976,7 +1001,9 @@
     const pills = elements.movesList.querySelectorAll("[data-move-index]");
     pills.forEach((pill, index) => {
       pill.classList.toggle("active", index === currentStepIndex);
+      pill.classList.toggle("done", index < currentStepIndex);
     });
+    renderSolutionCubeAtStep(currentStepIndex);
 
     if (solutionMoves.length === 0) {
       elements.currentStep.innerHTML = `
@@ -984,8 +1011,20 @@
         <div class="step-move">✓</div>
         <div class="step-text">El cubo ya está resuelto.</div>
       `;
+      elements.solutionMoveBadge.textContent = "No hace falta ejecutar ningún giro.";
       elements.prevStepBtn.disabled = true;
       elements.nextStepBtn.disabled = true;
+      return;
+    }
+
+    if (currentStepIndex >= solutionMoves.length) {
+      elements.currentStep.innerHTML = `
+        <div class="step-number">Estado final</div>
+        <div class="step-move">✓</div>
+        <div class="step-text">Has completado todos los movimientos. El cubo queda resuelto.</div>
+      `;
+      elements.solutionMoveBadge.textContent = "Solución completada.";
+      updateSolutionControls();
       return;
     }
 
@@ -995,8 +1034,73 @@
       <div class="step-move">${move}</div>
       <div class="step-text">${describeMove(move)}</div>
     `;
-    elements.prevStepBtn.disabled = currentStepIndex === 0;
-    elements.nextStepBtn.disabled = currentStepIndex === solutionMoves.length - 1;
+    elements.solutionMoveBadge.textContent = `Preparado: ejecuta ${move} en el cubo 3D.`;
+    updateSolutionControls();
+  }
+
+  async function executeCurrentSolutionMove() {
+    const move = solutionMoves[currentStepIndex];
+    if (!move) return;
+
+    solutionAnimating = true;
+    updateSolutionControls();
+    const cube = getSolutionCubeAtStep(currentStepIndex);
+    const turn = getTurnAnimation(move);
+    renderSolutionCube(faceletsToState(cube.asString()), turn);
+    elements.solutionMoveBadge.textContent = `Ejecutando ${move}...`;
+    await wait(turn.duration);
+    cube.move(move);
+    renderSolutionCube(faceletsToState(cube.asString()));
+    solutionAnimating = false;
+    updateSolutionControls();
+  }
+
+  function updateSolutionControls() {
+    elements.prevStepBtn.disabled = solutionAnimating || currentStepIndex === 0;
+    elements.nextStepBtn.disabled = solutionAnimating || currentStepIndex >= solutionMoves.length;
+    elements.nextStepBtn.textContent = solutionAnimating ? "Girando..." : "Ejecutar paso";
+  }
+
+  function renderSolutionCubeAtStep(stepIndex) {
+    const cube = getSolutionCubeAtStep(stepIndex);
+    renderSolutionCube(faceletsToState(cube.asString()));
+  }
+
+  function renderSolutionCube(state, turningMove = null) {
+    elements.solutionCube3d.innerHTML = renderCube3dMarkup(state, {
+      interactive: false,
+      selectedFace: turningMove?.face || null,
+      turningMove,
+    });
+  }
+
+  function getSolutionCubeAtStep(stepIndex) {
+    const cube = Cube.fromString(solutionInitialFacelets);
+    const movesToApply = solutionMoves.slice(0, stepIndex).join(" ");
+    if (movesToApply) {
+      cube.move(movesToApply);
+    }
+    return cube;
+  }
+
+  function faceletsToState(facelets) {
+    return FACE_ORDER.reduce((state, face, faceIndex) => {
+      const start = faceIndex * 9;
+      state[face] = facelets.slice(start, start + 9).split("");
+      return state;
+    }, {});
+  }
+
+  function getTurnAnimation(move) {
+    const face = move[0];
+    const suffix = move.slice(1);
+    const angle = suffix === "'" ? -90 : suffix === "2" ? 180 : 90;
+    const duration = suffix === "2" ? 900 : 650;
+    return { face, angle, duration };
+  }
+
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   function describeMove(move) {
@@ -1014,10 +1118,14 @@
 
   function resetSolution() {
     solutionMoves = [];
+    solutionInitialFacelets = "";
+    solutionAnimating = false;
     currentStepIndex = 0;
     elements.solutionPanel.hidden = true;
     elements.movesList.innerHTML = "";
     elements.currentStep.innerHTML = "";
+    elements.solutionCube3d.innerHTML = "";
+    elements.solutionMoveBadge.textContent = "";
   }
 
   function showValidation(type, message) {

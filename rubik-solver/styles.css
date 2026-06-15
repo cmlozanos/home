@@ -404,6 +404,12 @@ code {
   transition: none;
 }
 
+.cube-face-shell {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
 .cube-face-3d {
   position: absolute;
   inset: 0;
@@ -426,31 +432,47 @@ code {
     0 22px 48px rgba(0, 0, 0, 0.38);
 }
 
-.cube-face-3d.face-F {
+.cube-face-shell.face-F {
   transform: translateZ(var(--half-cube));
 }
 
-.cube-face-3d.face-B {
+.cube-face-shell.face-B {
   transform: rotateY(180deg) translateZ(var(--half-cube));
 }
 
-.cube-face-3d.face-R {
+.cube-face-shell.face-R {
   transform: rotateY(90deg) translateZ(var(--half-cube));
 }
 
-.cube-face-3d.face-L {
+.cube-face-shell.face-L {
   transform: rotateY(-90deg) translateZ(var(--half-cube));
 }
 
-.cube-face-3d.face-U {
+.cube-face-shell.face-U {
   transform: rotateX(90deg) translateZ(var(--half-cube));
 }
 
-.cube-face-3d.face-D {
+.cube-face-shell.face-D {
   transform: rotateX(-90deg) translateZ(var(--half-cube));
 }
 
+.cube-face-3d.turning {
+  animation: faceTurn var(--turn-duration, 650ms) cubic-bezier(0.2, 0.85, 0.2, 1) both;
+  filter: brightness(1.16);
+  z-index: 3;
+}
+
+@keyframes faceTurn {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(var(--turn-angle));
+  }
+}
+
 .cube3d-sticker {
+  display: block;
   position: relative;
   aspect-ratio: 1;
   padding: 0;
@@ -773,6 +795,48 @@ code {
   border-color: #bae6fd;
 }
 
+.move-pill.done {
+  color: #bbf7d0;
+  border-color: rgba(34, 197, 94, 0.45);
+  background: rgba(34, 197, 94, 0.14);
+}
+
+.solution-layout {
+  display: grid;
+  gap: 1rem;
+}
+
+.solution-visual {
+  padding: 0.75rem;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(34, 197, 94, 0.14), transparent 14rem),
+    rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.2rem;
+}
+
+.solution-stage {
+  --cube-size: min(74vw, 18rem);
+  min-height: calc(var(--cube-size) + 2rem);
+  cursor: default;
+}
+
+.solution-cube {
+  --rx: -28deg;
+  --ry: -35deg;
+}
+
+.solution-move-badge {
+  margin-top: 0.2rem;
+  padding: 0.65rem 0.8rem;
+  color: #dbeafe;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(147, 197, 253, 0.24);
+  border-radius: 0.9rem;
+  font-weight: 800;
+  text-align: center;
+}
+
 .current-step {
   min-height: 7rem;
   padding: 1rem;
@@ -966,6 +1030,15 @@ code {
   .current-step {
     min-height: 8rem;
     padding: 1.25rem;
+  }
+
+  .solution-layout {
+    grid-template-columns: minmax(18rem, 0.85fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+
+  .solution-stage {
+    --cube-size: min(28vw, 19rem);
   }
 
   .step-controls {
