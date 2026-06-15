@@ -824,7 +824,7 @@ code {
 }
 
 .solution-turning-layer {
-  animation: layerTurn var(--turn-duration, 700ms) cubic-bezier(0.22, 0.85, 0.2, 1) both;
+  animation: layerTurn var(--turn-duration, 1250ms) cubic-bezier(0.22, 0.85, 0.2, 1) both;
   z-index: 4;
 }
 

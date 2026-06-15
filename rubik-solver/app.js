@@ -3,6 +3,8 @@
 
   const FACE_ORDER = ["U", "R", "F", "D", "L", "B"];
   const STORAGE_KEY = "rubik-solver-state-v1";
+  const QUARTER_TURN_DURATION_MS = 1250;
+  const HALF_TURN_DURATION_MS = 1800;
 
   const FACES = {
     U: {
@@ -1218,7 +1220,7 @@
     const face = move[0];
     const suffix = move.slice(1);
     const angle = suffix === "'" ? -90 : suffix === "2" ? 180 : 90;
-    const duration = suffix === "2" ? 900 : 650;
+    const duration = suffix === "2" ? HALF_TURN_DURATION_MS : QUARTER_TURN_DURATION_MS;
     const cssAngleByFace = {
       U: -angle,
       D: angle,
