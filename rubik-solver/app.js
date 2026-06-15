@@ -62,6 +62,16 @@
     back: { x: -20, y: -215 },
   };
 
+  const SOLUTION_VIEW_PRESETS = {
+    U: { x: -58, y: -35 },
+    R: { x: -24, y: -58 },
+    F: { x: -26, y: -35 },
+    D: { x: 32, y: -35 },
+    L: { x: -24, y: 42 },
+    B: { x: -22, y: -210 },
+    default: { x: -28, y: -35 },
+  };
+
   const elements = {
     inputModeCards: document.getElementById("inputModeCards"),
     manualInputPanel: document.getElementById("manualInputPanel"),
@@ -368,7 +378,6 @@
   function renderCube3dMarkup(state, options = {}) {
     const selected = options.selectedFace || null;
     const interactive = options.interactive !== false;
-    const turningMove = options.turningMove || null;
 
     return FACE_ORDER.map((face) => {
       const stickers = state[face].map((stickerColor, index) => {
@@ -389,16 +398,12 @@
           ></${tag}>
         `;
       }).join("");
-      const turnClass = turningMove?.face === face ? "turning" : "";
-      const turnStyle = turningMove?.face === face
-        ? `style="--turn-angle:${turningMove.angle}deg; --turn-duration:${turningMove.duration}ms"`
-        : "";
       const selectedClass = face === selected ? "selected" : "";
       const cardAttr = interactive ? `data-cube-face-card="${face}"` : "";
 
       return `
         <div class="cube-face-shell face-${face}" ${cardAttr}>
-          <div class="cube-face-3d ${selectedClass} ${turnClass}" ${turnStyle}>
+          <div class="cube-face-3d ${selectedClass}">
             ${stickers}
           </div>
         </div>
@@ -993,6 +998,7 @@
       ? moves.map((move, index) => `<span class="move-pill ${index === 0 ? "active" : ""}" data-move-index="${index}">${move}</span>`).join("")
       : `<span class="move-pill active">OK</span>`;
     currentStepIndex = 0;
+    setSolutionViewForFace(moves[0]?.[0] || "default");
     renderCurrentStep();
     elements.solutionPanel.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -1024,11 +1030,13 @@
         <div class="step-text">Has completado todos los movimientos. El cubo queda resuelto.</div>
       `;
       elements.solutionMoveBadge.textContent = "Solución completada.";
+      setSolutionViewForFace("default");
       updateSolutionControls();
       return;
     }
 
     const move = solutionMoves[currentStepIndex];
+    setSolutionViewForFace(move[0]);
     elements.currentStep.innerHTML = `
       <div class="step-number">Paso ${currentStepIndex + 1} de ${solutionMoves.length}</div>
       <div class="step-move">${move}</div>
@@ -1046,6 +1054,7 @@
     updateSolutionControls();
     const cube = getSolutionCubeAtStep(currentStepIndex);
     const turn = getTurnAnimation(move);
+    setSolutionViewForFace(turn.face);
     renderSolutionCube(faceletsToState(cube.asString()), turn);
     elements.solutionMoveBadge.textContent = `Ejecutando ${move}...`;
     await wait(turn.duration);
@@ -1067,11 +1076,7 @@
   }
 
   function renderSolutionCube(state, turningMove = null) {
-    elements.solutionCube3d.innerHTML = renderCube3dMarkup(state, {
-      interactive: false,
-      selectedFace: turningMove?.face || null,
-      turningMove,
-    });
+    elements.solutionCube3d.innerHTML = renderVolumetricCubeMarkup(state, turningMove);
   }
 
   function getSolutionCubeAtStep(stepIndex) {
@@ -1091,16 +1096,162 @@
     }, {});
   }
 
+  function renderVolumetricCubeMarkup(state, turningMove = null) {
+    const cubies = buildCubies(state);
+    const staticCubies = [];
+    const turningCubies = [];
+
+    for (const cubie of cubies) {
+      if (turningMove && isCubieInLayer(cubie, turningMove.face)) {
+        turningCubies.push(cubie);
+      } else {
+        staticCubies.push(cubie);
+      }
+    }
+
+    const turningMarkup = turningMove
+      ? `
+        <div
+          class="solution-turning-layer"
+          style="--layer-turn: rotate${turningMove.axis}(${turningMove.cssAngle}deg); --turn-duration:${turningMove.duration}ms"
+        >
+          ${turningCubies.map(renderCubie).join("")}
+        </div>
+      `
+      : "";
+
+    return `
+      <div class="volumetric-cube">
+        <div class="solution-static-layer">${staticCubies.map(renderCubie).join("")}</div>
+        ${turningMarkup}
+      </div>
+    `;
+  }
+
+  function buildCubies(state) {
+    const cubieMap = new Map();
+
+    for (let x = -1; x <= 1; x += 1) {
+      for (let y = -1; y <= 1; y += 1) {
+        for (let z = -1; z <= 1; z += 1) {
+          if (x === 0 && y === 0 && z === 0) continue;
+          cubieMap.set(cubieKey(x, y, z), {
+            x,
+            y,
+            z,
+            stickers: {},
+          });
+        }
+      }
+    }
+
+    for (const face of FACE_ORDER) {
+      state[face].forEach((color, index) => {
+        const target = getFaceletTarget(face, index);
+        cubieMap.get(cubieKey(target.x, target.y, target.z)).stickers[face] = color;
+      });
+    }
+
+    return Array.from(cubieMap.values());
+  }
+
+  function getFaceletTarget(face, index) {
+    const row = Math.floor(index / 3);
+    const col = index % 3;
+
+    switch (face) {
+      case "U":
+        return { x: col - 1, y: 1, z: row - 1 };
+      case "D":
+        return { x: col - 1, y: -1, z: 1 - row };
+      case "R":
+        return { x: 1, y: 1 - row, z: 1 - col };
+      case "L":
+        return { x: -1, y: 1 - row, z: col - 1 };
+      case "B":
+        return { x: 1 - col, y: 1 - row, z: -1 };
+      case "F":
+      default:
+        return { x: col - 1, y: 1 - row, z: 1 };
+    }
+  }
+
+  function cubieKey(x, y, z) {
+    return `${x},${y},${z}`;
+  }
+
+  function isCubieInLayer(cubie, face) {
+    return (
+      (face === "U" && cubie.y === 1) ||
+      (face === "D" && cubie.y === -1) ||
+      (face === "R" && cubie.x === 1) ||
+      (face === "L" && cubie.x === -1) ||
+      (face === "F" && cubie.z === 1) ||
+      (face === "B" && cubie.z === -1)
+    );
+  }
+
+  function renderCubie(cubie) {
+    const coordClasses = `${coordClass("x", cubie.x)} ${coordClass("y", cubie.y)} ${coordClass("z", cubie.z)}`;
+    const faces = FACE_ORDER.map((face) => {
+      const color = cubie.stickers[face];
+      const colorClass = color ? "cubie-sticker" : "cubie-wall";
+      const background = color ? `style="background:${COLORS[color].hex}"` : "";
+      const label = color ? `${FACES[face].label}: ${COLORS[color].name}` : "";
+      return `<span class="cubie-side cubie-side-${face} ${colorClass}" ${background} aria-label="${label}"></span>`;
+    }).join("");
+
+    return `
+      <div class="solution-cubie ${coordClasses}">
+        ${faces}
+      </div>
+    `;
+  }
+
+  function coordClass(axis, value) {
+    if (value < 0) return `coord-${axis}-neg`;
+    if (value > 0) return `coord-${axis}-pos`;
+    return `coord-${axis}-zero`;
+  }
+
   function getTurnAnimation(move) {
     const face = move[0];
     const suffix = move.slice(1);
     const angle = suffix === "'" ? -90 : suffix === "2" ? 180 : 90;
     const duration = suffix === "2" ? 900 : 650;
-    return { face, angle, duration };
+    const cssAngleByFace = {
+      U: -angle,
+      D: angle,
+      R: -angle,
+      L: angle,
+      F: angle,
+      B: -angle,
+    };
+    const axisByFace = {
+      U: "Y",
+      D: "Y",
+      R: "X",
+      L: "X",
+      F: "Z",
+      B: "Z",
+    };
+    return {
+      face,
+      angle,
+      cssAngle: cssAngleByFace[face],
+      axis: axisByFace[face],
+      duration,
+    };
   }
 
   function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function setSolutionViewForFace(face) {
+    const preset = SOLUTION_VIEW_PRESETS[face] || SOLUTION_VIEW_PRESETS.default;
+    elements.solutionCube3d.style.setProperty("--rx", `${preset.x}deg`);
+    elements.solutionCube3d.style.setProperty("--ry", `${preset.y}deg`);
   }
 
   function describeMove(move) {

@@ -12,7 +12,7 @@ Aplicación web estática servida desde GitHub Pages en:
 - Editor plano de las 54 pegatinas en orden `U R F D L B`.
 - Entrada asistida por foto/cámara para muestrear una cara cada vez.
 - Validación de conteos, piezas, orientaciones y paridad antes de resolver.
-- Solución paso a paso con movimientos Singmaster y cubo 3D animado para cada giro.
+- Solución paso a paso con movimientos Singmaster y cubo 3D volumétrico que anima la capa completa de cada giro.
 
 ## Algoritmo
 
