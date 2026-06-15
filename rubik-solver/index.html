@@ -19,7 +19,7 @@
         <p class="eyebrow">Solucionador 3x3</p>
         <h1>Rubik Solver</h1>
         <p class="hero-copy">
-          Toca el cubo 3D para cambiar colores, usa una foto como ayuda para cada cara y recibe la solución paso a paso con notación Singmaster.
+          Primero registra el patrón real de tu cubo: píntalo a mano por colores o detecta cada cara con cámara. Después genera la solución paso a paso.
         </p>
       </div>
       <div class="engine-card" aria-live="polite">
@@ -36,8 +36,8 @@
         <section class="card-panel">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">1 · Estado actual</p>
-              <h2>Asigna colores tocando el cubo</h2>
+              <p class="eyebrow">1 · Patrón del cubo</p>
+              <h2>Elige cómo quieres introducirlo</h2>
             </div>
             <div class="actions-row">
               <button class="btn btn-outline-light btn-sm" id="loadSolvedBtn" type="button">Cubo resuelto</button>
@@ -48,39 +48,94 @@
           <div class="orientation-alert">
             <strong>Orientación recomendada:</strong>
             usa blanco arriba (U), verde al frente (F), rojo a la derecha (R), amarillo abajo (D), naranja a la izquierda (L) y azul detrás (B).
-            Corrige cualquier lectura de foto tocando las pegatinas del cubo 3D o del editor plano.
+            Mantén esta referencia tanto si pintas a mano como si escaneas con cámara.
           </div>
 
-          <div class="mobile-paint-tray">
-            <p class="tray-label">Color para pintar</p>
-            <div class="palette" id="palette" aria-label="Paleta de colores"></div>
+          <div class="mode-grid" id="inputModeCards" aria-label="Método de entrada del patrón">
+            <button class="mode-card active" type="button" data-input-mode="manual">
+              <span class="mode-icon">🎨</span>
+              <span>
+                <strong>Selección de color</strong>
+                <small>Toca un color y pinta pegatinas en el cubo 3D.</small>
+              </span>
+            </button>
+            <button class="mode-card" type="button" data-input-mode="camera">
+              <span class="mode-icon">📷</span>
+              <span>
+                <strong>Detección por cámara</strong>
+                <small>Escanea una cara cada vez y corrige si hace falta.</small>
+              </span>
+            </button>
           </div>
 
-          <div class="cube-viewer">
-            <div class="section-heading compact">
+          <section class="input-mode-panel" id="manualInputPanel">
+            <div class="mobile-paint-tray">
+              <p class="tray-label">Color para pintar</p>
+              <div class="palette" id="palette" aria-label="Paleta de colores"></div>
+            </div>
+
+            <div class="cube-viewer">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Entrada manual</p>
+                  <h3>Cubo 3D interactivo</h3>
+                </div>
+                <div class="view-controls" id="viewControls" aria-label="Controles de vista 3D">
+                  <button class="btn btn-outline-light btn-sm" type="button" data-view="front">Frente</button>
+                  <button class="btn btn-outline-light btn-sm" type="button" data-view="right">Derecha</button>
+                  <button class="btn btn-outline-light btn-sm" type="button" data-view="top">Arriba</button>
+                  <button class="btn btn-outline-light btn-sm" type="button" data-view="back">Detrás</button>
+                </div>
+              </div>
+              <div class="cube-stage" id="cubeStage" aria-label="Cubo 3D interactivo">
+                <div class="cube3d" id="cube3d"></div>
+              </div>
+              <p class="viewer-help">Arrastra para rotar. Toca una pegatina visible para pintarla con el color seleccionado.</p>
+            </div>
+
+            <div class="counts-grid" id="countsGrid" aria-live="polite"></div>
+
+            <details class="flat-editor">
+              <summary>Editar en plano las 6 caras</summary>
+              <div class="cube-net" id="cubeEditor" aria-label="Editor manual del cubo"></div>
+            </details>
+          </section>
+
+          <section class="input-mode-panel camera-input-panel" id="cameraInputPanel" hidden>
+            <div class="scanner-head">
               <div>
-                <p class="eyebrow">Vista 3D táctil</p>
-                <h3>Cubo interactivo</h3>
+                <p class="eyebrow">Entrada por cámara</p>
+                <h3>Escanea el patrón cara por cara</h3>
               </div>
-              <div class="view-controls" id="viewControls" aria-label="Controles de vista 3D">
-                <button class="btn btn-outline-light btn-sm" type="button" data-view="front">Frente</button>
-                <button class="btn btn-outline-light btn-sm" type="button" data-view="right">Derecha</button>
-                <button class="btn btn-outline-light btn-sm" type="button" data-view="top">Arriba</button>
-                <button class="btn btn-outline-light btn-sm" type="button" data-view="back">Detrás</button>
-              </div>
+              <button class="btn btn-outline-light btn-sm" id="switchToManualBtn" type="button">Corregir a mano</button>
             </div>
-            <div class="cube-stage" id="cubeStage" aria-label="Cubo 3D interactivo">
-              <div class="cube3d" id="cube3d"></div>
+
+            <p class="muted">
+              Selecciona una cara, alinéala dentro de la cuadrícula y pulsa detectar. La cámara solo sirve para rellenar colores: confirma siempre el resultado en el cubo.
+            </p>
+
+            <div class="face-progress" id="faceProgress" aria-label="Progreso de caras escaneadas"></div>
+
+            <label class="form-label" for="photoFaceSelect">Cara a detectar</label>
+            <select class="form-select" id="photoFaceSelect"></select>
+            <p class="face-hint" id="photoFaceHint"></p>
+
+            <div class="camera-actions">
+              <button class="btn btn-primary" id="startCameraBtn" type="button">Iniciar cámara</button>
+              <button class="btn btn-outline-light" id="stopCameraBtn" type="button">Parar cámara</button>
+              <button class="btn btn-outline-light" id="nextFaceBtn" type="button">Siguiente cara</button>
             </div>
-            <p class="viewer-help">Arrastra para rotar. Toca una pegatina visible para pintarla con el color seleccionado.</p>
-          </div>
 
-          <div class="counts-grid" id="countsGrid" aria-live="polite"></div>
+            <div class="camera-frame">
+              <video id="cameraVideo" autoplay playsinline muted></video>
+              <canvas id="photoCanvas" class="photo-canvas" width="720" height="720" aria-label="Vista previa de cámara"></canvas>
+            </div>
 
-          <details class="flat-editor">
-            <summary>Editar en plano las 6 caras</summary>
-            <div class="cube-net" id="cubeEditor" aria-label="Editor manual del cubo"></div>
-          </details>
+            <button class="btn btn-success w-100" id="samplePhotoBtn" type="button">Detectar esta cara</button>
+
+            <label class="form-label mt-3" for="photoInput">O subir/tomar una foto</label>
+            <input class="form-control" id="photoInput" type="file" accept="image/*" capture="environment" />
+          </section>
         </section>
       </div>
 
@@ -95,22 +150,13 @@
           <div class="validation-box" id="validationBox" role="status" aria-live="polite"></div>
         </section>
 
-        <section class="card-panel photo-panel">
-          <p class="eyebrow">Opcional · Foto/cámara</p>
-          <h2>Rellena una cara desde imagen</h2>
-          <p class="muted">
-            Haz una foto frontal de una cara, alinea las pegatinas con la cuadrícula y pulsa leer. La detección compara colores localmente en tu navegador.
-          </p>
-
-          <label class="form-label" for="photoFaceSelect">Cara que estás fotografiando</label>
-          <select class="form-select" id="photoFaceSelect"></select>
-          <p class="face-hint" id="photoFaceHint"></p>
-
-          <label class="form-label mt-3" for="photoInput">Foto o cámara</label>
-          <input class="form-control" id="photoInput" type="file" accept="image/*" capture="environment" />
-
-          <canvas id="photoCanvas" class="photo-canvas" width="720" height="720" aria-label="Vista previa de foto"></canvas>
-          <button class="btn btn-primary w-100" id="samplePhotoBtn" type="button">Leer cara seleccionada</button>
+        <section class="card-panel help-panel">
+          <p class="eyebrow">Flujo correcto</p>
+          <ol class="flow-list">
+            <li>Registra las 6 caras con uno de los dos métodos.</li>
+            <li>Comprueba que cada color aparece 9 veces.</li>
+            <li>Resuelve y sigue los movimientos en orden.</li>
+          </ol>
         </section>
       </div>
     </section>

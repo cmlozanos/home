@@ -63,8 +63,13 @@
   };
 
   const elements = {
+    inputModeCards: document.getElementById("inputModeCards"),
+    manualInputPanel: document.getElementById("manualInputPanel"),
+    cameraInputPanel: document.getElementById("cameraInputPanel"),
+    switchToManualBtn: document.getElementById("switchToManualBtn"),
     palette: document.getElementById("palette"),
     countsGrid: document.getElementById("countsGrid"),
+    faceProgress: document.getElementById("faceProgress"),
     cubeStage: document.getElementById("cubeStage"),
     cube3d: document.getElementById("cube3d"),
     viewControls: document.getElementById("viewControls"),
@@ -72,6 +77,10 @@
     photoFaceSelect: document.getElementById("photoFaceSelect"),
     photoFaceHint: document.getElementById("photoFaceHint"),
     photoInput: document.getElementById("photoInput"),
+    cameraVideo: document.getElementById("cameraVideo"),
+    startCameraBtn: document.getElementById("startCameraBtn"),
+    stopCameraBtn: document.getElementById("stopCameraBtn"),
+    nextFaceBtn: document.getElementById("nextFaceBtn"),
     photoCanvas: document.getElementById("photoCanvas"),
     samplePhotoBtn: document.getElementById("samplePhotoBtn"),
     solveBtn: document.getElementById("solveBtn"),
@@ -90,11 +99,14 @@
     copySolutionBtn: document.getElementById("copySolutionBtn"),
   };
 
-  let cubeState = createSolvedState();
+  let cubeState = createEmptyState();
+  let activeInputMode = "manual";
   let activeColor = "U";
   let selectedFace = "F";
   let currentPhoto = null;
   let currentPhotoUrl = null;
+  let cameraStream = null;
+  let cameraFrameRequest = null;
   let solverWorker = null;
   let solverReady = false;
   let workerFailed = false;
@@ -122,6 +134,8 @@
     renderCube3d();
     renderEditor();
     renderCounts();
+    renderFaceProgress();
+    setInputMode(activeInputMode);
     bindEvents();
     updatePhotoHint();
     drawEmptyPhotoCanvas();
@@ -129,6 +143,16 @@
   }
 
   function bindEvents() {
+    elements.inputModeCards.addEventListener("click", (event) => {
+      const card = event.target.closest("[data-input-mode]");
+      if (!card) return;
+      setInputMode(card.dataset.inputMode);
+    });
+
+    elements.switchToManualBtn.addEventListener("click", () => {
+      setInputMode("manual");
+    });
+
     elements.palette.addEventListener("click", (event) => {
       const button = event.target.closest("[data-color]");
       if (!button) return;
@@ -180,7 +204,16 @@
       selectFace(elements.photoFaceSelect.value);
     });
 
+    elements.faceProgress.addEventListener("click", (event) => {
+      const faceButton = event.target.closest("[data-progress-face]");
+      if (!faceButton) return;
+      selectFace(faceButton.dataset.progressFace);
+    });
+
     elements.photoInput.addEventListener("change", handlePhotoInput);
+    elements.startCameraBtn.addEventListener("click", startCamera);
+    elements.stopCameraBtn.addEventListener("click", stopCamera);
+    elements.nextFaceBtn.addEventListener("click", selectNextFace);
     elements.samplePhotoBtn.addEventListener("click", samplePhotoFace);
     elements.solveBtn.addEventListener("click", solveCurrentCube);
     elements.loadSolvedBtn.addEventListener("click", () => {
@@ -189,6 +222,7 @@
       renderCube3d();
       renderEditor();
       renderCounts();
+      renderFaceProgress();
       showValidation("ok", "Cubo resuelto cargado. Puedes pintar encima para registrar el caos actual.");
       resetSolution();
     });
@@ -199,6 +233,7 @@
       renderCube3d();
       renderEditor();
       renderCounts();
+      renderFaceProgress();
       showValidation("warn", "Caras vaciadas. Los centros quedan fijados porque definen la orientación del cubo.");
       resetSolution();
     });
@@ -271,6 +306,21 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cubeState));
   }
 
+  function setInputMode(mode) {
+    activeInputMode = mode === "camera" ? "camera" : "manual";
+    elements.manualInputPanel.hidden = activeInputMode !== "manual";
+    elements.cameraInputPanel.hidden = activeInputMode !== "camera";
+    elements.inputModeCards.querySelectorAll("[data-input-mode]").forEach((card) => {
+      card.classList.toggle("active", card.dataset.inputMode === activeInputMode);
+    });
+
+    if (activeInputMode === "camera") {
+      drawDetectionFrame(true) || drawEmptyPhotoCanvas();
+    } else {
+      stopCamera();
+    }
+  }
+
   function renderPalette() {
     elements.palette.innerHTML = FACE_ORDER.map((face) => `
       <button class="color-button ${face === activeColor ? "active" : ""}" type="button" data-color="${face}">
@@ -284,6 +334,24 @@
     elements.photoFaceSelect.innerHTML = FACE_ORDER.map((face) => (
       `<option value="${face}" ${face === selectedFace ? "selected" : ""}>${face} · ${FACES[face].label}</option>`
     )).join("");
+  }
+
+  function renderFaceProgress() {
+    elements.faceProgress.innerHTML = FACE_ORDER.map((face) => {
+      const assigned = cubeState[face].filter(Boolean).length;
+      const complete = assigned === 9;
+      return `
+        <button
+          class="face-progress-chip ${face === selectedFace ? "selected" : ""} ${complete ? "complete" : ""}"
+          type="button"
+          data-progress-face="${face}"
+          aria-label="Seleccionar cara ${FACES[face].label}"
+        >
+          <span>${face}</span>
+          <small>${assigned}/9</small>
+        </button>
+      `;
+    }).join("");
   }
 
   function renderCube3d() {
@@ -352,6 +420,7 @@
     updatePhotoHint();
     renderCube3d();
     renderEditor();
+    renderFaceProgress();
   }
 
   function paintSticker(face, index) {
@@ -364,6 +433,7 @@
     renderCube3d();
     renderEditor();
     renderCounts();
+    renderFaceProgress();
     clearValidation();
     resetSolution();
   }
@@ -464,6 +534,9 @@
     const file = event.target.files[0];
     if (!file) return;
 
+    setInputMode("camera");
+    stopCamera();
+
     if (currentPhotoUrl) {
       URL.revokeObjectURL(currentPhotoUrl);
     }
@@ -472,13 +545,63 @@
     currentPhoto = new Image();
     currentPhoto.onload = () => {
       drawPhoto(true);
-      showValidation("ok", "Foto cargada. Alinea mentalmente la cara con la cuadrícula y lee la cara seleccionada.");
+      showValidation("ok", "Foto cargada. Alinea la cara con la cuadrícula y pulsa detectar esta cara.");
     };
     currentPhoto.onerror = () => {
       drawEmptyPhotoCanvas();
       showValidation("error", "No se pudo leer la imagen seleccionada.");
     };
     currentPhoto.src = currentPhotoUrl;
+  }
+
+  async function startCamera() {
+    setInputMode("camera");
+    if (!navigator.mediaDevices?.getUserMedia) {
+      showValidation("error", "Este navegador no permite acceder a la cámara. Usa la opción de subir/tomar una foto.");
+      return;
+    }
+
+    try {
+      stopCamera();
+      currentPhoto = null;
+      cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1280 },
+          height: { ideal: 1280 },
+        },
+        audio: false,
+      });
+      elements.cameraVideo.srcObject = cameraStream;
+      await elements.cameraVideo.play();
+      drawCameraFrameLoop();
+      showValidation("ok", "Cámara activa. Encaja una cara dentro de la cuadrícula y pulsa detectar.");
+    } catch (error) {
+      showValidation("error", `No se pudo iniciar la cámara: ${error.message || error}`);
+      drawEmptyPhotoCanvas();
+    }
+  }
+
+  function stopCamera() {
+    if (cameraFrameRequest) {
+      cancelAnimationFrame(cameraFrameRequest);
+      cameraFrameRequest = null;
+    }
+
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      cameraStream = null;
+    }
+
+    if (elements.cameraVideo.srcObject) {
+      elements.cameraVideo.srcObject = null;
+    }
+  }
+
+  function drawCameraFrameLoop() {
+    if (!cameraStream) return;
+    drawVideoFrame(true);
+    cameraFrameRequest = requestAnimationFrame(drawCameraFrameLoop);
   }
 
   function drawEmptyPhotoCanvas() {
@@ -490,13 +613,34 @@
     ctx.fillStyle = "#94a3b8";
     ctx.font = "600 24px system-ui";
     ctx.textAlign = "center";
-    ctx.fillText("Carga una foto de una cara", canvas.width / 2, canvas.height / 2 - 8);
+    ctx.fillText("Activa cámara o sube foto", canvas.width / 2, canvas.height / 2 - 8);
     ctx.font = "400 16px system-ui";
-    ctx.fillText("La cuadrícula aparecerá aquí", canvas.width / 2, canvas.height / 2 + 24);
+    ctx.fillText("Alinea una cara por vez", canvas.width / 2, canvas.height / 2 + 24);
   }
 
   function drawPhoto(withOverlay) {
-    if (!currentPhoto) return;
+    if (!currentPhoto) return false;
+    drawSourceToCanvas(currentPhoto, withOverlay, "contain");
+    return true;
+  }
+
+  function drawVideoFrame(withOverlay) {
+    const video = elements.cameraVideo;
+    if (!cameraStream || video.readyState < 2) {
+      return false;
+    }
+
+    drawSourceToCanvas(video, withOverlay, "cover");
+    return true;
+  }
+
+  function drawDetectionFrame(withOverlay) {
+    if (drawVideoFrame(withOverlay)) return true;
+    if (drawPhoto(withOverlay)) return true;
+    return false;
+  }
+
+  function drawSourceToCanvas(source, withOverlay, fit) {
     const canvas = elements.photoCanvas;
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     const side = 720;
@@ -505,12 +649,16 @@
     ctx.fillStyle = "#0f172a";
     ctx.fillRect(0, 0, side, side);
 
-    const scale = Math.min(side / currentPhoto.width, side / currentPhoto.height);
-    const width = currentPhoto.width * scale;
-    const height = currentPhoto.height * scale;
+    const sourceWidth = source.videoWidth || source.width;
+    const sourceHeight = source.videoHeight || source.height;
+    const scale = fit === "cover"
+      ? Math.max(side / sourceWidth, side / sourceHeight)
+      : Math.min(side / sourceWidth, side / sourceHeight);
+    const width = sourceWidth * scale;
+    const height = sourceHeight * scale;
     const left = (side - width) / 2;
     const top = (side - height) / 2;
-    ctx.drawImage(currentPhoto, left, top, width, height);
+    ctx.drawImage(source, left, top, width, height);
 
     if (!withOverlay) return;
 
@@ -571,12 +719,11 @@
   }
 
   function samplePhotoFace() {
-    if (!currentPhoto) {
-      showValidation("warn", "Primero carga o toma una foto de la cara.");
+    if (!drawDetectionFrame(false)) {
+      showValidation("warn", "Primero inicia la cámara o sube una foto de la cara.");
       return;
     }
 
-    drawPhoto(false);
     const ctx = elements.photoCanvas.getContext("2d", { willReadFrequently: true });
     const sampled = getPhotoSamplePoints().map((point) => nearestCubeColor(averagePatch(ctx, point.x, point.y, 12)));
     sampled[4] = selectedFace;
@@ -586,8 +733,17 @@
     renderCube3d();
     renderEditor();
     renderCounts();
-    showValidation("ok", `Cara ${selectedFace} rellenada desde la foto. Revisa y corrige las pegatinas que no coincidan.`);
+    renderFaceProgress();
+    drawDetectionFrame(true);
+    showValidation("ok", `Cara ${selectedFace} detectada. Revisa colores y continúa con la siguiente cara.`);
     resetSolution();
+  }
+
+  function selectNextFace() {
+    const currentIndex = FACE_ORDER.indexOf(selectedFace);
+    const nextIncomplete = FACE_ORDER.find((face) => cubeState[face].filter(Boolean).length < 9);
+    const nextFace = nextIncomplete || FACE_ORDER[(currentIndex + 1) % FACE_ORDER.length];
+    selectFace(nextFace);
   }
 
   function averagePatch(ctx, x, y, radius) {

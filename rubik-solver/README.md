@@ -6,6 +6,7 @@ Aplicación web estática servida desde GitHub Pages en:
 
 ## Funcionalidad
 
+- Entrada explícita del patrón por selección de color o por detección de cámara/foto.
 - Cubo 3D interactivo con rotación táctil/ratón y pintado directo de pegatinas.
 - Diseño mobile-first con paleta táctil sticky y acción de resolver prioritaria.
 - Editor plano de las 54 pegatinas en orden `U R F D L B`.
