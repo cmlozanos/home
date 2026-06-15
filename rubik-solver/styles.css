@@ -431,7 +431,7 @@ code {
 }
 
 .cube-stage {
-  --cube-size: min(82vw, 21rem);
+  --cube-size: min(64vw, 17rem);
   --half-cube: calc(var(--cube-size) / 2);
   display: flex;
   align-items: center;
@@ -448,6 +448,9 @@ code {
 }
 
 .cube3d {
+  --piece-size: calc(var(--cube-size) / 3.12);
+  --piece-half: calc(var(--piece-size) / 2);
+  --piece-step: calc(var(--cube-size) / 3.12);
   position: relative;
   width: var(--cube-size);
   height: var(--cube-size);
@@ -460,51 +463,61 @@ code {
   transition: none;
 }
 
-.cube-solid-core {
+.editor-volumetric-cube {
   position: absolute;
   inset: 0;
-  pointer-events: none;
   transform-style: preserve-3d;
 }
 
-.cube-core-face {
-  position: absolute;
-  inset: -2px;
+.editor-cubie-sticker {
+  padding: 0;
+  appearance: none;
+  cursor: pointer;
+  transition:
+    filter var(--sticker-transition-duration, 240ms) ease,
+    box-shadow var(--sticker-transition-duration, 240ms) ease,
+    border-color var(--sticker-transition-duration, 240ms) ease;
+}
+
+.editor-cubie-sticker.empty {
   background:
-    linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 1)),
-    #020617;
-  border: 2px solid #020617;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
-  backface-visibility: visible;
+    linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 1)),
+    #0f172a;
 }
 
-.cube-core-face.face-F {
-  transform: translateZ(calc(var(--half-cube) - 2px));
+.editor-cubie-sticker.selected-face {
+  border-color: rgba(34, 211, 238, 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    inset 0 -0.35rem 0.65rem rgba(0, 0, 0, 0.18),
+    0 0 0 0.08rem rgba(34, 211, 238, 0.34);
 }
 
-.cube-core-face.face-B {
-  transform: rotateY(180deg) translateZ(calc(var(--half-cube) - 2px));
+.editor-cubie-sticker:hover,
+.editor-cubie-sticker:focus-visible {
+  z-index: 2;
+  filter: brightness(1.08);
+  border-color: rgba(248, 250, 252, 0.86);
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+    inset 0 -0.35rem 0.65rem rgba(0, 0, 0, 0.18),
+    0 0 0 0.16rem rgba(255, 255, 255, 0.14);
 }
 
-.cube-core-face.face-R {
-  transform: rotateY(90deg) translateZ(calc(var(--half-cube) - 2px));
-}
-
-.cube-core-face.face-L {
-  transform: rotateY(-90deg) translateZ(calc(var(--half-cube) - 2px));
-}
-
-.cube-core-face.face-U {
-  transform: rotateX(90deg) translateZ(calc(var(--half-cube) - 2px));
-}
-
-.cube-core-face.face-D {
-  transform: rotateX(-90deg) translateZ(calc(var(--half-cube) - 2px));
+.editor-cubie-sticker.center::after {
+  content: attr(data-center);
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(15, 23, 42, 0.62);
+  font-size: clamp(0.65rem, 2.2vw, 1rem);
+  font-weight: 950;
 }
 
 .cube-face-shell {
   position: absolute;
-  inset: 0;
+  inset: -1px;
   transform-style: preserve-3d;
 }
 
@@ -519,7 +532,7 @@ code {
     linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 1)),
     #020617;
   border: clamp(3px, 1vw, 6px) solid #020617;
-  border-radius: 0.2rem;
+  border-radius: 0;
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.06),
     0 22px 48px rgba(0, 0, 0, 0.38);
@@ -590,10 +603,8 @@ code {
 
 .cube3d-sticker.empty {
   background:
-    linear-gradient(45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
-    rgba(148, 163, 184, 0.16);
-  background-size: 1rem 1rem;
+    linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 1)),
+    #0f172a;
 }
 
 .cube3d-sticker.center::after {
@@ -777,7 +788,7 @@ code {
   background:
     linear-gradient(45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
     linear-gradient(-45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
-    rgba(148, 163, 184, 0.16);
+    #0f172a;
   background-size: 1rem 1rem;
 }
 
@@ -1174,7 +1185,7 @@ code {
   }
 
   .cube-face-3d {
-    border-radius: 0.2rem;
+    border-radius: 0;
   }
 
   .flat-editor {

@@ -429,44 +429,47 @@
     const selected = options.selectedFace || null;
     const interactive = options.interactive !== false;
 
-    const faceMarkup = FACE_ORDER.map((face) => {
-      const stickers = state[face].map((stickerColor, index) => {
-        const isCenter = index === 4;
-        const background = stickerColor ? COLORS[stickerColor].hex : "transparent";
-        const label = `${FACES[face].label} ${index + 1}: ${stickerColor ? COLORS[stickerColor].name : "sin asignar"}`;
-        const tag = interactive ? "button" : "span";
-        const interactiveAttrs = interactive
-          ? `type="button" data-cube-face="${face}" data-index="${index}" ${isCenter ? "disabled" : ""}`
-          : `role="img"`;
-        return `
-          <${tag}
-            class="cube3d-sticker ${isCenter ? "center" : ""} ${stickerColor ? "" : "empty"}"
-            data-center="${face}"
-            style="background:${background}"
-            aria-label="${label}"
-            ${interactiveAttrs}
-          ></${tag}>
-        `;
-      }).join("");
-      const selectedClass = face === selected ? "selected" : "";
-      const cardAttr = interactive ? `data-cube-face-card="${face}"` : "";
+    return `
+      <div class="editor-volumetric-cube">
+        ${buildCubies(state).map((cubie) => renderEditorCubie(cubie, { selected, interactive })).join("")}
+      </div>
+    `;
+  }
+
+  function renderEditorCubie(cubie, options) {
+    const coordClasses = `${coordClass("x", cubie.x)} ${coordClass("y", cubie.y)} ${coordClass("z", cubie.z)}`;
+    const faces = FACE_ORDER.map((face) => {
+      if (!hasCubieFacelet(cubie, face)) {
+        return `<span class="cubie-side cubie-side-${face} cubie-wall" aria-hidden="true"></span>`;
+      }
+
+      const color = cubie.stickers[face];
+      const index = cubie.indices[face];
+      const isCenter = index === 4;
+      const tag = options.interactive && !isCenter ? "button" : "span";
+      const selectedClass = face === options.selected ? "selected-face" : "";
+      const emptyClass = color ? "" : "empty";
+      const centerClass = isCenter ? "center" : "";
+      const backgroundStyle = color ? `style="background:${COLORS[color].hex}"` : "";
+      const label = `${FACES[face].label} ${index + 1}: ${color ? COLORS[color].name : "sin asignar"}`;
+      const attrs = tag === "button"
+        ? `type="button" data-cube-face="${face}" data-index="${index}" data-cube-face-card="${face}"`
+        : `role="button" data-cube-face-card="${face}"`;
 
       return `
-        <div class="cube-face-shell face-${face}" ${cardAttr}>
-          <div class="cube-face-3d ${selectedClass}">
-            ${stickers}
-          </div>
-        </div>
+        <${tag}
+          class="cubie-side cubie-side-${face} cubie-sticker editor-cubie-sticker ${emptyClass} ${centerClass} ${selectedClass}"
+          data-center="${face}"
+          ${backgroundStyle}
+          aria-label="${label}"
+          ${attrs}
+        ></${tag}>
       `;
     }).join("");
 
-    return `${renderCubeSolidCoreMarkup()}${faceMarkup}`;
-  }
-
-  function renderCubeSolidCoreMarkup() {
     return `
-      <div class="cube-solid-core" aria-hidden="true">
-        ${FACE_ORDER.map((face) => `<span class="cube-core-face face-${face}"></span>`).join("")}
+      <div class="solution-cubie editor-cubie ${coordClasses}">
+        ${faces}
       </div>
     `;
   }
@@ -475,7 +478,7 @@
     elements.cubeEditor.innerHTML = FACE_ORDER.map((face) => {
       const stickers = cubeState[face].map((color, index) => {
         const isCenter = index === 4;
-        const background = color ? COLORS[color].hex : "transparent";
+        const backgroundStyle = color ? `style="background:${COLORS[color].hex}"` : "";
         const label = `${FACES[face].label} ${index + 1}: ${color ? COLORS[color].name : "sin asignar"}`;
         return `
           <button
@@ -483,7 +486,7 @@
             type="button"
             data-face="${face}"
             data-index="${index}"
-            style="background:${background}"
+            ${backgroundStyle}
             aria-label="${label}"
             ${isCenter ? "disabled" : ""}
           ></button>
@@ -1200,6 +1203,7 @@
             y,
             z,
             stickers: {},
+            indices: {},
           });
         }
       }
@@ -1208,11 +1212,17 @@
     for (const face of FACE_ORDER) {
       state[face].forEach((color, index) => {
         const target = getFaceletTarget(face, index);
-        cubieMap.get(cubieKey(target.x, target.y, target.z)).stickers[face] = color;
+        const cubie = cubieMap.get(cubieKey(target.x, target.y, target.z));
+        cubie.stickers[face] = color;
+        cubie.indices[face] = index;
       });
     }
 
     return Array.from(cubieMap.values());
+  }
+
+  function hasCubieFacelet(cubie, face) {
+    return Object.prototype.hasOwnProperty.call(cubie.stickers, face);
   }
 
   function getFaceletTarget(face, index) {
