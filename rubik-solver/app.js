@@ -429,7 +429,7 @@
     const selected = options.selectedFace || null;
     const interactive = options.interactive !== false;
 
-    return FACE_ORDER.map((face) => {
+    const faceMarkup = FACE_ORDER.map((face) => {
       const stickers = state[face].map((stickerColor, index) => {
         const isCenter = index === 4;
         const background = stickerColor ? COLORS[stickerColor].hex : "transparent";
@@ -459,6 +459,16 @@
         </div>
       `;
     }).join("");
+
+    return `${renderCubeSolidCoreMarkup()}${faceMarkup}`;
+  }
+
+  function renderCubeSolidCoreMarkup() {
+    return `
+      <div class="cube-solid-core" aria-hidden="true">
+        ${FACE_ORDER.map((face) => `<span class="cube-core-face face-${face}"></span>`).join("")}
+      </div>
+    `;
   }
 
   function renderEditor() {

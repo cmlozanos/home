@@ -460,6 +460,48 @@ code {
   transition: none;
 }
 
+.cube-solid-core {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.cube-core-face {
+  position: absolute;
+  inset: -2px;
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 1)),
+    #020617;
+  border: 2px solid #020617;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  backface-visibility: visible;
+}
+
+.cube-core-face.face-F {
+  transform: translateZ(calc(var(--half-cube) - 2px));
+}
+
+.cube-core-face.face-B {
+  transform: rotateY(180deg) translateZ(calc(var(--half-cube) - 2px));
+}
+
+.cube-core-face.face-R {
+  transform: rotateY(90deg) translateZ(calc(var(--half-cube) - 2px));
+}
+
+.cube-core-face.face-L {
+  transform: rotateY(-90deg) translateZ(calc(var(--half-cube) - 2px));
+}
+
+.cube-core-face.face-U {
+  transform: rotateX(90deg) translateZ(calc(var(--half-cube) - 2px));
+}
+
+.cube-core-face.face-D {
+  transform: rotateX(-90deg) translateZ(calc(var(--half-cube) - 2px));
+}
+
 .cube-face-shell {
   position: absolute;
   inset: 0;
@@ -473,9 +515,11 @@ code {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 3%;
   padding: 4%;
-  background: linear-gradient(145deg, #020617, #111827);
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 1)),
+    #020617;
   border: clamp(3px, 1vw, 6px) solid #020617;
-  border-radius: 0.85rem;
+  border-radius: 0.2rem;
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.06),
     0 22px 48px rgba(0, 0, 0, 0.38);
@@ -524,9 +568,9 @@ code {
     inset 0 0 0 1px rgba(255, 255, 255, 0.28),
     inset 0 -0.3rem 0.8rem rgba(0, 0, 0, 0.12);
   transition:
-    transform var(--sticker-transition-duration, 240ms) ease,
     filter var(--sticker-transition-duration, 240ms) ease,
-    outline-color var(--sticker-transition-duration, 240ms) ease;
+    outline-color var(--sticker-transition-duration, 240ms) ease,
+    box-shadow var(--sticker-transition-duration, 240ms) ease;
 }
 
 .cube3d-sticker:disabled {
@@ -537,8 +581,11 @@ code {
 .cube3d-sticker:focus-visible {
   z-index: 2;
   filter: brightness(1.08);
-  transform: translateZ(0.35rem);
   outline: 3px solid rgba(255, 255, 255, 0.58);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    inset 0 -0.3rem 0.8rem rgba(0, 0, 0, 0.12),
+    0 0 0 0.18rem rgba(255, 255, 255, 0.12);
 }
 
 .cube3d-sticker.empty {
@@ -1127,7 +1174,7 @@ code {
   }
 
   .cube-face-3d {
-    border-radius: 1rem;
+    border-radius: 0.2rem;
   }
 
   .flat-editor {
