@@ -39,12 +39,28 @@
     <a class="back" href="../private/">← Volver</a>
   </div>
   <script>
-    async function getTunnelUrl() {
-      const res = await fetch('../urls/telegram-downloader.json', { cache: 'no-store' });
+    async function fetchTunnelUrl(source) {
+      const res = await fetch(source.url, source.options);
       if (!res.ok) throw new Error();
       const { url } = await res.json();
       if (!url || url.includes('placeholder')) throw new Error();
       return url;
+    }
+
+    async function getTunnelUrl() {
+      const sources = [
+        {
+          url: 'https://api.github.com/repos/cmlozanos/home/contents/urls/telegram-downloader.json?ref=main',
+          options: { cache: 'no-store', headers: { Accept: 'application/vnd.github.raw' } },
+        },
+        { url: '../urls/telegram-downloader.json', options: { cache: 'no-store' } },
+      ];
+      for (const source of sources) {
+        try {
+          return await fetchTunnelUrl(source);
+        } catch { /* prueba la siguiente fuente */ }
+      }
+      throw new Error();
     }
 
     async function main() {
