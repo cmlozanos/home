@@ -1,6 +1,6 @@
 # cmlozanos · home
 
-Portal público de proyectos en vivo. Cada proyecto corre localmente en Docker y se expone a internet mediante **Cloudflare Tunnel**. Esta página actúa como enrutador central, redirigiendo a cada proyecto usando su URL actual almacenada en un GitHub Gist.
+Portal público de proyectos en vivo. Reúne servicios locales publicados mediante **Cloudflare Tunnel** y juegos estáticos desplegados en **GitHub Pages**.
 
 🌐 **URL pública:** https://cmlozanos.github.io/home
 
@@ -74,6 +74,21 @@ Añadir un objeto al array `APPS` en `apps.js`:
   badge:   "Flask · MongoDB",     // stack tecnológico
   color:   "#0ea5e9",             // color de acento (hex)
   urlFile: "./urls/my-project.json", // fichero JSON con la URL del túnel
+}
+```
+
+Los juegos desplegados en GitHub Pages se registran directamente, sin carpeta de redirect ni fichero en `urls/`:
+
+```js
+{
+  slug:         "my-game",
+  icon:         "🎮",
+  title:        "My Game",
+  desc:         "Descripción corta.",
+  badge:        "Juego · PWA",
+  color:        "#f59e0b",
+  href:         "https://cmlozanos.github.io/my-game/",
+  alwaysOnline: true,
 }
 ```
 
@@ -174,6 +189,14 @@ home/
 └── README.md           → Este archivo
 ```
 
+## Comprobaciones
+
+```bash
+make check
+```
+
+Valida la sintaxis del registro y que las aplicaciones estáticas tengan enlaces HTTPS únicos.
+
 ---
 
 ## Stack de referencia (catalog-app)
@@ -247,4 +270,3 @@ Three.js se usa **solo para fondos y efectos** (escenarios, partículas, platafo
 /* ❌ Nunca hacer */
 /* createAnimal() con SphereGeometry + CylinderGeometry → parece un muñeco roto */
 ```
-

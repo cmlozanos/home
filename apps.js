@@ -24,6 +24,16 @@ const APPS = [
 
   // ── Juegos estáticos (GitHub Pages) ──────────────────────────────────────
   {
+    slug:         "turbo-loop-legends",
+    icon:         "🏎️",
+    title:        "Turbo Loop Legends",
+    desc:         "Carreras para niños con turbo, loopings, saltos y coches con habilidades para resolver cada pista.",
+    badge:        "Carreras · PWA",
+    color:        "#f3a529",
+    href:         "https://cmlozanos.github.io/turbo-loop-legends/",
+    alwaysOnline: true,
+  },
+  {
     slug:         "rubik-solver",
     icon:         "🧩",
     title:        "Rubik Solver",
