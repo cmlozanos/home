@@ -1,9 +1,9 @@
 name: Check family games
 on:
   push:
-    paths: ['fruit-splash/**', 'orbit-lab/**', 'rubik-solver/sw.js', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
+    paths: ['fruit-splash/**', 'orbit-lab/**', 'memory-garden/**', 'shape-studio/**', 'little-atelier/**', 'maze-meadow/**', 'rubik-solver/sw.js', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'Makefile', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
   pull_request:
-    paths: ['fruit-splash/**', 'orbit-lab/**', 'rubik-solver/sw.js', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
+    paths: ['fruit-splash/**', 'orbit-lab/**', 'memory-garden/**', 'shape-studio/**', 'little-atelier/**', 'maze-meadow/**', 'rubik-solver/sw.js', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'Makefile', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
 permissions:
   contents: read
 jobs:

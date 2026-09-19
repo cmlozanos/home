@@ -14,8 +14,12 @@ install-tests:
 check-games:
 	$(MAKE) -C fruit-splash check
 	$(MAKE) -C orbit-lab check
-	node tools/check-static-games.mjs fruit-splash orbit-lab
-	node tools/check-cache-isolation.mjs fruit-splash orbit-lab rubik-solver
+	$(MAKE) -C memory-garden check
+	$(MAKE) -C shape-studio check
+	$(MAKE) -C little-atelier check
+	$(MAKE) -C maze-meadow check
+	node tools/check-static-games.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow
+	node tools/check-cache-isolation.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow rubik-solver
 
 test-games:
 	npm test

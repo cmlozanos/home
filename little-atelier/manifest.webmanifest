@@ -1,0 +1,17 @@
+{
+  "id": "./",
+  "name": "Pequeño Atelier",
+  "short_name": "Atelier",
+  "description": "Pintar, estampar y crear con los dedos.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5eadb",
+  "theme_color": "#f5eadb",
+  "icons": [
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"},
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
+  ]
+}

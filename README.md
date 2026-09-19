@@ -7,15 +7,21 @@ Portal público de proyectos en vivo. Reúne servicios locales publicados median
 ## Nuevos juegos táctiles
 
 - [Fruit Splash](https://cmlozanos.github.io/home/fruit-splash/): cortar frutas con varios dedos, jardín sin penalizaciones, reto de 60 segundos y aventura con bombas y tres vidas. Récords locales.
-- [Órbita](https://cmlozanos.github.io/home/orbit-lab/): crear sistemas solares, colocar planetas en órbita o lanzarlos, fusionar cuerpos, experimentar con estrellas gemelas y guardar el universo.
+- [Órbita](https://cmlozanos.github.io/home/orbit-lab/): colisiones continuas, evolución estelar, nebulosas, agujeros negros, zonas habitables, civilizaciones y naves. Seis escenarios y guardado compatible con la versión anterior.
+- [Jardín de parejas](https://cmlozanos.github.io/home/memory-garden/): memoria visual con animales y tres tamaños de tablero.
+- [Taller de formas](https://cmlozanos.github.io/home/shape-studio/): encajar siluetas arrastrando o tocando, con retos progresivos.
+- [Pequeño Atelier](https://cmlozanos.github.io/home/little-atelier/): dibujo libre, sellos, deshacer y guardar/exportar creaciones.
+- [El jardín de los caminos](https://cmlozanos.github.io/home/maze-meadow/): laberintos generados siempre resolubles, estrellas y controles de dirección.
 
-Ambos son proyectos estáticos autónomos dentro de este repositorio, con Canvas 2D, scripts clásicos, sonido inicialmente apagado, iconos táctiles y recursos locales. Cada uno tiene su PWA instalable y su caché offline aislada. No requieren servidor de aplicación, anuncios, cuentas ni dependencias de producción. Primera apertura con conexión; después pueden abrirse sin red desde su acceso instalado. En Chrome usa «Instalar aplicación»/«Añadir a pantalla de inicio»; en Safari, Compartir → Añadir a pantalla de inicio.
+Son proyectos estáticos autónomos dentro de este repositorio, con Canvas 2D/SVG, scripts clásicos, sonido inicialmente apagado, iconos táctiles y recursos locales. Cada uno tiene su PWA instalable y su caché offline aislada. No requieren servidor de aplicación, anuncios, cuentas ni dependencias de producción. Primera apertura con conexión; después pueden abrirse sin red desde su acceso instalado. En Chrome usa «Instalar aplicación»/«Añadir a pantalla de inicio»; en Safari, Compartir → Añadir a pantalla de inicio.
 
 Su objetivo de compatibilidad es Chrome 95 (incluida la tablet Android 5 indicada) y Safari con Pointer Events, además de navegadores actuales. La revisión real del motor Chromium 95 no sustituye medir la GPU, RAM y respuesta táctil de la tablet física. No es posible garantizar cualquier navegador obsoleto o cualquier dispositivo existente.
 
 La investigación, repositorios revisados y licencias del código adaptado están en [Fruit Splash](fruit-splash/THIRD_PARTY_NOTICES.md) y [Órbita](orbit-lab/RESEARCH.md). El usuario autorizó el 19-09-2026 crear y publicar ambos juegos de principio a fin; el alcance incluye estas carpetas, sus herramientas/pruebas y sus dos entradas del catálogo. Los juegos anteriores mantienen sus enlaces.
 
-El service worker de Rubik ahora limita su limpieza a `rubik-solver-*`: antes podía eliminar las cachés de otros juegos del mismo dominio. `check-cache-isolation.mjs` comprueba que los tres juegos preservan las cachés ajenas y sus versiones actuales.
+La ampliación solicitada el 19-09-2026 añade las cuatro actividades infantiles y evoluciona Órbita dentro de `home`; no modifica el juego de coches ni sus enlaces. La comparación del museo está en [STELLAR_AUDIT.md](orbit-lab/STELLAR_AUDIT.md), y las alternativas, señales de popularidad y licencias de los juegos revisados en [children-games-research.md](docs/children-games-research.md). No se reutilizan marcas, gráficos ni código comercial de Stellar Playground.
+
+El service worker de Rubik limita su limpieza a `rubik-solver-*`. `check-cache-isolation.mjs` comprueba que los siete juegos preservan las cachés ajenas y sus versiones actuales.
 
 ### Desarrollo y validación
 

@@ -9,7 +9,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="style.css?v=20260919-1">
+  <link rel="stylesheet" href="style.css?v=20260919-2">
   <title>Órbita · Tu pequeño universo</title>
 </head>
 <body>
@@ -38,12 +38,23 @@
         <button id="reset" class="icon-button" aria-label="Elegir un nuevo universo"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 3v7h7"/></svg></button>
       </div>
       <div id="hint" class="hint"><span class="hint-hand">☝</span><span id="hint-text">Toca el espacio · crea un planeta</span></div>
+      <div id="body-info" class="body-info" hidden aria-live="polite"><strong id="body-name"></strong><span id="body-facts"></span><progress id="body-age" max="1" value="0" aria-label="Edad de este cuerpo"></progress></div>
+      <div class="workbench" role="group" aria-label="Herramientas del universo">
+        <button data-tool="create" class="selected" aria-label="Crear cuerpos" aria-pressed="true">＋</button>
+        <button data-tool="move" aria-label="Mover y lanzar cuerpos" aria-pressed="false">☝</button>
+        <button data-tool="lock" aria-label="Fijar o liberar un cuerpo" aria-pressed="false">⌖</button>
+        <button data-tool="orbit" aria-label="Poner un cuerpo en órbita; fijar primero para una órbita protegida" aria-pressed="false">↻</button>
+        <button id="size" aria-label="Tamaño pequeño. Cambiar tamaño"><span>●</span></button>
+        <button id="habitat" aria-label="Mostrar zona habitable" aria-pressed="false">🌱</button>
+      </div>
       <nav class="palette" aria-label="Elige un cuerpo celeste">
         <button data-body="ocean" class="body-button selected" aria-label="Planeta océano" aria-pressed="true"><span class="mini-planet ocean"></span><span class="body-label">OCÉANO</span></button>
         <button data-body="rock" class="body-button" aria-label="Planeta rocoso" aria-pressed="false"><span class="mini-planet rock"></span><span class="body-label">ROCA</span></button>
         <button data-body="giant" class="body-button" aria-label="Gigante con anillos" aria-pressed="false"><span class="mini-planet giant"></span><span class="body-label">GIGANTE</span></button>
         <button data-body="comet" class="body-button" aria-label="Cometa" aria-pressed="false"><span class="mini-planet comet"></span><span class="body-label">COMETA</span></button>
         <button data-body="star" class="body-button" aria-label="Estrella" aria-pressed="false"><span class="mini-planet star"></span><span class="body-label">ESTRELLA</span></button>
+        <button data-body="nebula" class="body-button" aria-label="Nebulosa" aria-pressed="false"><span class="mini-planet nebula"></span><span class="body-label">NEBULOSA</span></button>
+        <button data-body="blackhole" class="body-button" aria-label="Agujero negro" aria-pressed="false"><span class="mini-planet blackhole"></span><span class="body-label">AGUJERO</span></button>
       </nav>
     </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -55,6 +66,9 @@
           <button data-template="solar" aria-label="Crear sistema solar"><span>☀<i>●</i></span><strong>Sistema solar</strong></button>
           <button data-template="binary" aria-label="Crear dos estrellas gemelas"><span>☀ ☀</span><strong>Estrellas gemelas</strong></button>
           <button data-template="empty" aria-label="Crear desde cero con una estrella"><span>✦</span><strong>Desde cero</strong></button>
+          <button data-template="collision" aria-label="Estrellas en colisión hacia un agujero negro"><span>☀ → ◉</span><strong>Gran colisión</strong></button>
+          <button data-template="nursery" aria-label="Nebulosas y nacimiento de estrellas"><span>☁ ✦</span><strong>Nacen estrellas</strong></button>
+          <button data-template="life" aria-label="Planetas habitables y civilizaciones"><span>🌱 🚀</span><strong>Semillas de vida</strong></button>
         </div>
       </div>
     </section>
@@ -63,7 +77,10 @@
         <button id="close-help" class="icon-button close" aria-label="Cerrar ayuda">×</button>
         <span class="eyebrow">PARA PEQUEÑOS EXPLORADORES</span><h2 id="help-title">Tu universo, a tu manera</h2>
         <div class="help-gestures"><span>☝<small>TOCA · CREA</small></span><span>↗<small>ARRASTRA · LANZA</small></span><span>☝☝<small>JUGAD JUNTOS</small></span></div>
-        <p>Los planetas se atraen. Si chocan, se unen. Prueba otras masas y velocidades para descubrir qué ocurre.</p>
+        <p>Une planetas, alimenta estrellas y observa sus transformaciones. Los cuerpos muy masivos pueden colapsar en agujeros negros. Las nebulosas vuelven a formar estrellas y planetas.</p>
+        <div class="help-gestures"><span>☝<small>MUEVE Y LANZA</small></span><span>⌖<small>FIJA</small></span><span>↻<small>PON EN ÓRBITA</small></span></div>
+        <p>Usa ● para cambiar el tamaño. Toca un cuerpo con ⌖ para fijarlo; después ↻ crea una órbita protegida alrededor de la estrella cercana. 🌱 muestra dónde puede aparecer vida. Si un planeta sigue siendo habitable, puede llegar a enviar naves a otros mundos.</p>
+        <details><summary>Cómo funciona la simulación</summary><p>Las colisiones conservan masa y movimiento. Los radios sólidos coinciden con los de colisión; los halos y anillos son decorativos. La evolución, la vida y el colapso usan tiempos y umbrales acelerados de juego, no una escala astronómica real. Dos planetas pequeños no crean por sí solos un agujero negro. Se admiten hasta 24 cuerpos y 10 contactos, sujetos a lo que permita la pantalla.</p><a href="STELLAR_AUDIT.md">Funciones documentadas y adaptación</a></details>
         <button id="install" class="install-button" hidden>↓ Instalar Órbita</button>
         <details><summary>Instalar en la tablet</summary><p>Android: menú de Chrome → Instalar aplicación o Añadir a pantalla de inicio. iPad/iPhone: Compartir en Safari → Añadir a pantalla de inicio. Abre el juego una vez con conexión para poder jugar después sin internet.</p></details>
         <details><summary>Créditos y privacidad</summary><p>Diseño, ilustraciones y simulación de Órbita originales. Núcleo de gravedad de <a href="https://github.com/ybrodsky/gravity" target="_blank" rel="noopener noreferrer">Yael Brodsky</a>, <a href="vendor/LICENSE.gravity" target="_blank" rel="noopener noreferrer">licencia MIT</a>. Inspirado en la interacción de <a href="https://ideum.com/news/stellar-playground-ideum-pano" target="_blank" rel="noopener noreferrer">Stellar Playground</a>; sin afiliación. El guardado se queda en este dispositivo. Sin cuentas ni publicidad.</p></details>
@@ -71,8 +88,9 @@
     </section>
     <noscript>Activa JavaScript para explorar el universo.</noscript>
   </main>
-  <script src="vendor/gravity.js?v=20260919-1"></script>
-  <script src="physics.js?v=20260919-1"></script>
-  <script src="game.js?v=20260919-1"></script>
+  <script src="vendor/gravity.js?v=20260919-2"></script>
+  <script src="physics.js?v=20260919-2"></script>
+  <script src="life.js?v=20260919-2"></script>
+  <script src="game.js?v=20260919-2"></script>
 </body>
 </html>

@@ -78,9 +78,9 @@ test('orbit: create bodies, pause, save, reload, resume and templates',async({pa
   await page.locator('[data-body="rock"]').click();
   await page.mouse.click(box.width*.27,box.height*.43);
   await expect.poll(()=>page.evaluate(()=>window.__orbitDiagnostics.bodyCount)).toBe(initial+1);
-  const positions=await page.evaluate(()=>window.__orbitDiagnostics.bodies);
+  const positions=await page.evaluate(()=>window.__orbitDiagnostics.bodies.map(({screenX,screenY,...body})=>body));
   await page.waitForTimeout(180);
-  expect(await page.evaluate(()=>window.__orbitDiagnostics.bodies)).toEqual(positions);
+  expect(await page.evaluate(()=>window.__orbitDiagnostics.bodies.map(({screenX,screenY,...body})=>body))).toEqual(positions);
   await page.locator('#save').click();
   await page.reload();
   await expect(page.locator('#resume')).toBeVisible();
@@ -157,6 +157,7 @@ test('home links both new games and retains existing games',async({page})=>{
   await expect(page.getByRole('link').filter({hasText:'Fruit Splash'})).toHaveAttribute('href',/\/home\/fruit-splash\//);
   await expect(page.getByRole('link').filter({hasText:'Órbita'})).toHaveAttribute('href',/\/home\/orbit-lab\//);
   await expect(page.getByRole('link').filter({hasText:'Turbo Loop Legends'})).toBeVisible();
+  for(const slug of ['memory-garden','shape-studio','little-atelier','maze-meadow']) await expect(page.locator('a[href="https://cmlozanos.github.io/home/'+slug+'/"]')).toBeVisible();
 });
 
 test('fruit: adventure reaches game over and restarts with three lives',async({page})=>{

@@ -3,9 +3,11 @@
 check:
 	node --check game.js
 	node --check physics.js
+	node --check life.js
 	node --check vendor/gravity.js
 	node --check sw.js
 	node tools/check.mjs
+	node tools/check-life.mjs
 
 serve:
 	python3 -m http.server 8080

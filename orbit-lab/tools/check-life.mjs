@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const context=vm.createContext({});
+vm.runInContext(fs.readFileSync(new URL('../life.js',import.meta.url),'utf8'),context);
+const L=context.OrbitLife;
+const sun={id:1,type:'star',mass:30,x:0,y:0,radius:30};
+const earth={id:2,type:'ocean',mass:.07,x:180,y:0,radius:12};
+const hot={id:3,type:'rock',mass:.05,x:40,y:0,radius:10};
+const cold={id:4,type:'ocean',mass:.07,x:700,y:0,radius:12};
+assert.equal(L.climate(earth,[sun]).habitable,true);
+assert.equal(L.climate(hot,[sun]).state,'hot');assert.equal(L.climate(cold,[sun]).state,'cold');
+const ships=[],events=[];
+for(let i=0;i<49*60;i++)L.step([sun,earth,hot,cold],ships,1/60,(b,e)=>events.push(e.kind));
+assert.equal(earth.lifeStage,6);assert.equal(hot.lifeStage,0);assert.equal(cold.lifeStage,0);
+const colony={id:5,type:'rock',mass:.05,x:190,y:0,radius:10};
+earth.launchCooldown=0;
+for(let i=0;i<120;i++)L.step([sun,earth,colony],ships,1/60,(b,e)=>events.push(e.kind));
+assert.ok(events.includes('launch'));assert.ok(events.includes('colony'));assert.ok(colony.lifeStage>=2);
+earth.x=900;
+for(let i=0;i<1200;i++)L.step([sun,earth],ships,1/60);
+assert.equal(earth.lifeStage,0,'Losing habitability removes life progression');
+assert.equal(L.luminous({type:'blackhole'}),false);
+for (const type of ['star', 'blackhole']) {
+  const changedTarget = {id:20,type,mass:30,x:180,y:0,radius:12};
+  const arriving = [{x:179,y:0,targetId:20,age:1}];
+  const arrivalEvents = [];
+  assert.equal(L.climate(changedTarget,[sun,changedTarget]).habitable,true, 'Regression uses a habitable-flux location to isolate target type');
+  L.step([sun,changedTarget],arriving,1/120,(_,event)=>arrivalEvents.push(event.kind));
+  assert.equal(changedTarget.lifeStage,0,'A ship cannot colonize a target transformed into '+type);
+  assert.equal(changedTarget.habitableTime,0);
+  assert.equal(arrivalEvents.includes('colony'),false);
+  assert.equal(arriving.length,0,'Ship removes its invalid destination');
+}
+console.log('✓ Habitability, six life stages, colony ships, loss of conditions and black-hole darkness.');
