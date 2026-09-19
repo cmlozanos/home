@@ -6,6 +6,9 @@ Portal público de proyectos en vivo. Reúne servicios locales publicados median
 
 ## Nuevos juegos táctiles
 
+- [Turbo Horizonte](https://cmlozanos.github.io/home/nitro-highway/): carreras pseudo-3D con curvas, tráfico, nitro y rampas.
+- [Mini Karts](https://cmlozanos.github.io/home/pocket-karts/): carreras cenitales con tres coches y tres circuitos, vueltas y controles táctiles.
+- [Salto Neón](https://cmlozanos.github.io/home/pulse-path/): plataformas de un toque con tres circuitos, gravedad, puntos de control y ayudas opcionales.
 - [Fruit Splash](https://cmlozanos.github.io/home/fruit-splash/): cortar frutas con varios dedos, jardín sin penalizaciones, reto de 60 segundos y aventura con bombas y tres vidas. Récords locales.
 - [Órbita](https://cmlozanos.github.io/home/orbit-lab/): colisiones continuas, evolución estelar, nebulosas, agujeros negros, zonas habitables, civilizaciones y naves. Seis escenarios y guardado compatible con la versión anterior.
 - [Jardín de parejas](https://cmlozanos.github.io/home/memory-garden/): memoria visual con animales y tres tamaños de tablero.
@@ -21,7 +24,14 @@ La investigación, repositorios revisados y licencias del código adaptado está
 
 La ampliación solicitada el 19-09-2026 añade las cuatro actividades infantiles y evoluciona Órbita dentro de `home`; no modifica el juego de coches ni sus enlaces. La comparación del museo está en [STELLAR_AUDIT.md](orbit-lab/STELLAR_AUDIT.md), y las alternativas, señales de popularidad y licencias de los juegos revisados en [children-games-research.md](docs/children-games-research.md). No se reutilizan marcas, gráficos ni código comercial de Stellar Playground.
 
-El service worker de Rubik limita su limpieza a `rubik-solver-*`. `check-cache-isolation.mjs` comprueba que los siete juegos preservan las cachés ajenas y sus versiones actuales.
+Los tres juegos de carreras y ritmo fueron aprobados expresamente el 19-09-2026 con gráficos propios y créditos de las bases abiertas. No son versiones oficiales ni copias de los recursos de Asphalt o Geometry Dash. La procedencia, licencias y experimentos están en [racing-rhythm-research.md](docs/racing-rhythm-research.md).
+El alcance, los controles y las comprobaciones de esta entrega están en [racing-release.md](docs/racing-release.md).
+
+Estos tres juegos incluyen un reto educativo al entrar y cada diez minutos: suma/resta de números de 0 a 9 sin resultados negativos o trazo guiado de letras mayúsculas/minúsculas. La partida se congela mientras se resuelve; equivocarse no resta vidas. El tiempo cuenta también fuera de la pestaña y de noche. Es una actividad educativa local, no un control parental inviolable. El módulo compartido y su contrato se documentan en [learning-gate/README.md](learning-gate/README.md).
+
+Por indicación posterior del usuario, los juegos ya publicados quedan fuera de estos nuevos bloqueos: no se modifica ni su acceso ni sus reglas anteriores. Las copias del módulo educativo se limitan a `nitro-highway`, `pocket-karts` y `pulse-path`.
+
+El service worker de Rubik limita su limpieza a `rubik-solver-*`. `check-cache-isolation.mjs` comprueba que los juegos preservan las cachés ajenas y sus versiones actuales.
 
 ### Desarrollo y validación
 
@@ -34,6 +44,8 @@ make test-games            # Chrome actual, teléfono horizontal/vertical y WebK
 npm run serve              # previsualización http://127.0.0.1:4177
 make screenshots           # con el servidor anterior activo
 make icons GAME=fruit-splash
+make sync-gates            # copiar el reto canónico a los tres juegos nuevos
+make check-gates           # geometría, aritmética y copias offline idénticas
 ```
 
 Solo el tooling de desarrollo usa Playwright; el código servido por GitHub Pages no importa paquetes npm. Las pruebas cubren gestos reales, pausa, persistencia, multitáctil, rotación, almacenamiento bloqueado y modo offline. `?test=1` habilita diagnósticos de solo lectura.

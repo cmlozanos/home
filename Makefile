@@ -1,4 +1,4 @@
-.PHONY: check serve install-tests test-games check-games icons screenshots
+.PHONY: check serve install-tests test-games check-games icons screenshots sync-gates check-gates
 
 check:
 	node --check apps.js
@@ -12,14 +12,25 @@ install-tests:
 	npx playwright install chromium webkit
 
 check-games:
+	$(MAKE) check-gates
 	$(MAKE) -C fruit-splash check
 	$(MAKE) -C orbit-lab check
 	$(MAKE) -C memory-garden check
 	$(MAKE) -C shape-studio check
 	$(MAKE) -C little-atelier check
 	$(MAKE) -C maze-meadow check
-	node tools/check-static-games.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow
-	node tools/check-cache-isolation.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow rubik-solver
+	$(MAKE) -C nitro-highway check
+	$(MAKE) -C pocket-karts check
+	$(MAKE) -C pulse-path check
+	node tools/check-static-games.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow nitro-highway pocket-karts pulse-path
+	node tools/check-cache-isolation.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow nitro-highway pocket-karts pulse-path rubik-solver
+
+sync-gates:
+	node tools/sync-learning-gate.mjs
+
+check-gates:
+	$(MAKE) -C learning-gate check
+	node tools/sync-learning-gate.mjs --check
 
 test-games:
 	npm test
@@ -28,4 +39,4 @@ icons:
 	npm run icons -- $(GAME)
 
 screenshots:
-	node tools/game-screenshots.mjs
+	node tools/game-screenshots.mjs $(GAME)

@@ -24,6 +24,36 @@ const APPS = [
 
   // ── Juegos estáticos (GitHub Pages) ──────────────────────────────────────
   {
+    slug:         "nitro-highway",
+    icon:         "🏁",
+    title:        "Turbo Horizonte",
+    desc:         "Conduce entre curvas, rampas y tráfico. Elige tu coche y utiliza el nitro para llegar a la meta.",
+    badge:        "Carreras · PWA",
+    color:        "#ffad65",
+    href:         "https://cmlozanos.github.io/home/nitro-highway/",
+    alwaysOnline: true,
+  },
+  {
+    slug:         "pocket-karts",
+    icon:         "🚦",
+    title:        "Mini Karts",
+    desc:         "Pequeñas carreras vistas desde arriba. Tres circuitos para aprender a girar, acelerar y frenar.",
+    badge:        "Karts · PWA",
+    color:        "#8bd8b0",
+    href:         "https://cmlozanos.github.io/home/pocket-karts/",
+    alwaysOnline: true,
+  },
+  {
+    slug:         "pulse-path",
+    icon:         "💠",
+    title:        "Salto Neón",
+    desc:         "Salta al ritmo entre prismas y portales. Tres recorridos originales con puntos de control y ayudas opcionales.",
+    badge:        "Saltos · PWA",
+    color:        "#a699ff",
+    href:         "https://cmlozanos.github.io/home/pulse-path/",
+    alwaysOnline: true,
+  },
+  {
     slug:         "fruit-splash",
     icon:         "🍉",
     title:        "Fruit Splash",

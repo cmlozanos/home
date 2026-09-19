@@ -1,0 +1,6 @@
+'use strict';
+var PREFIX='pulse-path-',CACHE=PREFIX+'20260919-1';
+var FILES=['./','./index.html','./style.css?v=20260919-1','./learning-gate.js?v=20260919-1','./core.js?v=20260919-1','./game.js?v=20260919-1','./manifest.webmanifest','./icon.svg','./icons/icon-192.png','./icons/icon-512.png','./CREDITS.md','./vendor/LICENSE.geometry-runner'];
+self.addEventListener('install',function(event){event.waitUntil(caches.open(CACHE).then(function(cache){return cache.addAll(FILES);}).then(function(){return self.skipWaiting();}));});
+self.addEventListener('activate',function(event){event.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(key){return key.indexOf(PREFIX)===0&&key!==CACHE;}).map(function(key){return caches.delete(key);}));}).then(function(){return self.clients.claim();}));});
+self.addEventListener('fetch',function(event){var url=new URL(event.request.url);if(event.request.method!=='GET'||url.origin!==self.location.origin||url.href.indexOf(self.registration.scope)!==0)return;if(event.request.mode==='navigate'){event.respondWith(fetch(event.request).catch(function(){return caches.match('./index.html');}));return;}event.respondWith(caches.match(event.request).then(function(cached){return cached||fetch(event.request);}));});
