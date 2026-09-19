@@ -15,16 +15,18 @@ async function swipeFruit(page) {
   await page.waitForFunction(()=>window.fruitDebug.snapshot().fruits.some(f=>!f.bomb&&f.y<750&&f.y>180));
   const geometry=await page.evaluate(()=>{
     const s=window.fruitDebug.snapshot(),f=s.fruits.find(f=>!f.bomb&&f.y<750&&f.y>180),r=document.getElementById('game').getBoundingClientRect();
-    return {x:f.x*r.width/s.width,y:f.y*r.height/s.height,r:f.r*r.width/s.width};
+    return {x:f.x*r.width/s.width,height:r.height};
   });
-  await page.mouse.move(geometry.x-geometry.r*1.5,geometry.y);
+  // A full vertical stroke still intersects the moving fruit if CI input is delayed.
+  await page.mouse.move(geometry.x,geometry.height*.9);
   await page.mouse.down();
-  await page.mouse.move(geometry.x+geometry.r*1.5,geometry.y,{steps:3});
+  await page.mouse.move(geometry.x,geometry.height*.2);
   await page.mouse.up();
 }
 
 test('fruit: real swipe scores, pause freezes, resume and retry work',async({page})=>{
   const errors=trackErrors(page);
+  await page.addInitScript(()=>{Math.random=()=>.5;});
   await openFruit(page);
   await expect(page.locator('#sound')).toHaveAttribute('aria-pressed','false');
   await swipeFruit(page);
