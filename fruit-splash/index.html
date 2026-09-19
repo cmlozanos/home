@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#103e37">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Desliza, corta frutas y llena tu cesta de colores. Un juego táctil para toda la familia, también sin conexión.">
+  <title>Fruit Splash · Corta y sonríe</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css?v=20260919-1">
+</head>
+<body>
+  <svg class="symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v11h5v-7h4v7h5V10"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8Z" fill="currentColor" stroke-linejoin="round"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke-width="5"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5ZM16 8q5 4 0 8M19 4q8 8 0 16"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5ZM17 9l5 6m0-6-5 6"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M4 20C-2 4 12 2 21 3c1 11-3 19-14 15M4 20 16 8"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="9"/><path d="M12 7v6l4 2M9 1h6"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21C-6 10 5-4 12 5c7-9 18 5 0 16Z" fill="currentColor"/></symbol>
+    <symbol id="i-retry" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 3v7h7"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3 6 7 1-5 5 1 8-6-4-6 4 1-8-5-5 7-1Z" fill="currentColor"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+    <symbol id="i-install" viewBox="0 0 24 24"><path d="M12 2v13m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+  </defs></svg>
+  <canvas id="game" aria-label="Zona de juego: mantén pulsado y desliza para cortar las frutas" role="img"></canvas>
+  <header class="toolbar">
+    <a class="icon-button" href="../" aria-label="Todos los juegos" title="Todos los juegos"><svg><use href="#i-home"/></svg></a>
+    <div class="brand">FRUIT <b>SPLASH</b><span>EL JARDÍN DE LOS PEQUEÑOS NINJAS</span></div>
+    <button class="icon-button" id="sound" aria-label="Activar sonido" aria-pressed="false" title="Activar sonido"><svg><use href="#i-mute"/></svg></button>
+  </header>
+  <main>
+    <section id="menu" class="screen menu">
+      <div class="eyebrow"><span></span> UN PUÑADO DE DIVERSIÓN</div>
+      <h1>Corta.<br><em>Salpica.</em><br>Sonríe.</h1>
+      <p class="subtitle">Tu dedo hace la magia.</p>
+      <div class="modes" role="group" aria-label="Modo de juego">
+        <button class="mode selected" data-mode="garden" aria-label="Jardín: sin bombas ni límite de tiempo" aria-pressed="true"><svg><use href="#i-leaf"/></svg><span>Jardín</span></button>
+        <button class="mode" data-mode="rush" aria-label="Reto de sesenta segundos, sin bombas" aria-pressed="false"><svg><use href="#i-clock"/></svg><span>60 segundos</span></button>
+        <button class="mode" data-mode="classic" aria-label="Aventura: tres vidas, evita las bombas" aria-pressed="false"><svg><use href="#i-heart"/></svg><span>Aventura</span></button>
+      </div>
+      <button id="play" class="play-button" aria-label="Jugar"><svg><use href="#i-play"/></svg><span>¡A jugar!</span></button>
+      <p class="record"><svg><use href="#i-star"/></svg><span id="best">0</span><span class="record-label">tu mejor cosecha</span></p>
+      <div class="menu-footer"><button id="install" class="quiet" hidden aria-label="Instalar juego"><svg><use href="#i-install"/></svg> Instalar</button><a href="credits.html" class="quiet">Créditos</a></div>
+    </section>
+    <section id="hud" class="hud" hidden aria-label="Marcador">
+      <div class="score"><svg><use href="#i-star"/></svg><strong id="score">0</strong></div>
+      <div class="progress"><span id="mode-icon"></span><strong id="remaining">∞</strong></div>
+      <button id="pause" class="icon-button" aria-label="Pausar"><svg><use href="#i-pause"/></svg></button>
+    </section>
+    <div id="hint" class="swipe-hint" hidden><span class="swipe-line"></span><span class="finger">☝</span><span>Desliza</span></div>
+    <div id="combo" class="combo" aria-live="polite"></div>
+    <section id="dialog" class="dialog" hidden role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <div class="dialog-card"><div id="stars" class="stars"></div><h2 id="dialog-title">Una pausa</h2><p id="dialog-detail"></p><div class="dialog-actions">
+        <button id="resume" class="play-button" aria-label="Continuar jugando"><svg><use href="#i-play"/></svg></button>
+        <button id="retry" class="play-button" aria-label="Volver a jugar"><svg><use href="#i-retry"/></svg></button>
+        <button id="menu-button" class="icon-button" aria-label="Elegir modo"><svg><use href="#i-grid"/></svg></button>
+      </div></div>
+    </section>
+  </main>
+  <noscript>Activa JavaScript en el navegador para jugar.</noscript>
+  <script src="core.js?v=20260919-1"></script>
+  <script src="game.js?v=20260919-1"></script>
+</body>
+</html>

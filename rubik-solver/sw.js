@@ -30,7 +30,7 @@ self.addEventListener("activate", (event) => {
     caches.keys()
       .then((keys) => Promise.all(
         keys
-          .filter((key) => ![APP_CACHE, RUNTIME_CACHE].includes(key))
+          .filter((key) => key.startsWith("rubik-solver-") && ![APP_CACHE, RUNTIME_CACHE].includes(key))
           .map((key) => caches.delete(key)),
       ))
       .then(() => self.clients.claim()),

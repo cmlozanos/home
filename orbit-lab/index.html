@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080e22">
+  <meta name="description" content="Crea tu propio universo con los dedos. Un laboratorio de gravedad para pequeños exploradores.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css?v=20260919-1">
+  <title>Órbita · Tu pequeño universo</title>
+</head>
+<body>
+  <main id="app">
+    <canvas id="space" aria-label="Tu universo. Toca un espacio vacío para crear un planeta. Arrastra para lanzarlo." tabindex="0"></canvas>
+    <header class="topbar">
+      <a href="../" class="icon-button home" aria-label="Volver a todos los juegos"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8M5 10v11h5v-7h4v7h5V10"/></svg></a>
+      <div class="brand"><span class="brand-star">✦</span> ÓRBITA <small>TU PEQUEÑO UNIVERSO</small></div>
+      <div class="header-actions"><button id="help" class="icon-button" aria-label="Ayuda, instalación y créditos"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.2"/></svg></button><button id="sound" class="icon-button" aria-label="Activar sonido" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m11 4-5 5H3v6h3l5 5zM16 9l6 6m0-6-6 6"/></svg></button></div>
+    </header>
+    <section id="welcome" class="welcome">
+      <div class="eyebrow">UN UNIVERSO EN TUS MANOS</div>
+      <h1>Pequeños planetas.<br><em>Grandes descubrimientos.</em></h1>
+      <p>Toca, lanza y descubre la gravedad.</p>
+      <button id="start" class="start" aria-label="Jugar y crear mi universo"><svg viewBox="0 0 24 24"><path d="m8 4 12 8-12 8z"/></svg><span>EXPLORAR</span></button>
+      <button id="resume" class="resume" hidden aria-label="Continuar mi universo guardado">↺ Mi universo</button>
+      <div class="welcome-cues" aria-label="Toca para crear. Arrastra para lanzar. Juega con varios dedos."><span>☝ <small>CREA</small></span><span>↗ <small>LANZA</small></span><span>✦ <small>DESCUBRE</small></span></div>
+    </section>
+    <div id="game-ui" hidden>
+      <div class="status"><span class="live-dot"></span><span id="count">3</span><span class="status-planet" aria-hidden="true">●</span><span class="status-separator"></span><span id="orbit-count" aria-label="Órbitas completas">0</span><span aria-hidden="true">↻</span></div>
+      <div class="side-tools" aria-label="Controles del universo">
+        <button id="pause" class="icon-button" aria-label="Pausar universo" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button>
+        <button id="speed" class="icon-button speed" aria-label="Velocidad normal. Cambiar a doble velocidad">1×</button>
+        <button id="trails" class="icon-button" aria-label="Ocultar trayectorias" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 18c-8-9 13-17 16-10s-7 12-10 8"/><circle cx="9" cy="16" r="2"/></svg></button>
+        <button id="save" class="icon-button" aria-label="Guardar mi universo"><svg viewBox="0 0 24 24"><path d="M5 3h12l4 4v14H3V3zm3 0v6h8V3M7 21v-8h10v8"/></svg></button>
+        <button id="reset" class="icon-button" aria-label="Elegir un nuevo universo"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 3v7h7"/></svg></button>
+      </div>
+      <div id="hint" class="hint"><span class="hint-hand">☝</span><span id="hint-text">Toca el espacio · crea un planeta</span></div>
+      <nav class="palette" aria-label="Elige un cuerpo celeste">
+        <button data-body="ocean" class="body-button selected" aria-label="Planeta océano" aria-pressed="true"><span class="mini-planet ocean"></span><span class="body-label">OCÉANO</span></button>
+        <button data-body="rock" class="body-button" aria-label="Planeta rocoso" aria-pressed="false"><span class="mini-planet rock"></span><span class="body-label">ROCA</span></button>
+        <button data-body="giant" class="body-button" aria-label="Gigante con anillos" aria-pressed="false"><span class="mini-planet giant"></span><span class="body-label">GIGANTE</span></button>
+        <button data-body="comet" class="body-button" aria-label="Cometa" aria-pressed="false"><span class="mini-planet comet"></span><span class="body-label">COMETA</span></button>
+        <button data-body="star" class="body-button" aria-label="Estrella" aria-pressed="false"><span class="mini-planet star"></span><span class="body-label">ESTRELLA</span></button>
+      </nav>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <section id="templates" class="dialog-backdrop" hidden>
+      <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="template-title">
+        <button id="close-templates" class="icon-button close" aria-label="Volver a mi universo">×</button>
+        <span class="eyebrow">EMPIEZA UNA NUEVA AVENTURA</span><h2 id="template-title">Elige tu universo</h2>
+        <div class="template-grid">
+          <button data-template="solar" aria-label="Crear sistema solar"><span>☀<i>●</i></span><strong>Sistema solar</strong></button>
+          <button data-template="binary" aria-label="Crear dos estrellas gemelas"><span>☀ ☀</span><strong>Estrellas gemelas</strong></button>
+          <button data-template="empty" aria-label="Crear desde cero con una estrella"><span>✦</span><strong>Desde cero</strong></button>
+        </div>
+      </div>
+    </section>
+    <section id="help-dialog" class="dialog-backdrop" hidden>
+      <div class="dialog help-dialog" role="dialog" aria-modal="true" aria-labelledby="help-title">
+        <button id="close-help" class="icon-button close" aria-label="Cerrar ayuda">×</button>
+        <span class="eyebrow">PARA PEQUEÑOS EXPLORADORES</span><h2 id="help-title">Tu universo, a tu manera</h2>
+        <div class="help-gestures"><span>☝<small>TOCA · CREA</small></span><span>↗<small>ARRASTRA · LANZA</small></span><span>☝☝<small>JUGAD JUNTOS</small></span></div>
+        <p>Los planetas se atraen. Si chocan, se unen. Prueba otras masas y velocidades para descubrir qué ocurre.</p>
+        <button id="install" class="install-button" hidden>↓ Instalar Órbita</button>
+        <details><summary>Instalar en la tablet</summary><p>Android: menú de Chrome → Instalar aplicación o Añadir a pantalla de inicio. iPad/iPhone: Compartir en Safari → Añadir a pantalla de inicio. Abre el juego una vez con conexión para poder jugar después sin internet.</p></details>
+        <details><summary>Créditos y privacidad</summary><p>Diseño, ilustraciones y simulación de Órbita originales. Núcleo de gravedad de <a href="https://github.com/ybrodsky/gravity" target="_blank" rel="noopener noreferrer">Yael Brodsky</a>, <a href="vendor/LICENSE.gravity" target="_blank" rel="noopener noreferrer">licencia MIT</a>. Inspirado en la interacción de <a href="https://ideum.com/news/stellar-playground-ideum-pano" target="_blank" rel="noopener noreferrer">Stellar Playground</a>; sin afiliación. El guardado se queda en este dispositivo. Sin cuentas ni publicidad.</p></details>
+      </div>
+    </section>
+    <noscript>Activa JavaScript para explorar el universo.</noscript>
+  </main>
+  <script src="vendor/gravity.js?v=20260919-1"></script>
+  <script src="physics.js?v=20260919-1"></script>
+  <script src="game.js?v=20260919-1"></script>
+</body>
+</html>

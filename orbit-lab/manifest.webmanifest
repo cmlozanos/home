@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "Órbita · Tu pequeño universo",
+  "short_name": "Órbita",
+  "lang": "es",
+  "description": "Un laboratorio de gravedad para crear sistemas solares con tus dedos.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080e22",
+  "theme_color": "#080e22",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

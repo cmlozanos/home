@@ -24,6 +24,26 @@ const APPS = [
 
   // ── Juegos estáticos (GitHub Pages) ──────────────────────────────────────
   {
+    slug:         "fruit-splash",
+    icon:         "🍉",
+    title:        "Fruit Splash",
+    desc:         "Desliza y corta frutas, encadena combos y juega a tu ritmo. Tres modos para pequeños ninjas.",
+    badge:        "Táctil · PWA",
+    color:        "#ffb48f",
+    href:         "https://cmlozanos.github.io/home/fruit-splash/",
+    alwaysOnline: true,
+  },
+  {
+    slug:         "orbit-lab",
+    icon:         "🪐",
+    title:        "Órbita · Tu pequeño universo",
+    desc:         "Crea planetas, lanza cometas y descubre la gravedad. Construye tu sistema solar con los dedos.",
+    badge:        "Exploración · PWA",
+    color:        "#b8a1ff",
+    href:         "https://cmlozanos.github.io/home/orbit-lab/",
+    alwaysOnline: true,
+  },
+  {
     slug:         "turbo-loop-legends",
     icon:         "🏎️",
     title:        "Turbo Loop Legends",

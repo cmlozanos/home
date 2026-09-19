@@ -4,6 +4,44 @@ Portal público de proyectos en vivo. Reúne servicios locales publicados median
 
 🌐 **URL pública:** https://cmlozanos.github.io/home
 
+## Nuevos juegos táctiles
+
+- [Fruit Splash](https://cmlozanos.github.io/home/fruit-splash/): cortar frutas con varios dedos, jardín sin penalizaciones, reto de 60 segundos y aventura con bombas y tres vidas. Récords locales.
+- [Órbita](https://cmlozanos.github.io/home/orbit-lab/): crear sistemas solares, colocar planetas en órbita o lanzarlos, fusionar cuerpos, experimentar con estrellas gemelas y guardar el universo.
+
+Ambos son proyectos estáticos autónomos dentro de este repositorio, con Canvas 2D, scripts clásicos, sonido inicialmente apagado, iconos táctiles y recursos locales. Cada uno tiene su PWA instalable y su caché offline aislada. No requieren servidor de aplicación, anuncios, cuentas ni dependencias de producción. Primera apertura con conexión; después pueden abrirse sin red desde su acceso instalado. En Chrome usa «Instalar aplicación»/«Añadir a pantalla de inicio»; en Safari, Compartir → Añadir a pantalla de inicio.
+
+Su objetivo de compatibilidad es Chrome 95 (incluida la tablet Android 5 indicada) y Safari con Pointer Events, además de navegadores actuales. La revisión real del motor Chromium 95 no sustituye medir la GPU, RAM y respuesta táctil de la tablet física. No es posible garantizar cualquier navegador obsoleto o cualquier dispositivo existente.
+
+La investigación, repositorios revisados y licencias del código adaptado están en [Fruit Splash](fruit-splash/THIRD_PARTY_NOTICES.md) y [Órbita](orbit-lab/RESEARCH.md). El usuario autorizó el 19-09-2026 crear y publicar ambos juegos de principio a fin; el alcance incluye estas carpetas, sus herramientas/pruebas y sus dos entradas del catálogo. Los juegos anteriores mantienen sus enlaces.
+
+El service worker de Rubik ahora limita su limpieza a `rubik-solver-*`: antes podía eliminar las cachés de otros juegos del mismo dominio. `check-cache-isolation.mjs` comprueba que los tres juegos preservan las cachés ajenas y sus versiones actuales.
+
+### Desarrollo y validación
+
+Requiere Node 20+ y Python 3 para los servidores opcionales de cada juego.
+
+```sh
+make install-tests         # npm ci + navegadores de prueba
+make check check-games     # catálogo, sintaxis, cortes y física orbital
+make test-games            # Chrome actual, teléfono horizontal/vertical y WebKit
+npm run serve              # previsualización http://127.0.0.1:4177
+make screenshots           # con el servidor anterior activo
+make icons GAME=fruit-splash
+```
+
+Solo el tooling de desarrollo usa Playwright; el código servido por GitHub Pages no importa paquetes npm. Las pruebas cubren gestos reales, pausa, persistencia, multitáctil, rotación, almacenamiento bloqueado y modo offline. `?test=1` habilita diagnósticos de solo lectura.
+
+Se puede añadir un navegador antiguo real al mismo conjunto de pruebas:
+
+```sh
+CHROME95_PATH='/ruta/a/Chromium.app/Contents/MacOS/Chromium' npm test -- --project=chrome95
+```
+
+La versión verificada procede del [archivo oficial Mac ARM de Chromium, revisión 917397](https://storage.googleapis.com/chromium-browser-snapshots/Mac_Arm/917397/chrome-mac.zip): Chromium 95.0.4630.0, SHA-256 `5ec453364a3067fc859abf5fb64c79fe453536379f8f77b7b14be9962a1117e7`. No es una sustitución del navegador del usuario ni está incluida en la descarga del juego.
+
+GitHub Pages sirve la rama `main` existente. El workflow `Check family games` ejecuta la validación cuando cambian los juegos; no modifica la configuración de publicación. Al editar estáticos, actualizar los parámetros de versión del HTML y la versión/lista del service worker correspondiente.
+
 ---
 
 ## Arquitectura general

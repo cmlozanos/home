@@ -1,0 +1,28 @@
+name: Check family games
+on:
+  push:
+    paths: ['fruit-splash/**', 'orbit-lab/**', 'rubik-solver/sw.js', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
+  pull_request:
+    paths: ['fruit-splash/**', 'orbit-lab/**', 'rubik-solver/sw.js', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
+permissions:
+  contents: read
+jobs:
+  games:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium webkit
+      - run: make check check-games
+      - run: make test-games
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-test-results
+          path: test-results/
+          retention-days: 7

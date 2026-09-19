@@ -1,4 +1,4 @@
-.PHONY: check serve
+.PHONY: check serve install-tests test-games check-games icons screenshots
 
 check:
 	node --check apps.js
@@ -6,3 +6,22 @@ check:
 
 serve:
 	python3 -m http.server 8080
+
+install-tests:
+	npm ci
+	npx playwright install chromium webkit
+
+check-games:
+	$(MAKE) -C fruit-splash check
+	$(MAKE) -C orbit-lab check
+	node tools/check-static-games.mjs fruit-splash orbit-lab
+	node tools/check-cache-isolation.mjs fruit-splash orbit-lab rubik-solver
+
+test-games:
+	npm test
+
+icons:
+	npm run icons -- $(GAME)
+
+screenshots:
+	node tools/game-screenshots.mjs
