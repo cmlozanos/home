@@ -16,10 +16,11 @@ const APPS = [
     slug:    "animal-quiz",
     icon:    "🐾",
     title:   "Quiz de Animales",
-    desc:    "Juego educativo para Miguel Angel y Alejandro Manuel. Identifica animales y aprende a escribir su nombre.",
-    badge:   "Flask · MongoDB",
+    desc:    "Identifica animales y aprende a escribir su nombre. Progreso guardado solo en este dispositivo.",
+    badge:   "Educativo · PWA",
     color:   "#16a34a",
-    urlFile: "./urls/animal-quiz.json",
+    href:    "https://cmlozanos.github.io/home/animal-quiz/",
+    alwaysOnline: true,
   },
 
   // ── Juegos estáticos (GitHub Pages) ──────────────────────────────────────

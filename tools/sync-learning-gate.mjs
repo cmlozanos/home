@@ -3,7 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-const games=['nitro-highway','pocket-karts','pulse-path','fruit-splash','orbit-lab','memory-garden','shape-studio','little-atelier','maze-meadow'];
+const games=['nitro-highway','pocket-karts','pulse-path','fruit-splash','orbit-lab','memory-garden','shape-studio','little-atelier','maze-meadow','animal-quiz'];
 const source=resolve(root,'learning-gate/gate.js');
 const check=process.argv.includes('--check');
 for(const game of games){

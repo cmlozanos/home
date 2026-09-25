@@ -22,8 +22,9 @@ check-games:
 	$(MAKE) -C nitro-highway check
 	$(MAKE) -C pocket-karts check
 	$(MAKE) -C pulse-path check
-	node tools/check-static-games.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow nitro-highway pocket-karts pulse-path
-	node tools/check-cache-isolation.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow nitro-highway pocket-karts pulse-path rubik-solver
+	$(MAKE) -C animal-quiz check
+	node tools/check-static-games.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow nitro-highway pocket-karts pulse-path animal-quiz
+	node tools/check-cache-isolation.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow nitro-highway pocket-karts pulse-path animal-quiz rubik-solver
 
 sync-gates:
 	node tools/sync-learning-gate.mjs

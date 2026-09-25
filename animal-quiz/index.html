@@ -1,52 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz de Animales 🐾 · Conectando…</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff}
-    .card{background:rgba(255,255,255,.13);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3rem 2.5rem;text-align:center;max-width:420px;width:90%}
-    .logo{font-size:3rem;margin-bottom:1rem}
-    h1{font-size:1.6rem;font-weight:800;margin-bottom:.5rem}
-    p{opacity:.85;margin-bottom:1.8rem;font-size:.95rem;line-height:1.6}
-    .spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.5rem}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .btn{display:inline-block;padding:.65rem 1.6rem;background:#fff;color:#16a34a;border-radius:999px;font-weight:700;text-decoration:none;font-size:.95rem;transition:opacity .2s}
-    .btn:hover{opacity:.88}
-    .back{display:block;margin-top:1.2rem;opacity:.7;font-size:.82rem;color:#fff;text-decoration:none}
-    .back:hover{opacity:1}
-    .error{color:#fca5a5;margin-top:1rem;font-size:.85rem}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123e39"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Quiz de Animales</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css?v=20260925-static1">
 </head>
 <body>
-  <div class="card">
-    <div class="logo">🐾</div>
-    <h1>Quiz de Animales</h1>
-    <p>Juego 3D para Miguel Angel y Alejandro Manuel.<br>Conectando con el servidor…</p>
-    <div class="spinner" id="spinner"></div>
-    <a class="btn" id="link" href="#" style="display:none">¡Jugar ahora! →</a>
-    <p class="error" id="err" style="display:none">Servidor apagado en este momento.</p>
-    <a class="back" href="../">← Volver a proyectos</a>
-  </div>
-  <script>
-    async function redirect(){
-      try{
-        const res=await fetch("../urls/animal-quiz.json",{cache:"no-store"});
-        if(!res.ok)throw new Error();
-        const {url}=await res.json();
-        if(!url||url.includes("placeholder"))throw new Error();
-        document.getElementById("spinner").style.display="none";
-        const link=document.getElementById("link");
-        link.href=url;link.style.display="inline-block";
-        setTimeout(()=>{window.location.href=url;},1000);
-      }catch{
-        document.getElementById("spinner").style.display="none";
-        document.getElementById("err").style.display="block";
-      }
-    }
-    redirect();
-  </script>
-</body>
-</html>
+<svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="home-icon" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v11h5v-7h4v7h5V10"/></symbol>
+<symbol id="star-icon" viewBox="0 0 24 24"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"/></symbol>
+<symbol id="paw-icon" viewBox="0 0 24 24"><ellipse cx="6" cy="7" rx="2" ry="3"/><ellipse cx="12" cy="5" rx="2" ry="3"/><ellipse cx="18" cy="7" rx="2" ry="3"/><path d="M5 18c0-4 4-8 7-8s7 4 7 8-4 2-7 2-7 2-7-2Z"/></symbol>
+<symbol id="trophy-icon" viewBox="0 0 24 24"><path d="M7 3h10v6a5 5 0 0 1-10 0ZM7 5H3v3c0 3 2 4 5 4m9-7h4v3c0 3-2 4-5 4m-4 2v6m-5 1h10"/></symbol>
+<symbol id="next-icon" viewBox="0 0 24 24"><path d="m8 4 10 8L8 20Z"/></symbol>
+<symbol id="back-icon" viewBox="0 0 24 24"><path d="m10 6-7 6 7 6M3 12h18"/></symbol>
+<symbol id="erase-icon" viewBox="0 0 24 24"><path d="m8 5-6 7 6 7h13V5Zm4 4 6 6m0-6-6 6"/></symbol>
+<symbol id="check-icon" viewBox="0 0 24 24"><path d="m4 12 5 5L20 5"/></symbol>
+<symbol id="retry-icon" viewBox="0 0 24 24"><path d="M4 8a9 9 0 1 1-1 9M4 2v6h6"/></symbol>
+<symbol id="pencil-icon" viewBox="0 0 24 24"><path d="m4 16 12-12 4 4L8 20l-5 1Zm9-9 4 4"/></symbol>
+</defs></svg>
+<main class="app">
+<header class="topbar">
+<a class="icon-button" href="https://cmlozanos.github.io/games/" aria-label="Todos los juegos"><svg><use href="#home-icon"/></svg></a>
+<h1>Quiz de Animales</h1>
+<button id="profiles-button" class="icon-button" aria-label="Elegir perfil"><svg><use href="#paw-icon"/></svg></button>
+<button id="ranking-button" class="icon-button" aria-label="Estrellas y trofeos"><svg><use href="#trophy-icon"/></svg></button>
+<button id="help-button" class="icon-button" aria-label="Ayuda">?</button>
+</header>
+<section id="profiles" class="profile-screen" aria-label="Elige tu perfil local">
+<div class="intro-art" aria-hidden="true"><svg viewBox="0 0 200 160"><use href="assets/animals.svg?v=20260925-static1#fox"/></svg></div>
+<h2>Elige tu camino</h2>
+<div class="profile-grid">
+<button class="profile-card" data-profile="short" aria-label="Perfil de tres letras"><span class="profile-mark" aria-hidden="true">A B C</span><span>Tres letras</span><span class="profile-score" id="short-score">0</span></button>
+<button class="profile-card" data-profile="full" aria-label="Perfil de palabra completa"><span class="profile-mark" aria-hidden="true">A … Z</span><span>Palabra completa</span><span class="profile-score" id="full-score">0</span></button>
+</div></section>
+<section id="play" class="play-screen" hidden aria-label="Adivina y escribe el animal">
+<div class="scorebar"><span id="profile-badge" aria-label="Perfil"></span><span class="score"><svg aria-hidden="true"><use href="#star-icon"/></svg><strong id="stars">0</strong></span><span id="streak" aria-label="Aciertos seguidos"></span></div>
+<div id="play-layout" class="play-layout">
+<div id="animal-card" class="animal-card"><svg id="animal-art" viewBox="0 0 200 160" role="img" aria-label="Animal de la pregunta"><use id="animal-use"/></svg><span class="question-mark" aria-hidden="true">?</span></div>
+<section id="quiz-phase" class="quiz-phase" aria-label="Elige el nombre del animal"><div id="options" class="options"></div></section>
+<section id="write-phase" class="write-phase" hidden aria-label="Escribe el nombre del animal">
+<div class="word-model"><svg aria-hidden="true"><use href="#pencil-icon"/></svg><strong id="word-model"></strong></div>
+<div id="word-slots" class="word-slots" aria-label="Letras escritas"></div>
+<div id="keyboard" class="keyboard" aria-label="Teclado de letras"></div>
+<button id="erase" class="icon-button erase" aria-label="Borrar una letra"><svg><use href="#erase-icon"/></svg></button>
+</section>
+<section id="result" class="result" hidden aria-label="Animal completado">
+<svg class="big-star" aria-hidden="true"><use href="#star-icon"/></svg><h2>¡Muy bien!</h2><div id="new-trophies" class="trophy-row"></div>
+<button id="next" class="next-button" aria-label="Siguiente animal"><svg><use href="#next-icon"/></svg></button>
+</section></div>
+<div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+</section>
+<section id="ranking" class="ranking-screen" hidden aria-label="Progreso en este dispositivo"><h2>Estrellas y trofeos</h2><div id="ranking-cards" class="ranking-cards"></div><button id="ranking-back" class="icon-button" aria-label="Volver a elegir perfil"><svg><use href="#back-icon"/></svg></button></section>
+<p id="storage-status" class="storage-status" role="status" hidden>El navegador no permite guardar. Puedes jugar, pero esta sesión no se conservará.</p>
+</main>
+<section id="help" class="overlay" hidden role="dialog" aria-modal="true" aria-label="Ayuda"><div class="help-card"><button id="close-help" class="icon-button close" aria-label="Cerrar ayuda">×</button><h2>Descubre y escribe</h2><p>Elige el nombre del animal. Después copia las tres primeras letras o la palabra completa. Los errores no quitan estrellas: esos animales aparecerán más a menudo.</p><p>Los dos perfiles guardan sus estrellas y trofeos solo en este navegador. No se sincronizan con otras tablets. No se han importado partidas antiguas.</p><p>Para instalar: en Chrome, menú → Instalar aplicación o Añadir a pantalla de inicio. En Safari, Compartir → Añadir a pantalla de inicio. Abre el juego una vez con conexión para poder usarlo sin red.</p><p>Juego silencioso. No usa servidor, cuentas, anuncios ni seguimiento. <a href="THIRD_PARTY_NOTICES.md">Créditos</a>.</p></div></section>
+<noscript>Activa JavaScript para jugar.</noscript>
+<script src="quiz-core.js?v=20260925-static1"></script><script src="learning-gate.js?v=20260925-static1"></script><script src="game.js?v=20260925-static1"></script>
+</body></html>

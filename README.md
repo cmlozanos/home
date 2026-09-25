@@ -6,6 +6,7 @@ Portal público de proyectos en vivo. Reúne servicios locales publicados median
 
 ## Nuevos juegos táctiles
 
+- [Quiz de Animales](https://cmlozanos.github.io/home/animal-quiz/): identifica animales, practica sus nombres y gana estrellas/trofeos con perfiles genéricos locales.
 - [Turbo Horizonte](https://cmlozanos.github.io/home/nitro-highway/): carreras pseudo-3D con curvas, tráfico, nitro y rampas.
 - [Mini Karts](https://cmlozanos.github.io/home/pocket-karts/): carreras cenitales con tres coches y tres circuitos, vueltas y controles táctiles.
 - [Salto Neón](https://cmlozanos.github.io/home/pulse-path/): plataformas de un toque con tres circuitos, gravedad, puntos de control y ayudas opcionales.
@@ -37,6 +38,13 @@ y los de los tres juegos nuevos, vuelven al [catálogo de videojuegos](https://c
 
 El service worker de Rubik limita su limpieza a `rubik-solver-*`. `check-cache-isolation.mjs` comprueba que los juegos preservan las cachés ajenas y sus versiones actuales.
 
+El 25-09-2026 el usuario confirmó la migración estática del Quiz con progreso
+únicamente en cada dispositivo: sin sincronización entre tablets ni migración
+de los datos antiguos. Su URL pública deja de redirigir al túnel; el servidor,
+la base de datos y el repositorio privados antiguos permanecen intactos. Usa
+el mismo reto inicial/cada diez minutos y vuelve a `games/`. Borrar los datos
+del navegador elimina el progreso local.
+
 ### Desarrollo y validación
 
 Requiere Node 20+ y Python 3 para los servidores opcionales de cada juego.
@@ -48,7 +56,7 @@ make test-games            # Chrome actual, teléfono horizontal/vertical y WebK
 npm run serve              # previsualización http://127.0.0.1:4177
 make screenshots           # con el servidor anterior activo
 make icons GAME=fruit-splash
-make sync-gates            # copiar el reto canónico a los nueve juegos integrados
+make sync-gates            # copiar el reto canónico a los diez juegos integrados
 make check-gates           # geometría, aritmética y copias offline idénticas
 ```
 
