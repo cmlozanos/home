@@ -1,7 +1,7 @@
 'use strict';
 var PREFIX = 'memory-garden-';
-var CACHE = PREFIX + 'v20260919-1';
-var ASSETS = ['./', 'index.html', 'style.css?v=20260919-1', 'core.js?v=20260919-1', 'game.js?v=20260919-1', 'manifest.webmanifest', 'icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'THIRD_PARTY_NOTICES.md'];
+var CACHE = PREFIX + 'v20260925-gate1';
+var ASSETS = ['./learning-gate.js?v=20260925-gate1','./', 'index.html', 'style.css?v=20260925-gate1', 'core.js?v=20260925-gate1', 'game.js?v=20260925-gate1', 'manifest.webmanifest', 'icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'THIRD_PARTY_NOTICES.md'];
 self.addEventListener('install', function (event) { event.waitUntil(caches.open(CACHE).then(function (cache) { return cache.addAll(ASSETS); }).then(function () { return self.skipWaiting(); })); });
 self.addEventListener('activate', function (event) { event.waitUntil(caches.keys().then(function (keys) { return Promise.all(keys.filter(function (key) { return key.indexOf(PREFIX) === 0 && key !== CACHE; }).map(function (key) { return caches.delete(key); })); }).then(function () { return self.clients.claim(); })); });
 self.addEventListener('fetch', function (event) {

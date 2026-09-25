@@ -1,5 +1,7 @@
 (function () {
   'use strict';
+  if (!window.LearningGate) { document.body.textContent = '↻ Recarga para cargar el reto'; return; }
+  var learningLocked = true, learningTimers = LearningGate.createTimers(), learningAudioWasRunning = false;
   var $ = function (id) { return document.getElementById(id); };
   var animals = [
     ['fox', 'Zorro', '#ed8a51', '<path fill="#de7141" d="m20 32 2-25 24 18h10L80 7l1 28 7 20-18 31H34L13 57Z"/><path fill="#fff0cc" d="M17 43 50 59 83 43 71 78 50 90 29 78Z"/><path fill="#f9bd81" d="m27 18 1 19 15-7m30-12-1 19-15-7"/><path fill="#273b39" d="m43 62 7 10 7-10Z"/><circle cx="34" cy="48" r="3"/><circle cx="65" cy="48" r="3"/>'],
@@ -16,6 +18,7 @@
   function picture(animal) { return '<svg viewBox="0 0 100 100" aria-hidden="true" fill="#293c37">' + animal[3] + '</svg>'; }
   function say(message) { $('status').textContent = message; }
   function chime(frequency) {
+    if (learningLocked) return;
     if (!sound) return;
     try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); var oscillator = audio.createOscillator(), gain = audio.createGain(); oscillator.connect(gain); gain.connect(audio.destination); oscillator.frequency.setValueAtTime(frequency, audio.currentTime); gain.gain.setValueAtTime(.07, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .18); oscillator.start(); oscillator.stop(audio.currentTime + .2); } catch (_) {}
   }
@@ -33,12 +36,12 @@
   }
   function preview() {
     if (busy || !$('win').hidden) return;
-    clearTimeout(previewTimer); previewing = true; $('board').classList.add('preview'); $('preview').disabled = true;
+    learningTimers.clear(previewTimer); previewing = true; $('board').classList.add('preview'); $('preview').disabled = true;
     Array.prototype.forEach.call($('board').children, function (card, index) { card.setAttribute('aria-label', animals[round.cards[index]][1]); });
-    say('Mira los animales.'); previewTimer = setTimeout(hidePreview, 2200);
+    say('Mira los animales.'); previewTimer = learningTimers.set(hidePreview, 2200);
   }
   function start(nextLevel) {
-    clearTimeout(timer); clearTimeout(previewTimer); level = nextLevel; busy = false; previewing = false;
+    learningTimers.clear(timer); learningTimers.clear(previewTimer); level = nextLevel; busy = false; previewing = false;
     $('win').hidden = true; $('board').classList.remove('preview');
     var keys = MemoryGarden.shuffle(animals.map(function (_, i) { return i; })).slice(0, [4, 6, 8][level]);
     round = MemoryGarden.createRound(keys); $('board').innerHTML = ''; $('board').dataset.level = level;
@@ -56,7 +59,7 @@
     var card = $('board').children[index]; card.classList.add('open'); card.setAttribute('aria-label', animals[round.cards[index]][1]); chime(420);
     if (result === 'first') return;
     busy = true; update();
-    timer = setTimeout(function () {
+    timer = learningTimers.set(function () {
       round.selected.forEach(function (selected) {
         var item = $('board').children[selected];
         if (result === 'match') { item.classList.add('matched'); item.disabled = true; item.setAttribute('aria-label', animals[round.cards[selected]][1] + ', pareja encontrada'); }
@@ -81,4 +84,12 @@
   window.addEventListener('beforeinstallprompt', function (event) { event.preventDefault(); installEvent = event; $('install').hidden = false; }); $('install').addEventListener('click', function () { if (installEvent) { installEvent.prompt(); installEvent = null; $('install').hidden = true; } });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
   start(0);
+  LearningGate.mount({gameId:'memory-garden',onLock:function(){
+    learningLocked=true;learningTimers.pause();
+    learningAudioWasRunning=!!audio&&audio.state==='running';
+    if(learningAudioWasRunning)audio.suspend().catch(function(){});
+  },onUnlock:function(){
+    learningLocked=false;learningTimers.resume();
+    if(learningAudioWasRunning&&sound)audio.resume().catch(function(){});
+  }});
 }());

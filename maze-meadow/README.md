@@ -1,5 +1,11 @@
 # El jardín de los caminos
 
+## Reto educativo (ampliación aprobada el 25-09-2026)
+
+Antes de jugar y cada diez minutos se resuelve una suma, resta o trazo de letra del sistema compartido. La partida, las entradas activas, el sonido y los temporizadores de juego se suspenden sin perder el progreso ni quitar una pausa manual. El reto funciona también al abrir la PWA sin conexión; cada entrada requiere uno nuevo. La copia local `learning-gate.js` procede de `../learning-gate/gate.js`.
+
+La salida «Todos los juegos» conduce a https://cmlozanos.github.io/games/. No necesita servidor Ubuntu. `make check` comprueba la sintaxis del módulo; las pruebas de integración están en `../tests/legacy-gates.spec.cjs`.
+
 Standalone, original garden maze game for young children. Serve this directory over HTTP(S); no production dependencies, CDN, account or backend required.
 
 Lead the rabbit to the carrot using adjacent-cell taps, swipes, arrow/WASD keys or the large directional pad. Hedges block movement. Choose 4×4, 6×6 or 8×8 mazes. The seed remains stable when restarting a maze; “another maze” and the win screen's next button advance it. Stars are optional. The lightbulb toggles a visible hint route. Completed count, level size and maze number persist locally, with storage failures handled. Sound starts off.

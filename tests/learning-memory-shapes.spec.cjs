@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./helpers/learning-fixture.cjs');
 
 test.beforeEach(async ({ page }) => {
   page.runtimeErrors = [];

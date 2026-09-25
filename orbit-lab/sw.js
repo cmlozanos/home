@@ -1,7 +1,7 @@
 'use strict';
 var PREFIX = 'orbit-lab-';
-var CACHE = PREFIX + '20260919-2';
-var FILES = ['./', './index.html', './style.css?v=20260919-2', './vendor/gravity.js?v=20260919-2', './physics.js?v=20260919-2', './life.js?v=20260919-2', './game.js?v=20260919-2', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './RESEARCH.md', './STELLAR_AUDIT.md', './vendor/LICENSE.gravity'];
+var CACHE = PREFIX + '20260925-gate1';
+var FILES = ['./learning-gate.js?v=20260925-gate1','./', './index.html', './style.css?v=20260925-gate1', './vendor/gravity.js?v=20260925-gate1', './physics.js?v=20260925-gate1', './life.js?v=20260925-gate1', './game.js?v=20260925-gate1', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './RESEARCH.md', './STELLAR_AUDIT.md', './vendor/LICENSE.gravity'];
 self.addEventListener('install', function (event) {
   event.waitUntil(caches.open(CACHE).then(function (cache) { return cache.addAll(FILES); }).then(function () { return self.skipWaiting(); }));
 });

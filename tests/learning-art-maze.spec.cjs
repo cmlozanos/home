@@ -1,4 +1,4 @@
-const {test,expect}=require('@playwright/test');
+const {test,expect}=require('./helpers/learning-fixture.cjs');
 
 async function artState(page){return page.evaluate(()=>window.__atelier.read());}
 async function mazeState(page){return page.evaluate(()=>window.__meadow.read());}

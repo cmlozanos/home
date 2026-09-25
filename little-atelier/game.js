@@ -1,5 +1,7 @@
 (function () {
   'use strict';
+  if (!window.LearningGate) { document.body.textContent = '↻ Recarga para cargar el reto'; return; }
+  var learningLocked = true, learningAudioWasRunning = false;
   var paths = {
     home: '<path d="m3 11 9-8 9 8M6 10v10h12V10M10 20v-6h4v6"/>',
     help: '<circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 5 2c-2 1-2 2-2 3M12 17h.01"/>',
@@ -41,6 +43,7 @@
     select('#backgrounds button', document.querySelector('[data-background="' + background + '"]'));
   }
   function ping() {
+    if (learningLocked) return;
     if (!enabledSound) return;
     try { var Audio = window.AudioContext || window.webkitAudioContext; audio = audio || new Audio(); if (audio.state === 'suspended') audio.resume();
       var oscillator = audio.createOscillator(), gain = audio.createGain(); oscillator.type = 'sine'; oscillator.frequency.value = 620; gain.gain.setValueAtTime(.035, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .15); oscillator.connect(gain); gain.connect(audio.destination); oscillator.start(); oscillator.stop(audio.currentTime + .15);
@@ -131,6 +134,14 @@
   document.addEventListener('visibilitychange',function(){if(document.hidden){if(current)commit();flushSave();}});
   window.addEventListener('pagehide',function(){if(current)commit();flushSave();});
   sync();resize();
+  LearningGate.mount({gameId:'little-atelier',onLock:function(){
+    learningLocked=true;if(pointer!==null){try{canvas.releasePointerCapture(pointer);}catch(ignore){}}commit();flushSave();
+    learningAudioWasRunning=!!audio&&audio.state==='running';
+    if(learningAudioWasRunning)audio.suspend().catch(function(){});
+  },onUnlock:function(){
+    learningLocked=false;
+    if(learningAudioWasRunning&&enabledSound)audio.resume().catch(function(){});
+  }});
   if('serviceWorker'in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
   if(new URLSearchParams(location.search).get('test')==='1')window.__atelier={read:function(){return JSON.parse(JSON.stringify({actions:actions,background:background,undo:undo.length,redo:redo.length,sound:enabledSound}));}};
 }());

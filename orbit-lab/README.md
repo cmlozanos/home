@@ -1,5 +1,11 @@
 # Órbita · Tu pequeño universo
 
+## Reto educativo (ampliación aprobada el 25-09-2026)
+
+Antes de jugar y cada diez minutos se resuelve una suma, resta o trazo de letra del sistema compartido. La partida, las entradas activas, el sonido y los temporizadores de juego se suspenden sin perder el progreso ni quitar una pausa manual. El reto funciona también al abrir la PWA sin conexión; cada entrada requiere uno nuevo. La copia local `learning-gate.js` procede de `../learning-gate/gate.js`.
+
+La salida «Todos los juegos» conduce a https://cmlozanos.github.io/games/. No necesita servidor Ubuntu. `make check` comprueba la sintaxis del módulo; las pruebas de integración están en `../tests/legacy-gates.spec.cjs`.
+
 Laboratorio de gravedad táctil para niños. Juego estático, sin cuentas, anuncios, servicios externos ni dependencias de ejecución. Abrir `index.html` mediante cualquier servidor HTTP; GitHub Pages sirve la carpeta directamente.
 
 ## Jugar

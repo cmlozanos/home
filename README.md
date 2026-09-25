@@ -29,7 +29,11 @@ El alcance, los controles y las comprobaciones de esta entrega están en [racing
 
 Estos tres juegos incluyen un reto educativo al entrar y cada diez minutos: suma/resta de números de 0 a 9 sin resultados negativos o trazo guiado de letras mayúsculas/minúsculas. La partida se congela mientras se resuelve; equivocarse no resta vidas. El tiempo cuenta también fuera de la pestaña y de noche. Es una actividad educativa local, no un control parental inviolable. El módulo compartido y su contrato se documentan en [learning-gate/README.md](learning-gate/README.md).
 
-Por indicación posterior del usuario, los juegos ya publicados quedan fuera de estos nuevos bloqueos: no se modifica ni su acceso ni sus reglas anteriores. Las copias del módulo educativo se limitan a `nitro-highway`, `pocket-karts` y `pulse-path`.
+La autorización del 25-09-2026 amplía el nuevo bloqueo a los seis juegos educativos
+anteriores: Fruit Splash, Órbita, Jardín de parejas, Taller de formas, Pequeño
+Atelier y El jardín de los caminos. La partida y los temporizadores pendientes
+se detienen durante el reto, conservando la pausa manual. Sus botones de salida,
+y los de los tres juegos nuevos, vuelven al [catálogo de videojuegos](https://cmlozanos.github.io/games/), no al catálogo general de aplicaciones.
 
 El service worker de Rubik limita su limpieza a `rubik-solver-*`. `check-cache-isolation.mjs` comprueba que los juegos preservan las cachés ajenas y sus versiones actuales.
 
@@ -44,7 +48,7 @@ make test-games            # Chrome actual, teléfono horizontal/vertical y WebK
 npm run serve              # previsualización http://127.0.0.1:4177
 make screenshots           # con el servidor anterior activo
 make icons GAME=fruit-splash
-make sync-gates            # copiar el reto canónico a los tres juegos nuevos
+make sync-gates            # copiar el reto canónico a los nueve juegos integrados
 make check-gates           # geometría, aritmética y copias offline idénticas
 ```
 

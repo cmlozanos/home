@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./helpers/learning-fixture.cjs');
 
 async function protectedPlanet(page) {
   await page.goto('orbit-lab/?test=1');

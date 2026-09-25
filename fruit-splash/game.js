@@ -1,5 +1,7 @@
 (function () {
   'use strict';
+  if (!window.LearningGate) { document.body.textContent = '↻ Recarga para cargar el reto'; return; }
+  var learningLocked = true, learningGate, learningAudioWasRunning = false;
   var canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
   var $ = function (id) { return document.getElementById(id); };
   var core = window.FruitCore, clamp = core.clamp;
@@ -126,6 +128,7 @@
   document.addEventListener('visibilitychange',function(){if(document.hidden){if(state==='playing')pause();record();}lastTime=0;accumulator=0;});
   window.addEventListener('pagehide',record);window.addEventListener('resize',resize);
   function step(dt){
+    if(learningLocked)return;
     if(state!=='playing')return;
     elapsed+=dt;nextSpawn-=dt;flash=Math.max(0,flash-dt);
     if(elapsed>=4)$('hint').hidden=true;
@@ -165,6 +168,7 @@
     if(flash>0){ctx.fillStyle='rgba(255,125,80,'+flash*.7+')';ctx.fillRect(0,0,width,height);}
   }
   function frame(now){
+    if(learningGate)learningGate.check();
     var dt=lastTime?Math.min(.05,(now-lastTime)/1000):0;lastTime=now;
     accumulator+=dt;while(accumulator>=1/120){step(1/120);accumulator-=1/120;}
     render(now);requestAnimationFrame(frame);
@@ -178,4 +182,13 @@
   window.addEventListener('appinstalled',function(){$('install').hidden=true;});
   if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js',{scope:'./',updateViaCache:'none'}).catch(function(){});});
   $('best').textContent=best();resize();requestAnimationFrame(frame);
+  learningGate=LearningGate.mount({gameId:'fruit-splash',onLock:function(){
+    learningLocked=true;
+    pointers.forEach(function(p,id){try{canvas.releasePointerCapture(id);}catch(ignore){}});pointers.clear();
+    lastTime=0;accumulator=0;learningAudioWasRunning=!!audio&&audio.state==='running';
+    if(learningAudioWasRunning)audio.suspend().catch(function(){});
+  },onUnlock:function(){
+    learningLocked=false;lastTime=0;accumulator=0;
+    if(learningAudioWasRunning&&sound)audio.resume().catch(function(){});
+  }});
 })();

@@ -1,5 +1,6 @@
 .PHONY: check serve
 check:
+	node --check learning-gate.js
 	node --check game.js
 	node --check core.js
 	node --check sw.js

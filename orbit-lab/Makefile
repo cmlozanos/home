@@ -1,6 +1,7 @@
 .PHONY: check serve icons
 
 check:
+	node --check learning-gate.js
 	node --check game.js
 	node --check physics.js
 	node --check life.js

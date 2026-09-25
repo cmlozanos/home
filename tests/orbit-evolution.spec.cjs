@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./helpers/learning-fixture.cjs');
 
 const SAVE_KEY = 'orbit-lab-universe-v1';
 function errorsOn(page) {

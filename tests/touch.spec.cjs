@@ -1,4 +1,4 @@
-const {test,expect}=require('@playwright/test');
+const {test,expect}=require('./helpers/learning-fixture.cjs');
 
 test('native multitouch cuts fruit and creates two planets',async({page,context,browserName})=>{
   test.skip(browserName!=='chromium','Native multi-contact input uses Chromium CDP; pointer behavior is separately covered on WebKit.');

@@ -1,5 +1,7 @@
 (function () {
   'use strict';
+  if (!window.LearningGate) { document.body.textContent = '↻ Recarga para cargar el reto'; return; }
+  var learningLocked = true, learningGate, learningAudioWasRunning = false;
   var P = window.OrbitPhysics;
   var canvas = document.getElementById('space');
   var ctx = canvas.getContext('2d', { alpha: false });
@@ -458,6 +460,8 @@
     if (started) { tone(event.kind === 'collapse' ? 90 : 180); updateStatus(); if (event.kind !== 'merge' && event.kind !== 'accrete') notify(names[b.type]); }
   }
   function tick(time) {
+    if (learningGate) learningGate.check();
+    if (learningLocked) { lastTime = 0; accumulator = 0; requestAnimationFrame(tick); return; }
     requestAnimationFrame(tick);
     if (document.hidden) return;
     var dt = lastTime ? Math.min((time - lastTime) / 1000, 0.08) : 0;
@@ -508,6 +512,14 @@
     Object.defineProperty(window, '__orbitDiagnostics', { get: function () { return { started: started, paused: paused, speed: speed, sound: sound, tool: tool, size: sizes[sizeIndex], ships: ships.length, bodyCount: bodies.length, particles: particles.length, orbitCount: orbitCount, pointers: Object.keys(pointers).length, bodies: bodies.map(function (b) { var s = project(b.x, b.y); return { id: b.id, type: b.type, x: b.x, y: b.y, vx: b.vx, vy: b.vy, mass: b.mass, radius: b.radius, screenX: s.x, screenY: s.y, age: b.age, stageAge: b.stageAge, lifeStage: b.lifeStage || 0, locked: b.locked, held: b.held, orbitLocked: !!b.orbitLocked }; }) }; } });
   }
   makeUniverse('solar'); resize(); scale = Math.min(width, height) / 680; requestAnimationFrame(tick);
+  learningGate = LearningGate.mount({gameId:'orbit-lab',onLock:function(){
+    learningLocked=true;cancelAllPointers();lastTime=0;accumulator=0;
+    learningAudioWasRunning=!!audioContext&&audioContext.state==='running';
+    if(learningAudioWasRunning)audioContext.suspend().catch(function(){});
+  },onUnlock:function(){
+    learningLocked=false;lastTime=0;accumulator=0;
+    if(learningAudioWasRunning&&sound)audioContext.resume().catch(function(){});
+  }});
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     window.addEventListener('load', function () { navigator.serviceWorker.register('./sw.js').catch(function () { /* Online play also works without offline installation. */ }); });
   }

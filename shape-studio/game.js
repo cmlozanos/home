@@ -1,5 +1,7 @@
 (function () {
   'use strict';
+  if (!window.LearningGate) { document.body.textContent = '↻ Recarga para cargar el reto'; return; }
+  var learningLocked = true, learningTimers = LearningGate.createTimers(), learningAudioWasRunning = false;
   var $ = function (id) { return document.getElementById(id); };
   var shapes = [
     { id:'circle', name:'Círculo', color:'#dcaa52', shape:'<circle cx="50" cy="50" r="33"/>', detail:'<path d="M31 51q19-23 38 0M33 57q17 18 34 0"/>' },
@@ -14,22 +16,23 @@
   var level = 0, selected = null, placed = [], current = [], sound = false, audio, drag = null, ignoreClickUntil = 0, completed = [], installEvent, finishTimer, feedbackTimer, previousFocus;
   try { var saved = JSON.parse(localStorage.getItem('shape-studio-progress') || '[]'); if (Array.isArray(saved)) completed = saved.filter(function (n) { return n === 0 || n === 1 || n === 2; }); } catch (_) {}
   function art(shape, outline) { return '<svg viewBox="0 0 100 100" aria-hidden="true"><g class="geometry" fill="' + (outline ? '#d6d1c1' : level === 2 ? '#d8a65c' : shape.color) + '" stroke="' + (outline ? '#a6ad99' : '#4b514024') + '" stroke-width="' + (outline ? '2' : '1.5') + '"' + (outline ? ' stroke-dasharray="4 4"' : '') + '>' + shape.shape + '</g>' + (outline ? '' : '<g fill="none" stroke="#fff5df" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".58">' + shape.detail + '</g>') + '</svg>'; }
-  function chime(frequency) { if (!sound) return; try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); var oscillator = audio.createOscillator(), gain = audio.createGain(); oscillator.connect(gain); gain.connect(audio.destination); oscillator.frequency.setValueAtTime(frequency, audio.currentTime); gain.gain.setValueAtTime(.065, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .18); oscillator.start(); oscillator.stop(audio.currentTime + .2); } catch (_) {} }
+  function chime(frequency) { if (learningLocked || !sound) return; try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); var oscillator = audio.createOscillator(), gain = audio.createGain(); oscillator.connect(gain); gain.connect(audio.destination); oscillator.frequency.setValueAtTime(frequency, audio.currentTime); gain.gain.setValueAtTime(.065, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .18); oscillator.start(); oscillator.stop(audio.currentTime + .2); } catch (_) {} }
   function update() { $('progress').innerHTML = current.map(function (_, i) { return '<span class="' + (i < placed.length ? 'filled' : '') + '" aria-hidden="true">◆</span>'; }).join(''); $('progress').setAttribute('aria-label', placed.length + ' de ' + current.length + ' formas colocadas'); $('saved').textContent = completed.length ? '★ '.repeat(completed.length) : '◇ ◇ ◇'; }
-  function cancelDrag() { if (!drag) return; drag.ghost.remove(); drag.button.classList.remove('dragging'); drag = null; }
+  function cancelDrag() { if (!drag) return; var active = drag; drag = null; active.ghost.remove(); active.button.classList.remove('dragging'); try { active.button.releasePointerCapture(active.pointer); } catch (_) {} }
   function start(nextLevel) {
-    cancelDrag(); clearTimeout(finishTimer); clearTimeout(feedbackTimer); level = nextLevel; selected = null; placed = []; current = shapes.slice(0, [4,6,8][level]); $('win').hidden = true; $('slots').innerHTML = ''; $('tray').innerHTML = ''; document.body.dataset.level = level; $('scene-name').textContent = ['EL JARDÍN', 'LA ALDEA', 'EL TALLER DORADO'][level];
-    ShapeStudio.shuffle(current).forEach(function (shape) { var slot = document.createElement('button'); slot.className = 'slot'; slot.dataset.shape = shape.id; slot.setAttribute('aria-label', 'Hueco: ' + shape.name); slot.innerHTML = art(shape, true) + '<span class="slot-check" aria-hidden="true">✓</span>'; slot.addEventListener('click', function () { if (selected) attempt(selected, shape.id); else { $('status').textContent = 'Primero elige una pieza.'; $('tray').classList.add('nudge'); setTimeout(function () { $('tray').classList.remove('nudge'); }, 400); } }); $('slots').appendChild(slot); });
+    cancelDrag(); learningTimers.clear(finishTimer); learningTimers.clear(feedbackTimer); level = nextLevel; selected = null; placed = []; current = shapes.slice(0, [4,6,8][level]); $('win').hidden = true; $('slots').innerHTML = ''; $('tray').innerHTML = ''; document.body.dataset.level = level; $('scene-name').textContent = ['EL JARDÍN', 'LA ALDEA', 'EL TALLER DORADO'][level];
+    ShapeStudio.shuffle(current).forEach(function (shape) { var slot = document.createElement('button'); slot.className = 'slot'; slot.dataset.shape = shape.id; slot.setAttribute('aria-label', 'Hueco: ' + shape.name); slot.innerHTML = art(shape, true) + '<span class="slot-check" aria-hidden="true">✓</span>'; slot.addEventListener('click', function () { if (selected) attempt(selected, shape.id); else { $('status').textContent = 'Primero elige una pieza.'; $('tray').classList.add('nudge'); learningTimers.set(function () { $('tray').classList.remove('nudge'); }, 400); } }); $('slots').appendChild(slot); });
     ShapeStudio.shuffle(current).forEach(function (shape) { var piece = document.createElement('button'); piece.className = 'piece'; piece.dataset.shape = shape.id; piece.setAttribute('aria-label', 'Pieza: ' + shape.name); piece.setAttribute('aria-pressed', 'false'); piece.innerHTML = art(shape, false); piece.addEventListener('click', function () { if (Date.now() < ignoreClickUntil) return; select(shape.id); }); piece.addEventListener('pointerdown', function (event) { beginDrag(event, piece, shape.id); }); $('tray').appendChild(piece); });
     document.querySelectorAll('.levels [data-level]').forEach(function (button) { button.setAttribute('aria-pressed', Number(button.dataset.level) === level ? 'true' : 'false'); }); $('status').textContent = 'Lleva cada forma a su silueta.'; update();
   }
   function select(id) { if (placed.indexOf(id) !== -1) return; selected = id; document.querySelectorAll('.piece').forEach(function (piece) { piece.setAttribute('aria-pressed', String(piece.dataset.shape === id)); }); $('slots').classList.add('ready'); }
   function attempt(pieceId, slotId) {
+    if (learningLocked) return;
     var slot = $('slots').querySelector('[data-shape="' + slotId + '"]'), piece = $('tray').querySelector('[data-shape="' + pieceId + '"]');
     if (!slot || !piece || placed.indexOf(slotId) !== -1) return;
-    if (!ShapeStudio.place(placed, pieceId, slotId)) { slot.classList.remove('wrong'); void slot.offsetWidth; slot.classList.add('wrong'); $('status').textContent = 'Esa forma tiene otro sitio. Prueba otra silueta.'; clearTimeout(feedbackTimer); feedbackTimer = setTimeout(function () { slot.classList.remove('wrong'); }, 500); return; }
+    if (!ShapeStudio.place(placed, pieceId, slotId)) { slot.classList.remove('wrong'); void slot.offsetWidth; slot.classList.add('wrong'); $('status').textContent = 'Esa forma tiene otro sitio. Prueba otra silueta.'; learningTimers.clear(feedbackTimer); feedbackTimer = learningTimers.set(function () { slot.classList.remove('wrong'); }, 500); return; }
     slot.innerHTML = art(current.filter(function (shape) { return shape.id === pieceId; })[0], false) + '<span class="slot-check" aria-hidden="true">✓</span>'; slot.classList.add('placed'); slot.disabled = true; slot.setAttribute('aria-label', piece.getAttribute('aria-label').replace('Pieza: ', '') + ', colocada'); piece.classList.add('placed'); piece.disabled = true; piece.setAttribute('aria-pressed', 'false'); selected = null; $('slots').classList.remove('ready'); $('status').textContent = '¡Encaja!'; update(); chime(620 + placed.length * 50);
-    if (placed.length === current.length) finishTimer = setTimeout(finish, 450);
+    if (placed.length === current.length) finishTimer = learningTimers.set(finish, 450);
   }
   function beginDrag(event, button, id) {
     if (event.button !== 0 || button.disabled || drag) return;
@@ -47,4 +50,13 @@
   $('help').addEventListener('click', function () { previousFocus = document.activeElement; $('help-panel').hidden = false; $('close-help').focus(); }); $('close-help').addEventListener('click', closeHelp);
   document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { if (!$('help-panel').hidden) closeHelp(); cancelDrag(); selected = null; $('slots').classList.remove('ready'); document.querySelectorAll('.piece').forEach(function (piece) { piece.setAttribute('aria-pressed', 'false'); }); } var overlay = !$('help-panel').hidden ? $('help-panel') : !$('win').hidden ? $('win') : null; if (event.key === 'Tab' && overlay) { var buttons = Array.prototype.filter.call(overlay.querySelectorAll('button,a'), function (node) { return !node.hidden && !node.disabled; }); var first = buttons[0], last = buttons[buttons.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } } });
   window.addEventListener('beforeinstallprompt', function (event) { event.preventDefault(); installEvent = event; $('install').hidden = false; }); $('install').addEventListener('click', function () { if (installEvent) { installEvent.prompt(); installEvent = null; $('install').hidden = true; } }); if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {}); start(0);
+  LearningGate.mount({gameId:'shape-studio',onLock:function(){
+    learningLocked=true;learningTimers.pause();cancelDrag();
+    document.querySelectorAll('.slot').forEach(function(slot){slot.classList.remove('hover');});
+    learningAudioWasRunning=!!audio&&audio.state==='running';
+    if(learningAudioWasRunning)audio.suspend().catch(function(){});
+  },onUnlock:function(){
+    learningLocked=false;learningTimers.resume();
+    if(learningAudioWasRunning&&sound)audio.resume().catch(function(){});
+  }});
 }());
