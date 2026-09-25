@@ -50,7 +50,7 @@ for(const game of games){
   });
 }
 
-test('gate is per game, counts hidden wall time and does not impose new gates on previous games',async({page})=>{
+test('gate is per game, counts hidden wall time and also protects legacy games',async({page})=>{
   await page.addInitScript(()=>{Math.random=()=>.1;const now=Date.now;window.clockOffset=0;Date.now=()=>now()+window.clockOffset;});
   await page.goto('nitro-highway/');await solveGate(page);
   await page.goto('pocket-karts/');await expect(page.locator('#learning-gate')).toBeVisible();await solveGate(page);
@@ -59,7 +59,8 @@ test('gate is per game, counts hidden wall time and does not impose new gates on
   await page.evaluate(()=>{window.clockOffset=-100;window.dispatchEvent(new Event('focus'));});
   await expect(page.locator('#learning-gate')).toBeVisible();
   for(const game of ['fruit-splash','orbit-lab','memory-garden','shape-studio','little-atelier','maze-meadow']){
-    await page.goto(game+'/');await expect(page.locator('#learning-gate')).toHaveCount(0);
+    await page.goto(game+'/');await expect(page.locator('#learning-gate')).toBeVisible();
+    await solveGate(page);await expect(page.locator('#learning-gate')).toHaveCount(0);
   }
 });
 
