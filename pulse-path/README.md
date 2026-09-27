@@ -1,6 +1,6 @@
 # Salto Neón
 
-Plataformas de avance automático con tres circuitos originales de 18–27 segundos en modo tranquilo, salto por toque/espacio, portales de gravedad, precipicios, prismas, estrellas y puntos de control. Modo normal más rápido. La ayuda de salto y repetir saltos al mantener pulsado son controles visibles independientes; pueden desactivarse. Con la ayuda desactivada es necesario saltar para superar obstáculos.
+Plataformas de avance automático con tres circuitos originales de 18–27 segundos en modo tranquilo, salto por toque/espacio, portales de gravedad, precipicios, prismas, estrellas y puntos de control. Modo normal más rápido. La ayuda de salto empieza desactivada: sin pulsar no hay saltos. Puede activarse expresamente con el botón de varita. Repetir saltos requiere mantener pulsado y conserva su selector independiente. Corrección solicitada el 27-09-2026; no cambia circuitos, física ni progreso guardado.
 
 Entrada educativa obligatoria y cada diez minutos mediante copia local del módulo `learning-gate`; la simulación, el sonido y entradas pendientes se congelan durante el reto, sin acumular tiempo. Sonido apagado en cada carga. No hay anuncios, red analítica, compras, fuentes o librerías remotas.
 

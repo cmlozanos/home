@@ -2,7 +2,7 @@
   'use strict';
   if(!window.LearningGate||!window.PulseCore){document.body.innerHTML='<main style="padding:24px;font:20px Arial;color:white">↻ <a style="color:white" href="./">Volver a cargar el juego</a></main>';return;}
   var C=window.PulseCore,$=function(id){return document.getElementById(id);},canvas=$('world'),ctx=canvas.getContext('2d');
-  var width=0,height=0,dpr=1,state=C.create(0,'easy'),selected=0,difficulty='easy',assist=true,repeat=true,held=false,jumpQueued=false,playing=false,paused=false,helpPaused=false,gateLocked=true,sound=false,audio=null,deferredInstall=null,completed=[false,false,false],best=[0,0,0],particles=[],last=0,accumulator=0,lastBeat=-1;
+  var width=0,height=0,dpr=1,state=C.create(0,'easy'),selected=0,difficulty='easy',assist=false,repeat=true,held=false,jumpQueued=false,playing=false,paused=false,helpPaused=false,gateLocked=true,sound=false,audio=null,deferredInstall=null,completed=[false,false,false],best=[0,0,0],particles=[],last=0,accumulator=0,lastBeat=-1;
   try{var saved=JSON.parse(localStorage.getItem('pulse-path-progress-v1')||'null');if(saved&&Array.isArray(saved.completed))completed=completed.map(function(_,i){return saved.completed[i]===true;});if(saved&&Array.isArray(saved.best))best=best.map(function(_,i){return Math.max(0,Math.min(100,Number(saved.best[i])||0));});}catch(ignore){}
   function save(){try{localStorage.setItem('pulse-path-progress-v1',JSON.stringify({completed:completed,best:best}));}catch(ignore){}}
   function clearInput(){held=false;jumpQueued=false;}
