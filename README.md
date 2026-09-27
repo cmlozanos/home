@@ -47,6 +47,18 @@ del navegador elimina el progreso local.
 
 ### Desarrollo y validación
 
+La corrección solicitada el 27-09-2026 evita los menús de pulsación larga y la
+selección accidental en las superficies táctiles de los diez juegos, Rubik y
+el catálogo. Conserva los campos editables y no cancela globalmente los gestos.
+`make test-touch` verifica contexto táctil, edición y multitáctil; admite
+`CHROME95_PATH`. Las versiones de HTML/estáticos/cachés se actualizan juntas.
+La prueba del motor de escritorio no sustituye comprobar el menú nativo en la tablet.
+
+El [banco propuesto de 100 palabras](learning-gate/READING_WORDS.md) respeta
+minúsculas y un máximo de cinco letras (`make check-reading-proposal`).
+La lectura y los perfiles todavía no están integrados: faltan las confirmaciones
+documentadas en esa propuesta. Los retos educativos existentes no cambian.
+
 Requiere Node 20+ y Python 3 para los servidores opcionales de cada juego.
 
 ```sh

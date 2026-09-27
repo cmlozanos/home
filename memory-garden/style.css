@@ -5,3 +5,7 @@
   .board[data-level="1"]{width:min(100%,730px,calc((100vh - 285px)*1.546667))}
   .board[data-level="2"]{width:min(100%,730px,calc((100vh - 285px)*1.16))}
 }
+
+/* Long presses must not open touch callouts or select game artwork. */
+body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+input, textarea, select, [contenteditable]:not([contenteditable="false"]) { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }

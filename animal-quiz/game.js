@@ -1,7 +1,21 @@
+// Keep touch holds inside the game; preserve desktop menus and editable fields.
+(function () {
+  var lastTouch = -Infinity;
+  function rememberTouch(event) {
+    if (event.type === 'touchstart' || event.pointerType === 'touch') lastTouch = Date.now();
+  }
+  document.addEventListener('touchstart', rememberTouch, { capture: true, passive: true });
+  document.addEventListener('pointerdown', rememberTouch, { capture: true, passive: true });
+  document.addEventListener('contextmenu', function (event) {
+    var editable = event.target && event.target.closest && event.target.closest('input,textarea,select,[contenteditable]:not([contenteditable="false"])');
+    if (!editable && (event.pointerType === 'touch' || Date.now() - lastTouch < 2000)) event.preventDefault();
+  }, true);
+}());
+
 (function () {
   'use strict';
   if (!window.LearningGate || !window.AnimalQuiz) { document.body.textContent = 'No se pudo cargar el reto. Recarga para jugar.'; return; }
-  var Q = window.AnimalQuiz, KEY = 'animal-quiz:local:v1', VERSION = '20260925-static1';
+  var Q = window.AnimalQuiz, KEY = 'animal-quiz:local:v1', VERSION = '20260927-2';
   var state, mode = null, current = null, typed = '', locked = true, hidden = document.hidden, helping = false;
   var timers = LearningGate.createTimers(), transition = null, feedbackTimer = null;
   var trophyNames = { primer_acierto:'Primer acierto', racha_3:'Tres aciertos seguidos', racha_5:'Cinco aciertos seguidos', escritor_novato:'Primera palabra', experto_animales:'Experto: cincuenta estrellas' };

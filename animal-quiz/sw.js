@@ -1,7 +1,7 @@
 'use strict';
 var PREFIX = 'animal-quiz-';
-var CACHE = PREFIX + 'v20260925-static1';
-var ASSETS = ['./', 'index.html', 'style.css?v=20260925-static1', 'quiz-core.js?v=20260925-static1', 'learning-gate.js?v=20260925-static1', 'game.js?v=20260925-static1', 'assets/animals.svg?v=20260925-static1', 'manifest.webmanifest', 'icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'THIRD_PARTY_NOTICES.md'];
+var CACHE = PREFIX + 'v20260927-2';
+var ASSETS = ['./', 'index.html', 'style.css?v=20260927-2', 'quiz-core.js?v=20260927-2', 'learning-gate.js?v=20260927-2', 'game.js?v=20260927-2', 'assets/animals.svg?v=20260927-2', 'manifest.webmanifest', 'icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'THIRD_PARTY_NOTICES.md'];
 self.addEventListener('install', function (event) { event.waitUntil(caches.open(CACHE).then(function (cache) { return cache.addAll(ASSETS); }).then(function () { return self.skipWaiting(); })); });
 self.addEventListener('activate', function (event) { event.waitUntil(caches.keys().then(function (keys) { return Promise.all(keys.filter(function (key) { return key.indexOf(PREFIX) === 0 && key !== CACHE; }).map(function (key) { return caches.delete(key); })); }).then(function () { return self.clients.claim(); })); });
 self.addEventListener('fetch', function (event) {

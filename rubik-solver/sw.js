@@ -1,11 +1,11 @@
-const APP_CACHE = "rubik-solver-app-v1";
-const RUNTIME_CACHE = "rubik-solver-runtime-v1";
+const APP_CACHE = "rubik-solver-app-v20260927-2";
+const RUNTIME_CACHE = "rubik-solver-runtime-v20260927-2";
 
 const PRECACHE_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
+  "./styles.css?v=20260927-2",
+  "./app.js?v=20260927-2",
   "./solver-worker.js",
   "./manifest.webmanifest",
   "./icons/icon.svg",

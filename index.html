@@ -92,6 +92,9 @@
     .status-label { font-size: .75rem; color: var(--muted); }
 
     footer { margin-top: 4rem; color: var(--muted); font-size: .8rem; }
+  /* Long presses must not open touch callouts or select game artwork. */
+body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+input, textarea, select, [contenteditable]:not([contenteditable="false"]) { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
   </style>
 </head>
 <body>
@@ -107,6 +110,6 @@
 
   <footer>© 2026 cmlozanos · Proyectos personales en GitHub Pages y Cloudflare Tunnel</footer>
 
-  <script src="apps.js?v=20260925-static-quiz"></script>
+  <script src="apps.js?v=20260927-2"></script>
 </body>
 </html>

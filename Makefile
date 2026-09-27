@@ -1,4 +1,4 @@
-.PHONY: check serve install-tests test-games check-games icons screenshots sync-gates check-gates
+.PHONY: check serve install-tests test-games check-games icons screenshots sync-gates check-gates test-touch check-reading-proposal
 
 check:
 	node --check apps.js
@@ -35,6 +35,12 @@ check-gates:
 
 test-games:
 	npm test
+
+test-touch:
+	npx --no-install playwright test tests/long-press.spec.cjs tests/touch.spec.cjs
+
+check-reading-proposal:
+	node tools/check-reading-proposal.cjs
 
 icons:
 	npm run icons -- $(GAME)
