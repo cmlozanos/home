@@ -54,10 +54,13 @@ el catálogo. Conserva los campos editables y no cancela globalmente los gestos.
 `CHROME95_PATH`. Las versiones de HTML/estáticos/cachés se actualizan juntas.
 La prueba del motor de escritorio no sustituye comprobar el menú nativo en la tablet.
 
-El [banco propuesto de 100 palabras](learning-gate/READING_WORDS.md) respeta
-minúsculas y un máximo de cinco letras (`make check-reading-proposal`).
-La lectura y los perfiles todavía no están integrados: faltan las confirmaciones
-documentadas en esa propuesta. Los retos educativos existentes no cambian.
+El [banco de 100 palabras](learning-gate/READING_WORDS.md) respeta minúsculas y un
+máximo de cinco letras. La ampliación aprobada añade lectura como cuarto tipo de
+reto, sin sustituir sumas, restas ni trazos. Se configura desde «Perfiles y retos»
+en Games y se guarda durante un año solo en ese navegador. Sin perfil se mantienen
+los mínimos; para la Lenovo, seleccionar Avanzado y guardar una vez. Se pide un
+solo reto aleatorio al entrar y cada diez minutos. Las imágenes ARASAAC están
+incluidas en cada PWA y acreditadas con CC BY-NC-SA 4.0. [Contrato y privacidad](learning-gate/README.md).
 
 Requiere Node 20+ y Python 3 para los servidores opcionales de cada juego.
 

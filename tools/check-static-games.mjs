@@ -8,17 +8,19 @@ for(const game of process.argv.slice(2)){
   vm.runInContext(readFileSync(resolve(root,'sw.js'),'utf8'),context);
   const assets=context.ASSETS||context.FILES;
   assert.ok(Array.isArray(assets)&&assets.length>5,game+': precache list');
-  let bytes=0;
+  let bytes=0,readingBytes=0;
   for(const asset of assets){
     const path=asset.split('?')[0];
     const full=resolve(root,path.endsWith('/')?path+'index.html':path);
     assert.ok(existsSync(full),game+': missing offline resource '+asset);
-    bytes+=statSync(full).size;
+    if(/^(?:\.\/)?reading-images\/\d+\.png$/.test(path))readingBytes+=statSync(full).size;
+    else bytes+=statSync(full).size;
   }
   const html=readFileSync(resolve(root,'index.html'),'utf8');
   for(const [,asset] of html.matchAll(/(?:src|href)="([^"#]+\.(?:js|css)(?:\?[^"]*)?)"/g)){
     assert.ok(assets.some(a=>a.replace(/^\.\//,'')===asset.replace(/^\.\//,'')),game+': versioned asset absent from cache '+asset);
   }
   assert.ok(bytes<500000,game+': offline payload must stay below 500 KB');
-  console.log(game+': offline resources and versions verified ('+Math.ceil(bytes/1024)+' KiB).');
+  assert.ok(readingBytes<=2000000,game+': reading images must stay within the approved 2 MB budget');
+  console.log(game+': offline resources and versions verified ('+Math.ceil(bytes/1024)+' KiB game + '+Math.ceil(readingBytes/1024)+' KiB reading images).');
 }

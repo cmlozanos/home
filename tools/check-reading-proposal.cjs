@@ -13,4 +13,4 @@ rows.forEach((row, index) => {
   assert.ok(Array.from(row[2]).length <= 5, row[2]);
   assert.equal(Array.from(row[2]).length, Number(row[3]));
 });
-console.log('Reading proposal: 100 unique lowercase words, at most five letters; no runtime/profile changes.');
+console.log('Reading word catalogue: 100 unique lowercase words, at most five letters, with unique source references.');
