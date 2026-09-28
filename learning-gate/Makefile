@@ -3,6 +3,7 @@ check:
 	node --check gate.js
 	node tools/check.cjs
 	node tools/profile-check.cjs
+	node tools/selection-check.cjs
 	node tools/reading-check.cjs
 	node tools/reading-assets.cjs
 check-browser:

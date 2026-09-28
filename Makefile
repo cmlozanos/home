@@ -1,4 +1,4 @@
-.PHONY: check serve install-tests test-games check-games icons screenshots sync-gates check-gates test-touch check-reading-proposal test-reading test-reading-games
+.PHONY: check serve install-tests test-games check-games icons screenshots sync-gates check-gates test-touch check-reading-proposal test-reading test-reading-games test-selected-games
 
 check:
 	node --check apps.js
@@ -46,6 +46,10 @@ test-reading:
 
 test-reading-games:
 	node tools/check-reading-games.cjs
+
+# READING_URLS may target deployed games; otherwise checks the ten local games.
+test-selected-games:
+	READING_PROFILE=selected node tools/check-reading-games.cjs
 
 check-reading-proposal:
 	node tools/check-reading-proposal.cjs

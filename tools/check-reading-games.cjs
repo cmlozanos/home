@@ -36,10 +36,13 @@ async function check(browser,url) {
   const context=await browser.newContext({viewport:{width:1024,height:768},hasTouch:true});
   const timer=setTimeout(()=>context.close(),60000);
   try {
-    await context.addCookies([{name:'family-learning-profile',value:encodeURIComponent(JSON.stringify({version:1,level:'advanced',reading:true,expiresAt:Date.now()+31536000000})),url:new URL(url).origin}]);
+    const profile={version:1,level:'advanced',reading:true,expiresAt:Date.now()+31536000000};
+    if(process.env.READING_PROFILE==='selected'){profile.version=2;profile.challenges=['reading'];}
+    await context.addCookies([{name:'family-learning-profile',value:encodeURIComponent(JSON.stringify(profile)),url:new URL(url).origin}]);
     const page=await context.newPage(),errors=[];
     page.on('pageerror',error=>errors.push(error.message));
     await page.addInitScript(()=>{Math.random=()=>.99;window.readingClockOffset=0;const now=Date.now;Date.now=()=>now()+window.readingClockOffset;});
+    if(process.env.READING_PROFILE==='selected')await page.addInitScript(()=>Object.defineProperty(Math,'random',{configurable:true,get:()=>()=>.1,set:()=>{}}));
     await page.goto(url);const word=await ready(page);
     const before=await page.locator('.gate-pictures button').evaluateAll(nodes=>nodes.map(n=>n.dataset.readingId));
     const wrong=page.locator('.gate-pictures button').filter({hasNot:page.locator('img[alt="'+word+'"]')}).first();
@@ -61,12 +64,21 @@ async function check(browser,url) {
     await context.setOffline(true);await page.reload();await ready(page);await correct(page);
     await page.evaluate(()=>{readingClockOffset+=600001;document.dispatchEvent(new Event('visibilitychange'));});
     await ready(page);await correct(page);
+    if(process.env.READING_PROFILE==='selected'){
+      assert.deepEqual(await page.evaluate(()=>LearningProfile.read().challenges),['reading']);
+      assert(await page.evaluate(()=>LearningProfile.save({level:'learner',challenges:['subtraction']})));
+      await page.evaluate(()=>{readingClockOffset+=600001;document.dispatchEvent(new Event('visibilitychange'));});
+      await expect(page.locator('#gate-prompt')).toContainText('−');
+      const prompt=await page.locator('#gate-prompt').textContent(),parts=prompt.match(/(\d)\s*−\s*(\d)/);
+      await page.locator('[data-gate-key="'+(+parts[1]- +parts[2])+'"]').click();
+      await expect(page.locator('#learning-gate')).toHaveCount(0);
+    }
     await context.clearCookies();
     await page.evaluate(()=>{readingClockOffset+=600001;document.dispatchEvent(new Event('visibilitychange'));});
     await expect(page.locator('#learning-gate')).toBeVisible();await expect(page.locator('#gate-reading')).toBeHidden();
     assert.equal(await page.locator('#gate-trace').isVisible()||await page.locator('#gate-prompt').isVisible(),true);
     assert.deepEqual(errors,[]);
-    console.log(JSON.stringify({url,reading:'entry, error/full rotation, success, 100 offline images, offline reload, 10-minute recurrence, no-cookie minima PASS'}));
+    console.log(JSON.stringify({url,profile:process.env.READING_PROFILE==='selected'?'v2 reading-only and switch to subtraction':'v1 legacy preserved',reading:'entry, error/full rotation, success, 100 offline images, offline reload, 10-minute recurrence, no-cookie defaults PASS'}));
   } finally {clearTimeout(timer);await context.close();}
 }
 (async()=>{
