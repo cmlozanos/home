@@ -37,6 +37,17 @@ const APPS = [
     alwaysOnline: true,
   },
 
+  {
+    slug:         "cole-aventura",
+    icon:         "📚",
+    title:        "Cole Aventura",
+    desc:         "Matemáticas y cuentos para primero de Primaria. Aprende jugando con palabras, sílabas y formas.",
+    badge:        "Primaria · PWA",
+    color:        "#355aca",
+    href:         "https://cmlozanos.github.io/cole-aventura/",
+    alwaysOnline: true,
+  },
+
   // ── Juegos estáticos (GitHub Pages) ──────────────────────────────────────
   {
     slug:         "nitro-highway",

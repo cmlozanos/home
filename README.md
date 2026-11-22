@@ -4,6 +4,10 @@ Portal público de proyectos en vivo. Reúne servicios locales publicados median
 
 🌐 **URL pública:** https://cmlozanos.github.io/home
 
+## Cole Aventura
+
+- [Cole Aventura](https://cmlozanos.github.io/cole-aventura/): acceso directo 📚 desde el catálogo a Matemáticas y cuentos de primero de Primaria. Se abre en una pestaña nueva, como el resto de proyectos; no depende de túneles.
+
 ## Nuevos juegos táctiles
 
 - [Quiz de Animales](https://cmlozanos.github.io/home/animal-quiz/): identifica animales, practica sus nombres y gana estrellas/trofeos con perfiles genéricos locales.
