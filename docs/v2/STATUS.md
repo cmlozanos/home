@@ -38,3 +38,5 @@ Final root tablet **120/120passed** serial on current source, including two full
 Horizontal serial final116passed3skips exposed one real issue: Quiz status feedback intercepted letter keys on short landscape. Fixed feedback pointer-events:none (status has no controls), revalidated storage-denied full answer and responsive view. Source pending follow-up acceptance; not counted as passed until focused run completes. No click-force workaround.
 
 Quiz horizontal correction focused2/2passed, no force-click. Full root tablet120passed; Safari104passed16skips; modern entry12+11WebKit and genuine95entry11+regressions5 passed. Public eight standalone/games native entry/Home/Adult checked and home11URLs follow. Gates recorded without zero-bug or physical-device claims.
+
+Final Quiz correction accepted separately:quiz-landscape-accepted2/2green on current source (the earlier same-name log was overwritten by an older concurrent process, so it is retained as historical failure, not acceptance). Final same-runtime public Home11/11passed. Pages accepted742e40e. CI matrix in progress, release tags await its result. Tests do not require hidden clicks or suppress game errors.

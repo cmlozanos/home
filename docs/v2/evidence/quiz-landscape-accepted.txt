@@ -1,0 +1,7 @@
+
+Running 2 tests using 1 worker
+
+  ✓  1 [phone-landscape] › tests/animal-quiz.spec.cjs:121:1 › animal quiz remains playable when local storage is blocked (2.1s)
+  ✓  2 [phone-landscape] › tests/animal-quiz.spec.cjs:132:1 › animal quiz has readable responsive profiles, answers and writing controls (2.5s)
+
+  2 passed (5.5s)
