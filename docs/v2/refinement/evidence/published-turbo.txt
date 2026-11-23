@@ -1,0 +1,2 @@
+node tools/check-published-v2.mjs https://cmlozanos.github.io/turbo-loop-legends/
+PUBLISHED V2 https://cmlozanos.github.io/turbo-loop-legends/ native home, parent gate, font/shell loaded, no page errors

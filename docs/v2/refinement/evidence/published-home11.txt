@@ -1,0 +1,12 @@
+node tools/check-published-v2.mjs https://cmlozanos.github.io/home/animal-quiz/ https://cmlozanos.github.io/home/nitro-highway/ https://cmlozanos.github.io/home/pocket-karts/ https://cmlozanos.github.io/home/pulse-path/ https://cmlozanos.github.io/home/fruit-splash/ https://cmlozanos.github.io/home/orbit-lab/ https://cmlozanos.github.io/home/memory-garden/ https://cmlozanos.github.io/home/shape-studio/ https://cmlozanos.github.io/home/little-atelier/ https://cmlozanos.github.io/home/maze-meadow/ https://cmlozanos.github.io/home/rubik-solver/
+PUBLISHED V2 https://cmlozanos.github.io/home/animal-quiz/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/nitro-highway/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/pocket-karts/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/pulse-path/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/fruit-splash/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/orbit-lab/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/memory-garden/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/shape-studio/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/little-atelier/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/maze-meadow/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/rubik-solver/ native home, parent gate, font/shell loaded, no page errors

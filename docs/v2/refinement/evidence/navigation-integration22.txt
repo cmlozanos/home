@@ -1,0 +1,27 @@
+
+Running 22 tests using 1 worker
+
+  ✓   1 [tablet] › tests/v2/all-games.spec.cjs:3:183 › memory-garden:V2 shell/native home/parent/settings/offline (869ms)
+  ✓   2 [tablet] › tests/v2/all-games.spec.cjs:3:183 › shape-studio:V2 shell/native home/parent/settings/offline (590ms)
+  ✓   3 [tablet] › tests/v2/all-games.spec.cjs:3:183 › little-atelier:V2 shell/native home/parent/settings/offline (537ms)
+  ✓   4 [tablet] › tests/v2/all-games.spec.cjs:3:183 › maze-meadow:V2 shell/native home/parent/settings/offline (540ms)
+  ✓   5 [tablet] › tests/v2/all-games.spec.cjs:3:183 › nitro-highway:V2 shell/native home/parent/settings/offline (756ms)
+  ✓   6 [tablet] › tests/v2/all-games.spec.cjs:3:183 › pocket-karts:V2 shell/native home/parent/settings/offline (899ms)
+  ✓   7 [tablet] › tests/v2/all-games.spec.cjs:3:183 › pulse-path:V2 shell/native home/parent/settings/offline (762ms)
+  ✓   8 [tablet] › tests/v2/all-games.spec.cjs:3:183 › animal-quiz:V2 shell/native home/parent/settings/offline (657ms)
+  ✓   9 [tablet] › tests/v2/all-games.spec.cjs:3:183 › fruit-splash:V2 shell/native home/parent/settings/offline (631ms)
+  ✓  10 [tablet] › tests/v2/all-games.spec.cjs:3:183 › orbit-lab:V2 shell/native home/parent/settings/offline (750ms)
+  ✓  11 [tablet] › tests/v2/all-games.spec.cjs:3:183 › rubik-solver:V2 shell/native home/parent/settings/offline (671ms)
+  ✓  12 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › memory-garden:V2 shell/native home/parent/settings/offline (848ms)
+  ✓  13 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › shape-studio:V2 shell/native home/parent/settings/offline (570ms)
+  ✓  14 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › little-atelier:V2 shell/native home/parent/settings/offline (537ms)
+  ✓  15 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › maze-meadow:V2 shell/native home/parent/settings/offline (563ms)
+  ✓  16 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › nitro-highway:V2 shell/native home/parent/settings/offline (653ms)
+  ✓  17 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › pocket-karts:V2 shell/native home/parent/settings/offline (679ms)
+  ✓  18 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › pulse-path:V2 shell/native home/parent/settings/offline (687ms)
+  ✓  19 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › animal-quiz:V2 shell/native home/parent/settings/offline (670ms)
+  ✓  20 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › fruit-splash:V2 shell/native home/parent/settings/offline (728ms)
+  ✓  21 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › orbit-lab:V2 shell/native home/parent/settings/offline (2.1s)
+  ✓  22 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › rubik-solver:V2 shell/native home/parent/settings/offline (637ms)
+
+  22 passed (18.6s)

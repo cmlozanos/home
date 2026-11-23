@@ -1,5 +1,5 @@
-const APP_CACHE = "rubik-solver-app-v2.0.0-refinement1";
-const RUNTIME_CACHE = "rubik-solver-runtime-v2.0.0-refinement1";
+const APP_CACHE = "rubik-solver-app-v2.0.0-refinement2";
+const RUNTIME_CACHE = "rubik-solver-runtime-v2.0.0-refinement2";
 
 const PRECACHE_ASSETS = ["family-v2/family.css?v=2.0.0","family-v2/family.js?v=2.0.0","family-v2/playwrite-es.ttf","family-v2/OFL.txt",
   "./",
