@@ -27,3 +27,7 @@ Adult modal cannot block periodic learning gate; shadow keyboard never controls 
 Detailed per-game notes remain local (V2-VALIDATION/README/RELEASE_NOTES). Root model check preserves math, maze, physics, PNG source/license, cache-isolation and performance budgets. School font measured separately340KB rather than silently increasing game-code500KB budget. Exact local kit hashes tested.
 
 Modern browser and actual Chromium95 desktop engines tested with touch viewports. Engine emulation is NOT physical Android5GPU/RAM/thermal acceptance. No claim every campaign/car-track combination is bug-free. Rubik camera/editor/long solutions may scroll to preserve data; catalogues intentionally scroll. Remaining known limits must accompany release, not be masked with overflow:hidden.
+
+## Publication references
+
+Initial coordinated application commits: Homef9d5f24, Games77ed59b (test-route followupb328bb3), Banana75bd573, Jump54bd7a9, Fancy8390882, World4196bab, Turbo1ef90de. Final release tags point to accepted heads; later documentation-only commits do not change runtime bytes. See STATUS/ACCEPTANCE for public checks and limits.

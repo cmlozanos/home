@@ -25,3 +25,5 @@ html.family-v2 body{background:var(--family-page);color:var(--family-ink)}
 @media(max-height:500px) and (min-width:621px){.family-v2 .topbar h1{display:none}.family-v2 .option{min-height:64px}.family-v2 .animal-card>svg{max-height:165px}.family-v2 .word-model{margin:0 0 4px}.family-v2 .word-slots{margin-bottom:4px}.family-v2 .letter-key{min-height:44px}.family-v2 .erase{margin-top:4px}}
 @media(max-height:500px) and (min-width:621px){.family-v2 .profile-card{min-height:130px;padding:12px 8px}.family-v2 .profile-grid{margin:8px auto}.family-v2 .profile-screen{padding:0}}
 .family-v2 [data-family-setting]{width:auto;gap:8px;padding:8px 12px}
+/* Status feedback is never an input target; don't block letter keys underneath. */
+#feedback{pointer-events:none}

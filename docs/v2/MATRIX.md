@@ -36,3 +36,7 @@ banana-party75bd573; jump-the-car54bd7a9; fancy-jumping-car8390882; world-of-joy
 Chef validation now covers40rounds/five modes with native keyboard-driven simulation. It exposed unreachable rear spawn, stale final HUD, summary timer surviving Home and incomplete retry-state reset; these are corrected with regression. This was not just a rendering update.
 
 Turbo final shared-shell commit1ef90de (native60372e9 unchanged);16/16V2 browser desktop/WebKit/95 plus offline1/1 genuine95. Final bytes match canonical kit. Private identity/DS excluded. Physical device still pending.
+
+## Public acceptance
+
+Eight standalone/games URLs checked in a clean browser after Pages builds: FamilyV2=2.0.0, native Home URL unchanged, parent challenge usable, no page errors (standalone-published-final.txt). Home11published URLs under test, including offline. games public Chef offline reload once timed out under concurrent GPU load; isolated repeat passed and cache content/standalone navigation fallback independently inspected. No false all-three-failed claim from initial wrongly-rooted test route: test baseURL now honours public subdirectory and relative game path, committed b328bb3.

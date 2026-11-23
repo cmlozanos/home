@@ -1,0 +1,8 @@
+PUBLISHED V2 https://cmlozanos.github.io/banana-party/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/jump-the-car/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/fancy-jumping-car/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/world-of-joy/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/turbo-loop-legends/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/games/burbujas/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/games/buscaminas/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/games/little-chef-academy/ native home, parent gate, font/shell loaded, no page errors

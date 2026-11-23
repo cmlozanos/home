@@ -1,0 +1,59 @@
+
+Running 2 tests using 1 worker
+  ✘  1 [phone-landscape] › tests/animal-quiz.spec.cjs:121:1 › animal quiz remains playable when local storage is blocked (45.0s)
+
+
+  1) [phone-landscape] › tests/animal-quiz.spec.cjs:121:1 › animal quiz remains playable when local storage is blocked
+
+    Test timeout of 45000ms exceeded.
+
+    Error: locator.click: Test timeout of 45000ms exceeded.
+    Call log:
+      - waiting for locator('[data-letter="L"]')
+        - locator resolved to <button data-letter="L" class="letter-key" aria-label="Letra L">L</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div id="feedback" role="status" class="feedback" aria-live="polite"></div> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div id="feedback" role="status" class="feedback" aria-live="polite"></div> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        83 × waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <div id="feedback" role="status" class="feedback" aria-live="polite"></div> intercepts pointer events
+         - retrying click action
+           - waiting 500ms
+
+
+      16 | }
+      17 | async function typeWord(page, word) {
+    > 18 |   for (const letter of word) await page.locator('[data-letter="'+letter+'"]').click();
+         |                                                                               ^
+      19 | }
+      20 | async function advanceClock(page) {
+      21 |   await page.evaluate(() => { const now=Date.now;Date.now=()=>now()+600001; });
+        at typeWord (/Users/carlos.lozanosoto/personal/repositories/home/tests/animal-quiz.spec.cjs:18:79)
+        at /Users/carlos.lozanosoto/personal/repositories/home/tests/animal-quiz.spec.cjs:128:3
+
+    Error Context: test-results/animal-quiz-animal-quiz-re-3f3fb-en-local-storage-is-blocked-phone-landscape/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/animal-quiz-animal-quiz-re-3f3fb-en-local-storage-is-blocked-phone-landscape/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/animal-quiz-animal-quiz-re-3f3fb-en-local-storage-is-blocked-phone-landscape/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [phone-landscape] › tests/animal-quiz.spec.cjs:121:1 › animal quiz remains playable when local storage is blocked

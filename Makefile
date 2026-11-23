@@ -75,3 +75,7 @@ test-family-v2:
 .PHONY: check-release-v2
 check-release-v2: check-family-v2
 	node tools/check-release-v2.mjs
+
+.PHONY: check-published-v2
+check-published-v2:
+	node tools/check-published-v2.mjs $(URLS)

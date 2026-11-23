@@ -42,3 +42,140 @@ Running 120 tests using 1 worker
   ✓   39 [phone-landscape] › tests/learning-memory-shapes.spec.cjs:38:1 › memory: every difficulty fits an 800px or 600px high tablet (760ms)
   ✓   40 [phone-landscape] › tests/learning-memory-shapes.spec.cjs:57:1 › memory: all three levels are solvable, matched cards lock and progress persists (41.4s)
   ✓   41 [phone-landscape] › tests/learning-memory-shapes.spec.cjs:72:1 › memory: mismatches lock the third card, preview can repeat, keyboard plays (6.5s)
+  ✓   42 [phone-landscape] › tests/learning-memory-shapes.spec.cjs:92:1 › shapes: geometry rejects wrong slots and all levels complete with tap or keyboard (6.8s)
+  ✓   43 [phone-landscape] › tests/learning-memory-shapes.spec.cjs:113:1 › shapes: dragging over a correct silhouette places the piece (572ms)
+  ✓   44 [phone-landscape] › tests/learning-memory-shapes.spec.cjs:126:3 › memory-garden: blocked storage and 320px portrait remain playable (6.2s)
+  ✓   45 [phone-landscape] › tests/learning-memory-shapes.spec.cjs:137:3 › memory-garden: offline shell loads and cache isolation preserves sibling games (6.2s)
+  ✓   46 [phone-landscape] › tests/learning-memory-shapes.spec.cjs:126:3 › shape-studio: blocked storage and 320px portrait remain playable (1.4s)
+  ✓   47 [phone-landscape] › tests/learning-memory-shapes.spec.cjs:137:3 › shape-studio: offline shell loads and cache isolation preserves sibling games (1.5s)
+  ✓   48 [phone-landscape] › tests/legacy-gates.spec.cjs:19:3 › fruit-splash: challenge at entry, errors, every ten minutes, reload and home (589ms)
+  ✓   49 [phone-landscape] › tests/legacy-gates.spec.cjs:19:3 › orbit-lab: challenge at entry, errors, every ten minutes, reload and home (643ms)
+  ✓   50 [phone-landscape] › tests/legacy-gates.spec.cjs:19:3 › memory-garden: challenge at entry, errors, every ten minutes, reload and home (480ms)
+  ✓   51 [phone-landscape] › tests/legacy-gates.spec.cjs:19:3 › shape-studio: challenge at entry, errors, every ten minutes, reload and home (449ms)
+  ✓   52 [phone-landscape] › tests/legacy-gates.spec.cjs:19:3 › little-atelier: challenge at entry, errors, every ten minutes, reload and home (508ms)
+  ✓   53 [phone-landscape] › tests/legacy-gates.spec.cjs:19:3 › maze-meadow: challenge at entry, errors, every ten minutes, reload and home (560ms)
+  ✓   54 [phone-landscape] › tests/legacy-gates.spec.cjs:39:1 › Fruit: simulation freezes and manual pause survives a challenge (1.2s)
+  ✓   55 [phone-landscape] › tests/legacy-gates.spec.cjs:52:1 › Orbit: all celestial motion freezes during the challenge (876ms)
+  ✓   56 [phone-landscape] › tests/legacy-gates.spec.cjs:63:1 › Memory: a pending comparison waits for unlock (5.8s)
+  ✓   57 [phone-landscape] › tests/legacy-gates.spec.cjs:76:1 › Shapes: completion is not delivered under the challenge (2.0s)
+  ✓   58 [phone-landscape] › tests/legacy-gates.spec.cjs:85:1 › Atelier and maze preserve progress through the challenge (837ms)
+  ✓   59 [phone-landscape] › tests/legacy-gates.spec.cjs:103:1 › All six games keep the challenge available offline (4.0s)
+  ✓   60 [phone-landscape] › tests/long-press.spec.cjs:5:26 › : touch context menu is suppressed without blocking editing (926ms)
+  ✓   61 [phone-landscape] › tests/long-press.spec.cjs:5:26 › fruit-splash: touch context menu is suppressed without blocking editing (565ms)
+  ✓   62 [phone-landscape] › tests/long-press.spec.cjs:5:26 › orbit-lab: touch context menu is suppressed without blocking editing (505ms)
+  ✓   63 [phone-landscape] › tests/long-press.spec.cjs:5:26 › memory-garden: touch context menu is suppressed without blocking editing (399ms)
+  ✓   64 [phone-landscape] › tests/long-press.spec.cjs:5:26 › shape-studio: touch context menu is suppressed without blocking editing (472ms)
+  ✓   65 [phone-landscape] › tests/long-press.spec.cjs:5:26 › little-atelier: touch context menu is suppressed without blocking editing (406ms)
+  ✓   66 [phone-landscape] › tests/long-press.spec.cjs:5:26 › maze-meadow: touch context menu is suppressed without blocking editing (477ms)
+  ✓   67 [phone-landscape] › tests/long-press.spec.cjs:5:26 › nitro-highway: touch context menu is suppressed without blocking editing (551ms)
+  ✓   68 [phone-landscape] › tests/long-press.spec.cjs:5:26 › pocket-karts: touch context menu is suppressed without blocking editing (418ms)
+  ✓   69 [phone-landscape] › tests/long-press.spec.cjs:5:26 › pulse-path: touch context menu is suppressed without blocking editing (400ms)
+  ✓   70 [phone-landscape] › tests/long-press.spec.cjs:5:26 › animal-quiz: touch context menu is suppressed without blocking editing (560ms)
+  ✓   71 [phone-landscape] › tests/long-press.spec.cjs:5:26 › rubik-solver: touch context menu is suppressed without blocking editing (464ms)
+  ✓   72 [phone-landscape] › tests/orbit-cancel.spec.cjs:23:1 › orbit: cancelling a touch drag restores the protected orbit and movement resumes (849ms)
+  ✓   73 [phone-landscape] › tests/orbit-cancel.spec.cjs:40:1 › orbit: window blur clears held contacts and restores the interrupted planet (659ms)
+  ✓   74 [phone-landscape] › tests/orbit-evolution.spec.cjs:37:1 › orbit evolution: collision preset forms a black hole with conserved mass (2.6s)
+  ✓   75 [phone-landscape] › tests/orbit-evolution.spec.cjs:51:1 › orbit evolution: nursery preset resumes near condensation and creates protostars (1.7s)
+  ✓   76 [phone-landscape] › tests/orbit-evolution.spec.cjs:68:1 › orbit tools: move an existing planet without creating another body (1.4s)
+  ✓   77 [phone-landscape] › tests/orbit-evolution.spec.cjs:86:1 › orbit tools: locking then orbiting protects a planet around its fixed sun (765ms)
+  ✓   78 [phone-landscape] › tests/orbit-evolution.spec.cjs:109:1 › orbit life: habitable planets develop ships and retain civilization after save/resume (2.7s)
+  ✓   79 [phone-landscape] › tests/orbit-evolution.spec.cjs:134:1 › orbit palette: size changes both visible radius and mass for new planets (592ms)
+  ✓   80 [phone-landscape] › tests/pulse-path.spec.cjs:4:1 › Salto Neón never jumps without input by default, including after retry (6.2s)
+  ✓   81 [phone-landscape] › tests/pulse-path.spec.cjs:15:1 › Salto Neón accepts taps and keys, pauses, retries and exposes child-friendly choices (4.5s)
+  ✓   82 [phone-landscape] › tests/pulse-path.spec.cjs:30:1 › Salto Neón completes an actual authored course when assistance is explicitly enabled (19.0s)
+  ✓   83 [phone-landscape] › tests/pulse-path.spec.cjs:36:1 › Salto Neón works at 320px without local storage and loads offline (547ms)
+  ✓   84 [phone-landscape] › tests/pulse-path.spec.cjs:41:1 › Salto Neón educational recurrence preserves an existing manual pause (1.3s)
+  ✓   85 [phone-landscape] › tests/quiz-entry.spec.cjs:3:1 › Quiz entry uses static Pages and never registers tunnel polling (959ms)
+  ✓   86 [phone-landscape] › tests/reading-gate.spec.cjs:21:1 › reading: lowercase word, three local images, full replacement after errors, and focus containment (430ms)
+  ✓   87 [phone-landscape] › tests/reading-gate.spec.cjs:47:1 › reading: a correct answer gives exactly ten minutes, then rechecks current profile (399ms)
+  ✓   88 [phone-landscape] › tests/reading-gate.spec.cjs:56:1 › reading: image failure cannot unlock and retry restores the same question (390ms)
+  ✓   89 [phone-landscape] › tests/reading-gate.spec.cjs:68:1 › reading: no profile, invalid profile and expired profile preserve minimum challenges (366ms)
+  ✓   90 [phone-landscape] › tests/reading-gate.spec.cjs:78:1 › reading: keyboard can pick an image and missing dictionary never grants access (255ms)
+  ✓   91 [phone-landscape] › tests/reading-gate.spec.cjs:86:1 › reading: failed unlock callback keeps the gate locked but permits retry (316ms)
+  ✓   92 [phone-landscape] › tests/reading-gate.spec.cjs:93:1 › reading in a real game preserves a manual pause and resumes only on request (1.1s)
+  ✓   93 [phone-landscape] › tests/touch.spec.cjs:3:1 › native multitouch cuts fruit and creates two planets (1.7s)
+  ✓   94 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › memory-garden:V2 shell/native home/parent/settings/offline (593ms)
+  ✓   95 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › shape-studio:V2 shell/native home/parent/settings/offline (612ms)
+  ✓   96 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › little-atelier:V2 shell/native home/parent/settings/offline (666ms)
+  ✓   97 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › maze-meadow:V2 shell/native home/parent/settings/offline (614ms)
+  ✓   98 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › nitro-highway:V2 shell/native home/parent/settings/offline (720ms)
+  ✓   99 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › pocket-karts:V2 shell/native home/parent/settings/offline (666ms)
+  ✓  100 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › pulse-path:V2 shell/native home/parent/settings/offline (660ms)
+  ✓  101 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › animal-quiz:V2 shell/native home/parent/settings/offline (586ms)
+  ✓  102 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › fruit-splash:V2 shell/native home/parent/settings/offline (672ms)
+  ✓  103 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › orbit-lab:V2 shell/native home/parent/settings/offline (781ms)
+  ✓  104 [phone-landscape] › tests/v2/all-games.spec.cjs:3:183 › rubik-solver:V2 shell/native home/parent/settings/offline (898ms)
+  ✓  105 [phone-landscape] › tests/v2/family-shell.spec.cjs:2:1 › shared2 shell preserves native settings IDs, parent gate, score, theme, audio and pauses (521ms)
+  ✓  106 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:34:1 › learning deadline closes Adult modal and leaves the actual challenge usable (406ms)
+  ✓  107 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:58:1 › theme keyboard events stay inside the shell, native controls still receive keys (277ms)
+  ✓  108 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:73:1 › cookie remains authoritative when localStorage reads succeed but writes throw (272ms)
+  ✓  109 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:95:55 › keyboard extends session activity without disabling genuine expiry (283ms)
+  ✓  110 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:95:55 › pointer movement extends session activity without disabling genuine expiry (309ms)
+  ✓  111 [phone-landscape] › tests/new-racing.spec.cjs:6:3 › nitro-highway: choose car/course, drive with touch, cancel, pause and retry (1.2s)
+  ✓  112 [phone-landscape] › tests/new-racing.spec.cjs:28:3 › nitro-highway: ten-minute challenge freezes and preserves manual pause (1.1s)
+  ✓  113 [phone-landscape] › tests/new-racing.spec.cjs:43:3 › nitro-highway: compact controls fit phone portrait and landscape (418ms)
+  ✓  114 [phone-landscape] › tests/new-racing.spec.cjs:56:3 › nitro-highway: offline shell retains educational challenge and cache isolation (784ms)
+  ✓  115 [phone-landscape] › tests/new-racing.spec.cjs:6:3 › pocket-karts: choose car/course, drive with touch, cancel, pause and retry (897ms)
+  ✓  116 [phone-landscape] › tests/new-racing.spec.cjs:28:3 › pocket-karts: ten-minute challenge freezes and preserves manual pause (1.1s)
+  ✓  117 [phone-landscape] › tests/new-racing.spec.cjs:43:3 › pocket-karts: compact controls fit phone portrait and landscape (447ms)
+  ✓  118 [phone-landscape] › tests/new-racing.spec.cjs:56:3 › pocket-karts: offline shell retains educational challenge and cache isolation (830ms)
+  -  119 [phone-landscape] › tests/racing-finish.spec.cjs:6:3 › nitro-highway: finishes a real race with keyboard and opens next circuit
+  -  120 [phone-landscape] › tests/racing-finish.spec.cjs:6:3 › pocket-karts: finishes a real race with keyboard and opens next circuit
+
+
+  1) [phone-landscape] › tests/animal-quiz.spec.cjs:121:1 › animal quiz remains playable when local storage is blocked
+
+    Test timeout of 45000ms exceeded.
+
+    Error: locator.click: Test timeout of 45000ms exceeded.
+    Call log:
+      - waiting for locator('[data-letter="L"]')
+        - locator resolved to <button data-letter="L" class="letter-key" aria-label="Letra L">L</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div id="feedback" role="status" class="feedback" aria-live="polite"></div> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div id="feedback" role="status" class="feedback" aria-live="polite"></div> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        84 × waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <div id="feedback" role="status" class="feedback" aria-live="polite"></div> intercepts pointer events
+         - retrying click action
+           - waiting 500ms
+
+
+      16 | }
+      17 | async function typeWord(page, word) {
+    > 18 |   for (const letter of word) await page.locator('[data-letter="'+letter+'"]').click();
+         |                                                                               ^
+      19 | }
+      20 | async function advanceClock(page) {
+      21 |   await page.evaluate(() => { const now=Date.now;Date.now=()=>now()+600001; });
+        at typeWord (/Users/carlos.lozanosoto/personal/repositories/home/tests/animal-quiz.spec.cjs:18:79)
+        at /Users/carlos.lozanosoto/personal/repositories/home/tests/animal-quiz.spec.cjs:128:3
+
+    Error Context: test-results/animal-quiz-animal-quiz-re-3f3fb-en-local-storage-is-blocked-phone-landscape/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/animal-quiz-animal-quiz-re-3f3fb-en-local-storage-is-blocked-phone-landscape/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/animal-quiz-animal-quiz-re-3f3fb-en-local-storage-is-blocked-phone-landscape/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [phone-landscape] › tests/animal-quiz.spec.cjs:121:1 › animal quiz remains playable when local storage is blocked
+  3 skipped
+  116 passed (4.7m)
