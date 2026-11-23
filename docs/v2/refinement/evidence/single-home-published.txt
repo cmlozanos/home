@@ -1,0 +1,3 @@
+PUBLISHED V2 https://cmlozanos.github.io/turbo-loop-legends/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/home/pulse-path/ native home, parent gate, font/shell loaded, no page errors
+PUBLISHED V2 https://cmlozanos.github.io/games/burbujas/ native home, parent gate, font/shell loaded, no page errors

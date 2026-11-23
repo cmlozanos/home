@@ -30,3 +30,21 @@ The user explicitly clarified GitHub is for web publication, not test acceptance
 Turbo dynamic camera makes the car larger on ordinary short-screen terrain while zooming out around actual loop radius and high jumps; loop safe area incorporates HUD/controls. Mixed input aggregation fixes keyboard/touch releases and alternate keys;36newinput tests,127localunit overall. Two real-input heavycar races repeated with final camera:both loops,jump,landing,7checkpoints,finish,0respawns. Native singleHome and3responsive/browsercontrol checks green. Shared36localChromium/WebKit plus22allHomeintegration and exact19kits green. GitHub only builds/publishes; remote test workflow removed.
 
 Acceptance limits: graphics are richer child-readable2D/3Dmaterials, not photorealism; physicalTab4,allcampaigncombinations and no-bug guarantee not claimed. Mandatory school font remains original local bytes, DOM and engine text verified in bounded samples.
+
+## Final exact branch heads
+
+|Repo|Branch|Verified origin head|
+|---|---|---|
+|home|main|`8ecc837d880c9c6d766dc6143f19cdcd13fe3df2`|
+|games|main|`0901d947809d2dd4584382bea34fdbcae8045e12`|
+|banana-party|master|`b5f5d58655c9d8f78617006727e10dbc57d57d6c`|
+|jump-the-car|master|`d2fd46eff567e5019a14fdf16887acb55c72e957`|
+|fancy-jumping-car|master|`5e0a6e679ebbbe8094c4aec5260522fe0643a63b`|
+|world-of-joy|master|`5e613e240b524419eda6c91257498f1197ffc4f9`|
+|turbo-loop-legends|main|`2e045f3f305796721c8ca262a096bb6f3ea2b2c1`|
+
+SubsequentHome documentation commit only may advance this head; runtime and tested bytes unchanged.
+
+Direct final public verification (not CI): Turbo/Pulse/Bubbles return HTTP200 with exact canonical sharedJS hash. Live740×360 browser:each0visibleduplicateHomes/1sharednativeHome, successful return; Adult gate/font/no-page-error smoke3/3. Remaining16share exact copied kernel and local native checks; no claim all live states inspected. Latest headmap above supersedes initial table.
+
+Self-evaluation:accuracy4/5(localunit/browser/model vs physical limits explicit),completeness4/5(19nativegraphics plus sharedHome,not all possible campaigns),clarity4/5,actionability5/5(publication+reprotests),concision4/5. Next realworld verification:favoriteTab4camera/controlcomfort and concrete child bug sequences. No additional hidden controls or sound activation.
