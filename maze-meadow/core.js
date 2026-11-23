@@ -30,7 +30,7 @@
     return { size: size, seed: seed >>> 0, cells: cells };
   }
   function move(maze, position, direction) {
-    if (direction < 0 || direction > 3 || !maze.cells[position] || maze.cells[position][direction]) return position;
+    if (!Number.isInteger(direction) || !Number.isInteger(position) || direction < 0 || direction > 3 || !maze.cells[position] || maze.cells[position][direction]) return position;
     var x = position % maze.size + directions[direction][0], y = Math.floor(position / maze.size) + directions[direction][1];
     if (x < 0 || y < 0 || x >= maze.size || y >= maze.size) return position;
     return y * maze.size + x;

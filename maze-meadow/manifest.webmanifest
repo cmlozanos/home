@@ -1,5 +1,6 @@
 {
   "id": "./",
+  "version": "2.0.0",
   "name": "El jardín de los caminos",
   "short_name": "Caminos",
   "description": "Pequeños laberintos para explorar con los dedos.",

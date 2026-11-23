@@ -1,0 +1,16 @@
+
+Running 11 tests using 1 worker
+
+  ✓   1 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › memory-garden:V2 shell/native home/parent/settings/offline (2.3s)
+  ✓   2 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › shape-studio:V2 shell/native home/parent/settings/offline (1.5s)
+  ✓   3 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › little-atelier:V2 shell/native home/parent/settings/offline (1.0s)
+  ✓   4 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › maze-meadow:V2 shell/native home/parent/settings/offline (1.3s)
+  ✓   5 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › nitro-highway:V2 shell/native home/parent/settings/offline (3.7s)
+  ✓   6 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › pocket-karts:V2 shell/native home/parent/settings/offline (1.8s)
+  ✓   7 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › pulse-path:V2 shell/native home/parent/settings/offline (2.0s)
+  ✓   8 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › animal-quiz:V2 shell/native home/parent/settings/offline (1.7s)
+  ✓   9 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › fruit-splash:V2 shell/native home/parent/settings/offline (2.3s)
+  ✓  10 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › orbit-lab:V2 shell/native home/parent/settings/offline (1.8s)
+  ✓  11 [chrome95] › tests/v2/all-games.spec.cjs:3:183 › rubik-solver:V2 shell/native home/parent/settings/offline (1.9s)
+
+  11 passed (23.9s)

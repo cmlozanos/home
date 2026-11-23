@@ -4,7 +4,7 @@
 
 Antes de jugar y cada diez minutos se resuelve una suma, resta o trazo de letra del sistema compartido. La partida, las entradas activas, el sonido y los temporizadores de juego se suspenden sin perder el progreso ni quitar una pausa manual. El reto funciona también al abrir la PWA sin conexión; cada entrada requiere uno nuevo. La copia local `learning-gate.js` procede de `../learning-gate/gate.js`.
 
-La salida «Todos los juegos» conduce a https://cmlozanos.github.io/games/. No necesita servidor Ubuntu. `make check` comprueba la sintaxis del módulo; las pruebas de integración están en `../tests/legacy-gates.spec.cjs`.
+En V2, Inicio vuelve al menú del mismo juego sin borrar partidas; el catálogo externo queda en Adultos. No necesita servidor Ubuntu. `make check` comprueba la sintaxis del módulo; las pruebas de integración están en `../tests/legacy-gates.spec.cjs`.
 
 Laboratorio de gravedad táctil para niños. Juego estático, sin cuentas, anuncios, servicios externos ni dependencias de ejecución. Abrir `index.html` mediante cualquier servidor HTTP; GitHub Pages sirve la carpeta directamente.
 
@@ -27,7 +27,7 @@ Laboratorio de gravedad táctil para niños. Juego estático, sin cuentas, anunc
 
 Integrador velocity Verlet con paso fijo 1/120 s, máximo 20 pasos por fotograma, gravedad mutua con suavizado de Plummer de 10 unidades y colisiones inelásticas con detección continua durante el movimiento. Los radios sólidos visibles coinciden con las superficies físicas; halos, anillos y colas son decorativos. La escala de masas, evolución, habitabilidad y tiempos es lúdica, no una predicción astronómica ni una reproducción de los parámetros privados del museo. La velocidad orbital inicial es solo una ayuda de colocación. Los bloqueos explícitos y las órbitas protegidas son restricciones educativas externas: no se exige conservación del momento frente a esos anclajes.
 
-Máximo 24 cuerpos, 100 puntos de trayectoria por cuerpo, 90 partículas y densidad de píxel máxima 1,5. Canvas2D sin WebGL, fuentes del sistema, scripts clásicos, cero descargas externas. Compatible por APIs con Chrome 95 y Safari con Pointer Events; no se garantiza una tasa de fotogramas concreta sin medir el dispositivo físico. Orientación libre, cámara que adapta el encuadre al área disponible. No se acumula tiempo al volver de segundo plano.
+Máximo 24 cuerpos, 100 puntos de trayectoria por cuerpo, 90 partículas y densidad de píxel máxima 1,5. Canvas2D sin WebGL, fuente local Playwrite ES, scripts clásicos, cero descargas externas. Compatible por APIs con Chrome 95 y Safari con Pointer Events; no se garantiza una tasa de fotogramas concreta sin medir el dispositivo físico. Orientación libre, cámara que adapta el encuadre al área disponible. No se acumula tiempo al volver de segundo plano.
 
 PWA instalable con manifiesto, iconos PNG y caché offline propia `orbit-lab-*`. Su service worker solo intercepta su carpeta y no elimina cachés de otros juegos. La navegación consulta la red; una apertura offline utiliza el documento precacheado. Al publicar cambios se deben incrementar juntos la versión de CSS/scripts en HTML y la versión/lista de recursos en `sw.js`.
 
@@ -42,3 +42,15 @@ make icons # regenerar PNG desde SVG con ImageMagick
 `?test=1` expone `window.__orbitDiagnostics`, una instantánea de solo lectura del estado para la automatización del navegador. No permite modificar la simulación. El padre del proyecto contiene el arnés de pruebas responsive/PWA del conjunto de juegos.
 
 Consulta [RESEARCH.md](RESEARCH.md) y la [auditoría de Stellar Playground](STELLAR_AUDIT.md) para las fuentes, diferencias y límites de la adaptación. El núcleo gravitatorio reutilizado conserva su [licencia MIT](vendor/LICENSE.gravity). El guardado v2 conserva edad, tamaño, bloqueos y vida, y sigue aceptando partidas v1. Las naves en tránsito y los efectos efímeros no se guardan.
+
+## Family V2 · 2.0.0
+
+Kit local `family-v2/`: fuente Playwrite ES (OFL), tema claro, controles de familia y puntos de la última hora. Los ajustes usan los mismos botones y conservan sus manejadores; la pausa familiar es independiente del reto educativo y de la pausa manual. Todos los modos y contenidos siguen disponibles sin requisitos de rango. No se migran ni borran partidas. Sonido apagado en cada carga. Los cuatro recursos del kit se precachean para uso offline.
+
+Validación local: `make check`. Las pruebas de navegador no sustituyen una tablet física ni conceden permisos de cámara.
+
+Inicio V2 conserva la URL y los guardados. Los controles de Adultos no sustituyen permisos del navegador; la cámara de Rubik sigue requiriendo permiso explícito.
+
+V2 corrige la colocación orbital de cuerpos escalados usando su radio físico y restablece la zona habitable al cambiar de escenario. Los tres descubrimientos originales tienen indicador 0/3 y recompensa, sin bloquear herramientas ni escenarios.
+
+Regresión V2: en Chromium se completó la creación de tres cuerpos por teclado, cambio Vida → Desde cero (zona habitable reiniciada), pausa manual y familiar, sonido desde el botón trasladado, Inicio con guardado y apertura offline. La prueba física de tablet y los tres descubrimientos juntos siguen pendientes; física/colisiones/vida se comprueban en `make check`.

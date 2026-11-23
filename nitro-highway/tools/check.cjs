@@ -8,3 +8,5 @@ const values = []; for (const hz of [30, 60, 120]) { s = H.make(1, 1); for (let 
 const before = JSON.stringify(s); s.finished = true; const finished = JSON.stringify(s); H.step(s, { throttle: true }, 5); assert.equal(JSON.stringify(s), finished); assert.notEqual(before, finished);
 assert.equal(fs.readFileSync('learning-gate.js', 'utf8'), fs.readFileSync('../learning-gate/gate.js', 'utf8'));
 console.log('PASS: 9 car/course finishes, projection, traffic, turbo jump, fixed 30/60/120 Hz, finished freeze, canonical gate');
+
+s = H.make(0,0); s.z=2500; s.traffic=[{z:2500,x:0,speed:290}]; H.step(s,{},1/120); assert.equal(s.bumps,0,'traffic moving away cannot hit a stationary player');

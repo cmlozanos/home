@@ -5,3 +5,7 @@ check:
 
 serve:
 	python3 -m http.server 4181
+
+.PHONY: check-browser
+check-browser:
+	node tools/check-v2-browser.cjs

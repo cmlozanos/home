@@ -9,3 +9,19 @@
 /* Long presses must not open touch callouts or select game artwork. */
 body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 input, textarea, select, [contenteditable]:not([contenteditable="false"]) { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
+
+/* Family V2: light controls, all tools and scenarios stay available. */
+html.family-v2,html.family-v2 body,.family-v2 #app{height:var(--family-height,100vh);overflow:visible;background:var(--family-page);color:var(--family-ink)}
+.family-v2 .topbar{padding:8px 12px;gap:8px}.family-v2 .brand{font-size:18px;letter-spacing:0}.family-v2 .header-actions:empty{display:none}
+.family-v2 .icon-button,.family-v2 .palette,.family-v2 .workbench,.family-v2 .dialog,.family-v2 .body-info{background:var(--family-panel);color:var(--family-ink);border:0;box-shadow:none}
+.family-v2 .body-button.selected,.family-v2 .workbench button[aria-pressed=true]{background:var(--family-button);color:var(--family-ink)}
+.family-v2 .body-label,.family-v2 .body-info span,.family-v2 .status,.family-v2 p,.family-v2 .eyebrow,.family-v2 .resume,.family-v2 .help-dialog summary{color:var(--family-ink);letter-spacing:0}
+.family-v2 .welcome{top:24%;max-width:75%}.family-v2 h1{font-size:clamp(26px,5vw,48px);letter-spacing:0;line-height:1.6}.family-v2 .start{letter-spacing:0;font-size:16px;margin-top:16px}
+.family-v2 .template-grid button{background:var(--family-button);border:0}.family-v2 .template-grid strong{color:var(--family-ink)}
+.family-v2 .side-tools{top:80px}.family-v2 .side-tools .icon-button{min-width:44px;min-height:44px}
+.family-v2 .workbench button{min-width:44px;min-height:44px}.family-v2 .hint{display:none}
+.family-v2 .status{top:76px}.family-v2 .body-info{top:110px}
+@media(max-width:650px){.family-v2 .body-button{height:72px;gap:8px}.family-v2 .body-label{font-size:8px}.family-v2 .workbench{bottom:104px}.family-v2 .welcome{max-width:86%}.family-v2 .palette{width:calc(100% - 16px)}}
+@media(max-height:520px) and (orientation:landscape){.family-v2 .workbench{bottom:72px}.family-v2 .body-button{height:52px}.family-v2 .welcome{top:22%;max-width:70%}.family-v2 h1{margin:4px 0;font-size:28px}.family-v2 .welcome p{margin:4px 0}.family-v2 .start{margin-top:8px;padding:10px 20px}.family-v2 .resume{position:static;padding:8px}}
+.family-v2 [data-family-setting]{width:auto;gap:8px;padding:8px 12px}
+.family-v2 .body-label{max-width:100%;overflow-wrap:anywhere;text-align:center;line-height:1.4;letter-spacing:0}.family-v2 .body-button{padding:5px}

@@ -1,0 +1,6 @@
+node tools/browser-check.cjs
+chrome95 360x740: defaults, touch, layout, cached board/sprites, idle sleep, keyboard, pause/gate, one RAF, persistence and offline OK
+chrome95 1024x768: defaults, touch, layout, cached board/sprites OK
+chrome95 844x390: defaults, touch, layout, cached board/sprites OK
+chrome95: real shot -> won, result controls and next level OK (response fixture only)
+chrome95: real shot -> lost, result controls and retry OK (response fixture only)

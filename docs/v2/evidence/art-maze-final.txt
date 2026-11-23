@@ -1,0 +1,11 @@
+
+Running 6 tests using 1 worker
+
+  ✓  1 [tablet] › tests/learning-art-maze.spec.cjs:14:1 › Atelier paints, stamps, erases, restores and downloads an actual PNG (1.7s)
+  ✓  2 [tablet] › tests/learning-art-maze.spec.cjs:47:1 › Meadow blocks walls, accepts touch, solves real paths, advances and changes size (1.3s)
+  ✓  3 [tablet] › tests/learning-art-maze.spec.cjs:69:3 › little-atelier remains playable without storage and at 320px width (793ms)
+  ✓  4 [tablet] › tests/learning-art-maze.spec.cjs:77:3 › little-atelier opens offline through its isolated PWA cache (3.1s)
+  ✓  5 [tablet] › tests/learning-art-maze.spec.cjs:69:3 › maze-meadow remains playable without storage and at 320px width (1.4s)
+  ✓  6 [tablet] › tests/learning-art-maze.spec.cjs:77:3 › maze-meadow opens offline through its isolated PWA cache (679ms)
+
+  6 passed (10.5s)

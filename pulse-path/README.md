@@ -9,3 +9,27 @@ Canvas 2D / JavaScript clásico compatible con Chrome 95; no WebGL, `roundRect`,
 `make check` valida sintaxis, colisiones, salto, gravedad, restauración y que los seis recorridos/dificultades sean completables e idénticos a 30/60/120 Hz. `make serve` sirve esta carpeta en el puerto 8080. Desde la raíz del repositorio, `make icons GAME=pulse-path` genera los PNG de instalación en `icons/`. Las pruebas Playwright del repositorio verifican entrada táctil/teclado, pausa, reintento, victoria y siguiente circuito. En `?test=1`, `window.__pulse.read()` ofrece una copia de diagnóstico solo de lectura; no modifica el estado.
 
 Créditos de terceros y procedencia concreta: [CREDITS.md](CREDITS.md). La verificación en Chromium 95 de escritorio no sustituye una prueba física en la tablet Android indicada.
+
+## Versión 2.0.0 — Family V2
+
+Integra la copia local del kit canónico `../family-v2/`: tema público con selector
+nativo, fuente manuscrita local, ajustes para adultos y sesión de una hora. Los
+botones originales de sonido, ayuda y opciones se trasladan conservando sus
+listeners; el audio siempre arranca apagado. La pausa familiar es independiente
+del reto educativo y de la pausa manual: cerrar un diálogo no desbloquea ninguno.
+
+Todos los coches/circuitos siguen accesibles. Se simplifica el HUD y se reducen
+los efectos y la resolución de render a un máximo de 1× para tablets antiguas;
+se conservan los circuitos y las claves de progreso existentes. Las correcciones
+de mecánica acotadas se detallan abajo. Las
+metas y logros reales aportan puntos con IDs estables por circuito, sin premiar
+abrir menús. La caché propia `2.0.0` precarga CSS/JS del kit con `?v=2.0.0`,
+`playwrite-es.ttf` y `OFL.txt`; conserva las cachés ajenas y el progreso guardado.
+
+Autorización de este lote: solo cambios locales en este juego; integración Git
+a cargo del agente principal, sin commit/push desde esta tarea.
+
+Inicio usa el menú nativo del juego y mantiene la URL. En carreras abandona
+la carrera actual sin premiarla y conserva coche/circuito seleccionados; Jugar
+inicia una carrera nueva. En Salto Neón mantiene selección y progreso guardado.
+El catálogo solo se ofrece desde el área de adultos del kit.

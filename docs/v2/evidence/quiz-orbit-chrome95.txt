@@ -1,0 +1,12 @@
+PASS animal-quiz 360x740 play, home/save, fit, reload/offline
+PASS fruit-splash 360x740 play, home/save, fit, reload/offline
+PASS orbit-lab 360x740 play, home/save, fit, reload/offline
+PASS rubik-solver 360x740 play, home/save, fit, reload/offline
+PASS animal-quiz 740x360 play, home/save, fit, reload/offline
+PASS fruit-splash 740x360 play, home/save, fit, reload/offline
+PASS orbit-lab 740x360 play, home/save, fit, reload/offline
+PASS rubik-solver 740x360 play, home/save, fit, reload/offline
+PASS animal-quiz 1280x800 play, home/save, fit, reload/offline
+PASS fruit-splash 1280x800 play, home/save, fit, reload/offline
+PASS orbit-lab 1280x800 play, home/save, fit, reload/offline
+PASS rubik-solver 1280x800 play, home/save, fit, reload/offline

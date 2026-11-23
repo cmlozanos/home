@@ -1,0 +1,15 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+const root = path.join(__dirname, '..');
+const Cube = require('../vendor/cubejs/cube.js');
+assert.equal(new Cube().asString(), 'UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB');
+const source = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
+const sandbox = {self: {addEventListener() {}}};
+vm.runInNewContext(source + '\nthis.assets = PRECACHE_ASSETS;', sandbox);
+for (const asset of sandbox.assets) assert.ok(fs.existsSync(path.join(root, asset === './' ? 'index.html' : asset.split('?')[0])), asset);
+assert.ok(source.includes('key.startsWith("rubik-solver-")'));
+assert.equal(JSON.parse(fs.readFileSync(path.join(root, 'manifest.webmanifest'))).version, '2.0.0');
+assert.doesNotMatch(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /cdn\.jsdelivr/);
+console.log('Rubik: solved model, local assets, version and isolated cache verified.');

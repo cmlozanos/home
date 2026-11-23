@@ -1,0 +1,13 @@
+
+Running 8 tests using 1 worker
+
+  ✓  1 [tablet] › tests/orbit-cancel.spec.cjs:23:1 › orbit: cancelling a touch drag restores the protected orbit and movement resumes (1.6s)
+  ✓  2 [tablet] › tests/orbit-cancel.spec.cjs:40:1 › orbit: window blur clears held contacts and restores the interrupted planet (811ms)
+  ✓  3 [tablet] › tests/orbit-evolution.spec.cjs:37:1 › orbit evolution: collision preset forms a black hole with conserved mass (3.1s)
+  ✓  4 [tablet] › tests/orbit-evolution.spec.cjs:51:1 › orbit evolution: nursery preset resumes near condensation and creates protostars (2.7s)
+  ✓  5 [tablet] › tests/orbit-evolution.spec.cjs:68:1 › orbit tools: move an existing planet without creating another body (1.4s)
+  ✓  6 [tablet] › tests/orbit-evolution.spec.cjs:86:1 › orbit tools: locking then orbiting protects a planet around its fixed sun (1.2s)
+  ✓  7 [tablet] › tests/orbit-evolution.spec.cjs:109:1 › orbit life: habitable planets develop ships and retain civilization after save/resume (1.7s)
+  ✓  8 [tablet] › tests/orbit-evolution.spec.cjs:134:1 › orbit palette: size changes both visible radius and mass for new planets (1.1s)
+
+  8 passed (15.2s)

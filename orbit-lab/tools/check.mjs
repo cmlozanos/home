@@ -196,3 +196,9 @@ console.log(`✓ 12 orbital periods stable: ${minRadius.toFixed(3)}–${maxRadiu
 console.log('✓ Momentum, collision mass/momentum, dense 24-body stability, Chrome 95 API checks, PWA icons');
 console.log('✓ Visible-rim and swept collisions, chain mergers, ignition, collapse and black-hole accretion');
 console.log('✓ Accelerated stellar stages and four mass-dependent remnants, nebula condensation, legacy saves, size and lock helpers');
+
+// A large planet must be placed using its actual collision radius, not its type default.
+const large = P.setSize(P.body('giant', 1, 0), 2.5);
+const placed = P.orbit(large.type, 1, 0, sun, large.radius);
+assert.ok(Math.hypot(placed.x - sun.x, placed.y - sun.y) > sun.radius + large.radius + 22);
+console.log('✓ Scaled-body orbital placement clears the true collision rims.');

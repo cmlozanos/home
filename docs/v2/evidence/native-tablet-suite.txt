@@ -1,0 +1,183 @@
+
+Running 26 tests using 1 worker
+
+  ✓   1 [tablet] › tests/games.spec.cjs:28:1 › fruit: real swipe scores, pause freezes, resume and retry work (3.3s)
+  ✓   2 [tablet] › tests/games.spec.cjs:50:1 › fruit: three difficulty choices and two independent fingers (2.8s)
+  ✘   3 [tablet] › tests/games.spec.cjs:70:1 › orbit: create bodies, pause, save, reload, resume and templates (3.0s)
+  ✘   4 [tablet] › tests/games.spec.cjs:96:1 › orbit: launch gesture and simultaneous touches are independent (2.1s)
+  ✓   5 [tablet] › tests/games.spec.cjs:115:3 › fruit-splash: controls fit, blocked storage does not break startup, portrait/landscape (10.4s)
+  ✓   6 [tablet] › tests/games.spec.cjs:138:3 › fruit-splash: installs offline shell without deleting other games caches (3.4s)
+  ✓   7 [tablet] › tests/games.spec.cjs:115:3 › orbit-lab: controls fit, blocked storage does not break startup, portrait/landscape (3.3s)
+  ✓   8 [tablet] › tests/games.spec.cjs:138:3 › orbit-lab: installs offline shell without deleting other games caches (2.0s)
+  ✓   9 [tablet] › tests/games.spec.cjs:156:1 › home links both new games and retains existing games (1.8s)
+  ✓  10 [tablet] › tests/games.spec.cjs:164:1 › fruit: adventure reaches game over and restarts with three lives (5.6s)
+  ✓  11 [tablet] › tests/games.spec.cjs:176:1 › fruit: sixty-second round finishes and can be replayed (1.0m)
+  ✓  12 [tablet] › tests/learning-art-maze.spec.cjs:13:1 › Atelier paints, stamps, erases, restores and downloads an actual PNG (6.6s)
+  ✘  13 [tablet] › tests/learning-art-maze.spec.cjs:46:1 › Meadow blocks walls, accepts touch, solves real paths, advances and changes size (2.5s)
+  ✘  14 [tablet] › tests/learning-art-maze.spec.cjs:68:3 › little-atelier remains playable without storage and at 320px width (45.0s)
+  ✓  15 [tablet] › tests/learning-art-maze.spec.cjs:76:3 › little-atelier opens offline through its isolated PWA cache (2.4s)
+  ✘  16 [tablet] › tests/learning-art-maze.spec.cjs:68:3 › maze-meadow remains playable without storage and at 320px width (45.1s)
+  ✓  17 [tablet] › tests/learning-art-maze.spec.cjs:76:3 › maze-meadow opens offline through its isolated PWA cache (2.3s)
+  ✓  18 [tablet] › tests/new-racing.spec.cjs:4:3 › nitro-highway: choose car/course, drive with touch, cancel, pause and retry (1.4s)
+  ✓  19 [tablet] › tests/new-racing.spec.cjs:26:3 › nitro-highway: ten-minute challenge freezes and preserves manual pause (2.0s)
+  ✓  20 [tablet] › tests/new-racing.spec.cjs:41:3 › nitro-highway: compact controls fit phone portrait and landscape (548ms)
+  ✓  21 [tablet] › tests/new-racing.spec.cjs:54:3 › nitro-highway: offline shell retains educational challenge and cache isolation (998ms)
+  ✓  22 [tablet] › tests/new-racing.spec.cjs:4:3 › pocket-karts: choose car/course, drive with touch, cancel, pause and retry (2.0s)
+  ✓  23 [tablet] › tests/new-racing.spec.cjs:26:3 › pocket-karts: ten-minute challenge freezes and preserves manual pause (2.2s)
+  ✓  24 [tablet] › tests/new-racing.spec.cjs:41:3 › pocket-karts: compact controls fit phone portrait and landscape (774ms)
+  ✓  25 [tablet] › tests/new-racing.spec.cjs:54:3 › pocket-karts: offline shell retains educational challenge and cache isolation (1.6s)
+  ✓  26 [tablet] › tests/touch.spec.cjs:3:1 › native multitouch cuts fruit and creates two planets (3.2s)
+
+
+  1) [tablet] › tests/games.spec.cjs:70:1 › orbit: create bodies, pause, save, reload, resume and templates
+
+    Error: locator.click: Error: strict mode violation: locator('#reset') resolved to 2 elements:
+        1) <button id="reset" class="icon-button" aria-label="Elegir un nuevo universo">…</button> aka getByRole('button', { name: 'Elegir un nuevo universo' })
+        2) <button id="reset">☆ Reiniciar puntos</button> aka getByText('☆ Reiniciar puntos')
+
+    Call log:
+      - waiting for locator('#reset')
+
+
+      88 |   await page.locator('#resume').click();
+      89 |   expect(await page.evaluate(()=>window.__orbitDiagnostics.bodyCount)).toBe(initial+1);
+    > 90 |   await page.locator('#reset').click();
+         |                                ^
+      91 |   await page.locator('[data-template="binary"]').click();
+      92 |   expect(await page.evaluate(()=>window.__orbitDiagnostics.bodies.filter(b=>b.type==='star').length)).toBe(2);
+      93 |   expect(errors).toEqual([]);
+        at /Users/carlos.lozanosoto/personal/repositories/home/tests/games.spec.cjs:90:32
+
+    Error Context: test-results/games-orbit-create-bodies--d0766-reload-resume-and-templates-tablet/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/games-orbit-create-bodies--d0766-reload-resume-and-templates-tablet/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/games-orbit-create-bodies--d0766-reload-resume-and-templates-tablet/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [tablet] › tests/games.spec.cjs:96:1 › orbit: launch gesture and simultaneous touches are independent
+
+    Error: locator.click: Error: strict mode violation: locator('#reset') resolved to 2 elements:
+        1) <button id="reset" class="icon-button" aria-label="Elegir un nuevo universo">…</button> aka getByRole('button', { name: 'Elegir un nuevo universo' })
+        2) <button id="reset">☆ Reiniciar puntos</button> aka getByText('☆ Reiniciar puntos')
+
+    Call log:
+      - waiting for locator('#reset')
+
+
+       97 |   const errors=trackErrors(page);
+       98 |   await page.goto('orbit-lab/?test=1');await page.locator('#start').click();await page.locator('#pause').click();
+    >  99 |   await page.locator('#reset').click();await page.locator('[data-template="empty"]').click();await page.locator('#pause').click();
+          |                                ^
+      100 |   await page.locator('[data-body="comet"]').click();
+      101 |   const box=await page.locator('#space').boundingBox();
+      102 |   await page.mouse.move(box.width*.25,box.height*.37);await page.mouse.down();await page.mouse.move(box.width*.35,box.height*.3,{steps:8});await page.mouse.up();
+        at /Users/carlos.lozanosoto/personal/repositories/home/tests/games.spec.cjs:99:32
+
+    Error Context: test-results/games-orbit-launch-gesture-23d67-ous-touches-are-independent-tablet/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/games-orbit-launch-gesture-23d67-ous-touches-are-independent-tablet/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/games-orbit-launch-gesture-23d67-ous-touches-are-independent-tablet/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [tablet] › tests/learning-art-maze.spec.cjs:46:1 › Meadow blocks walls, accepts touch, solves real paths, advances and changes size
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "Failed to execute 'ellipse' on 'CanvasRenderingContext2D': The major-axis radius provided (-0.1197) is negative.",
+    + ]
+
+      62 |   await page.getByRole('button',{name:'Mostrar camino de ayuda',exact:true}).click();await page.screenshot({path:testInfo.outputPath('meadow.png'),fullPage:true});
+      63 |   await page.reload();expect((await mazeState(page)).size).toBe(8);expect((await mazeState(page)).completed).toBe(1);
+    > 64 |   expect(errors).toEqual([]);
+         |                  ^
+      65 | });
+      66 |
+      67 | for(const slug of ['little-atelier','maze-meadow']){
+        at /Users/carlos.lozanosoto/personal/repositories/home/tests/learning-art-maze.spec.cjs:64:18
+
+    Error Context: test-results/learning-art-maze-Meadow-b-9e498-s-advances-and-changes-size-tablet/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/learning-art-maze-Meadow-b-9e498-s-advances-and-changes-size-tablet/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/learning-art-maze-Meadow-b-9e498-s-advances-and-changes-size-tablet/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [tablet] › tests/learning-art-maze.spec.cjs:68:3 › little-atelier remains playable without storage and at 320px width
+
+    Test timeout of 45000ms exceeded.
+
+    Error: locator.click: Test timeout of 45000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Ayuda y opciones', exact: true })
+
+
+      69 |     await page.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw new Error('storage disabled for test');}});});
+      70 |     await page.setViewportSize({width:320,height:640});const errors=await start(page,slug);
+    > 71 |     await page.getByRole('button',{name:'Ayuda y opciones',exact:true}).click();await expect(page.getByRole('button',{name:'Activar sonido',exact:true})).toBeVisible();await page.getByRole('button',{name:'Cerrar ayuda',exact:true}).click();
+         |                                                                         ^
+      72 |     if(slug==='maze-meadow'){const state=await mazeState(page);const delta=state.path[1];await page.keyboard.press(delta===1?'ArrowRight':'ArrowDown');expect((await mazeState(page)).position).not.toBe(0);}
+      73 |     else{const box=await page.locator('#paper').boundingBox();await page.touchscreen.tap(box.x+box.width/2,box.y+box.height/2);expect((await artState(page)).actions.length).toBe(1);}
+      74 |     expect(errors).toEqual([]);
+        at /Users/carlos.lozanosoto/personal/repositories/home/tests/learning-art-maze.spec.cjs:71:73
+
+    Error Context: test-results/learning-art-maze-little-a-30e8f--storage-and-at-320px-width-tablet/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/learning-art-maze-little-a-30e8f--storage-and-at-320px-width-tablet/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/learning-art-maze-little-a-30e8f--storage-and-at-320px-width-tablet/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [tablet] › tests/learning-art-maze.spec.cjs:68:3 › maze-meadow remains playable without storage and at 320px width
+
+    Test timeout of 45000ms exceeded.
+
+    Error: locator.click: Test timeout of 45000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Ayuda y opciones', exact: true })
+
+
+      69 |     await page.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw new Error('storage disabled for test');}});});
+      70 |     await page.setViewportSize({width:320,height:640});const errors=await start(page,slug);
+    > 71 |     await page.getByRole('button',{name:'Ayuda y opciones',exact:true}).click();await expect(page.getByRole('button',{name:'Activar sonido',exact:true})).toBeVisible();await page.getByRole('button',{name:'Cerrar ayuda',exact:true}).click();
+         |                                                                         ^
+      72 |     if(slug==='maze-meadow'){const state=await mazeState(page);const delta=state.path[1];await page.keyboard.press(delta===1?'ArrowRight':'ArrowDown');expect((await mazeState(page)).position).not.toBe(0);}
+      73 |     else{const box=await page.locator('#paper').boundingBox();await page.touchscreen.tap(box.x+box.width/2,box.y+box.height/2);expect((await artState(page)).actions.length).toBe(1);}
+      74 |     expect(errors).toEqual([]);
+        at /Users/carlos.lozanosoto/personal/repositories/home/tests/learning-art-maze.spec.cjs:71:73
+
+    Error Context: test-results/learning-art-maze-maze-mea-f8e53--storage-and-at-320px-width-tablet/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/learning-art-maze-maze-mea-f8e53--storage-and-at-320px-width-tablet/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/learning-art-maze-maze-mea-f8e53--storage-and-at-320px-width-tablet/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5 failed
+    [tablet] › tests/games.spec.cjs:70:1 › orbit: create bodies, pause, save, reload, resume and templates
+    [tablet] › tests/games.spec.cjs:96:1 › orbit: launch gesture and simultaneous touches are independent
+    [tablet] › tests/learning-art-maze.spec.cjs:46:1 › Meadow blocks walls, accepts touch, solves real paths, advances and changes size
+    [tablet] › tests/learning-art-maze.spec.cjs:68:3 › little-atelier remains playable without storage and at 320px width
+    [tablet] › tests/learning-art-maze.spec.cjs:68:3 › maze-meadow remains playable without storage and at 320px width
+  21 passed (3.8m)

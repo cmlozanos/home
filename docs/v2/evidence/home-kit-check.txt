@@ -1,0 +1,15 @@
+node --check family-v2/family.js
+node tools/verify-family-v2.mjs animal-quiz nitro-highway pocket-karts pulse-path fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow rubik-solver
+Family2 asset integration animal-quiz 5e16bffbb83d
+Family2 asset integration nitro-highway 5e16bffbb83d
+Family2 asset integration pocket-karts 5e16bffbb83d
+Family2 asset integration pulse-path 5e16bffbb83d
+Family2 asset integration fruit-splash 5e16bffbb83d
+Family2 asset integration orbit-lab 5e16bffbb83d
+Family2 asset integration memory-garden 5e16bffbb83d
+Family2 asset integration shape-studio 5e16bffbb83d
+Family2 asset integration little-atelier 5e16bffbb83d
+Family2 asset integration maze-meadow 5e16bffbb83d
+Family2 asset integration rubik-solver 5e16bffbb83d
+node --check apps.js
+Static app links verified: 18

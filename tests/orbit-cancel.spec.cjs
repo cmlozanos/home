@@ -3,7 +3,7 @@ const { test, expect } = require('./helpers/learning-fixture.cjs');
 async function protectedPlanet(page) {
   await page.goto('orbit-lab/?test=1');
   await page.locator('#start').click();
-  await page.locator('#reset').click();
+  await page.getByRole('button',{name:'Elegir un nuevo universo',exact:true}).click();
   await page.locator('[data-template="life"]').click();
   await page.locator('#pause').click();
   await page.locator('[data-tool="move"]').click();

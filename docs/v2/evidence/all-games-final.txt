@@ -1,0 +1,17 @@
+
+Running 12 tests using 1 worker
+
+  ✓   1 [tablet] › tests/v2/all-games.spec.cjs:3:183 › memory-garden:V2 shell/native home/parent/settings/offline (1.2s)
+  ✓   2 [tablet] › tests/v2/all-games.spec.cjs:3:183 › shape-studio:V2 shell/native home/parent/settings/offline (1.0s)
+  ✓   3 [tablet] › tests/v2/all-games.spec.cjs:3:183 › little-atelier:V2 shell/native home/parent/settings/offline (877ms)
+  ✓   4 [tablet] › tests/v2/all-games.spec.cjs:3:183 › maze-meadow:V2 shell/native home/parent/settings/offline (677ms)
+  ✓   5 [tablet] › tests/v2/all-games.spec.cjs:3:183 › nitro-highway:V2 shell/native home/parent/settings/offline (889ms)
+  ✓   6 [tablet] › tests/v2/all-games.spec.cjs:3:183 › pocket-karts:V2 shell/native home/parent/settings/offline (976ms)
+  ✓   7 [tablet] › tests/v2/all-games.spec.cjs:3:183 › pulse-path:V2 shell/native home/parent/settings/offline (1.5s)
+  ✓   8 [tablet] › tests/v2/all-games.spec.cjs:3:183 › animal-quiz:V2 shell/native home/parent/settings/offline (1.4s)
+  ✓   9 [tablet] › tests/v2/all-games.spec.cjs:3:183 › fruit-splash:V2 shell/native home/parent/settings/offline (1.1s)
+  ✓  10 [tablet] › tests/v2/all-games.spec.cjs:3:183 › orbit-lab:V2 shell/native home/parent/settings/offline (1.1s)
+  ✓  11 [tablet] › tests/v2/all-games.spec.cjs:3:183 › rubik-solver:V2 shell/native home/parent/settings/offline (1.4s)
+  ✓  12 [tablet] › tests/v2/family-shell.spec.cjs:2:1 › shared2 shell preserves native settings IDs, parent gate, score, theme, audio and pauses (578ms)
+
+  12 passed (13.7s)

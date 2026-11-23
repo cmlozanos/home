@@ -15,11 +15,11 @@
 (function () {
   'use strict';
   if (!window.LearningGate) { document.body.textContent = '↻ Recarga para cargar el reto'; return; }
-  var learningLocked = true, learningGate, learningAudioWasRunning = false;
+  var familyPaused = false, sessionId = Date.now().toString(36) + Math.random().toString(36).slice(2), learningLocked = true, learningGate, learningAudioWasRunning = false;
   var P = window.OrbitPhysics;
   var canvas = document.getElementById('space');
   var ctx = canvas.getContext('2d', { alpha: false });
-  var $ = function (id) { return document.getElementById(id); };
+  function $(id) { return document.getElementById(id); }
   var SAVE_KEY = 'orbit-lab-universe-v1';
   var MAX_BODIES = 24;
   var bodies = [], particles = [], pointers = {}, ships = [], waves = [];
@@ -30,6 +30,7 @@
   var dpr = Math.min(window.devicePixelRatio || 1, 1.5), background = document.createElement('canvas');
   var bg = background.getContext('2d'), lastTime = 0, accumulator = 0, trailClock = 0, elapsed = 0;
   var orbitCount = 0, created = 0, toastTimer, saveClock = 0, audioContext, previousFocus;
+  var sceneId = 0;
   var milestones = { created: false, orbit: false, family: false };
   var saveAvailable = false, installPrompt;
   try { saveAvailable = !!localStorage.getItem(SAVE_KEY); } catch (e) { /* Private browsing still permits play. */ }
@@ -61,7 +62,15 @@
       particles.push({ x: x, y: y, vx: Math.cos(angle) * velocity, vy: Math.sin(angle) * velocity, life: 1, color: color });
     }
   }
+  function discover(id, message) {
+    if (milestones[id]) return;
+    milestones[id] = true;
+    if (window.FamilyV2) FamilyV2.award(sessionId + ':scene:' + sceneId + ':' + id, 3);
+    updateStatus(); notify(Object.keys(milestones).every(function(key){return milestones[key];}) ? '¡Tres descubrimientos completados!' : message);
+  }
   function makeUniverse(kind) {
+    sceneId++;
+    showHabitat = false; $('habitat').setAttribute('aria-pressed', 'false');
     bodies = [P.body('star', 0, 0)];
     if (kind === 'solar') {
       bodies.push(P.orbit('rock', 100, -40, bodies[0]));
@@ -98,8 +107,12 @@
     updatePause(); resize(); canvas.focus();
   }
   function updateStatus() {
-    $('count').textContent = bodies.length;
-    $('orbit-count').textContent = orbitCount;
+    var missionCount = Object.keys(milestones).filter(function(key){return milestones[key];}).length;
+    var missionText = missionCount + '/3 ✦';
+    if ($('mission').textContent !== missionText) $('mission').textContent = missionText;
+    $('mission').setAttribute('aria-label', missionCount + ' de 3 descubrimientos: ' + (milestones.created ? 'tres cuerpos creados; ' : 'crea tres cuerpos; ') + (milestones.orbit ? 'órbita completada; ' : 'completa una órbita; ') + (milestones.family ? 'cinco tipos reunidos' : 'reúne cinco tipos'));
+    if ($('count').textContent !== String(bodies.length)) $('count').textContent = bodies.length;
+    if ($('orbit-count').textContent !== String(orbitCount)) $('orbit-count').textContent = orbitCount;
     $('count').setAttribute('aria-label', bodies.length + ' cuerpos celestes');
   }
   function updatePause() {
@@ -145,15 +158,15 @@
     canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
     background.width = canvas.width; background.height = canvas.height;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); bg.setTransform(dpr, 0, 0, dpr, 0, 0);
-    bg.fillStyle = '#080e22'; bg.fillRect(0, 0, width, height);
+    bg.fillStyle = '#f7f8fc'; bg.fillRect(0, 0, width, height);
     var nebula = bg.createRadialGradient(width * 0.8, height * 0.55, 0, width * 0.8, height * 0.55, width * 0.65);
-    nebula.addColorStop(0, '#162740'); nebula.addColorStop(0.48, '#10192f'); nebula.addColorStop(1, '#080e22');
+    nebula.addColorStop(0, '#dce8f7'); nebula.addColorStop(0.48, '#edf1fb'); nebula.addColorStop(1, '#f7f8fc');
     bg.fillStyle = nebula; bg.fillRect(0, 0, width, height);
     var seed = 187;
     function rand() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
     for (var i = 0; i < Math.min(230, width * height / 2800); i++) {
       var x = rand() * width, y = rand() * height, radius = rand() > 0.95 ? 1.6 : rand() * 0.8 + 0.3;
-      bg.globalAlpha = 0.18 + rand() * 0.65; bg.fillStyle = '#bccfe9'; bg.beginPath(); bg.arc(x, y, radius, 0, Math.PI * 2); bg.fill();
+      bg.globalAlpha = 0.18 + rand() * 0.65; bg.fillStyle = '#647b9e'; bg.beginPath(); bg.arc(x, y, radius, 0, Math.PI * 2); bg.fill();
     }
     bg.globalAlpha = 1;
   }
@@ -187,7 +200,7 @@
   function placeInOrbit(b) {
     var anchor = nearestStar(b);
     if (!anchor) { notify('☀ Busca una estrella más grande'); return; }
-    var orbital = P.orbit(b.type, b.x, b.y, anchor), locked = b.locked;
+    var orbital = P.orbit(b.type, b.x, b.y, anchor, b.radius), locked = b.locked;
     b.x = orbital.x; b.y = orbital.y; b.vx = orbital.vx; b.vy = orbital.vy; b.trail = [];
     if (locked) protectOrbit(b, anchor);
   }
@@ -203,13 +216,14 @@
     });
   }
   function create(pointer) {
+    if (familyPaused || learningLocked) return;
     if (bodies.length >= MAX_BODIES) { notify('✦ 24 cuerpos · empieza otro universo con ↺'); return; }
     var p = pointer.palette ? pointer.end : pointer.start;
     if (p.y < 70 || p.y > height - (height < 520 && width > height ? 120 : 155)) return;
     var pos = world(p.x, p.y), b = P.setSize(P.body(pointer.type, pos.x, pos.y), sizes[sizeIndex]);
     var anchor = nearestStar(b);
     if (anchor && b.type !== 'blackhole' && b.type !== 'nebula') {
-      var orbital = P.orbit(b.type, pos.x, pos.y, anchor);
+      var orbital = P.orbit(b.type, pos.x, pos.y, anchor, b.radius);
       b.x = orbital.x; b.y = orbital.y; b.vx = orbital.vx; b.vy = orbital.vy;
     }
     var dx = pointer.end.x - pointer.start.x, dy = pointer.end.y - pointer.start.y;
@@ -221,15 +235,15 @@
     bodies.push(b); inspected = b.id; created++;
     spark(b.x, b.y, P.types[b.type].color, 15); tone(290 + bodies.length * 28); updateStatus();
     if (created === 1) $('hint-text').textContent = 'Arrastra y suelta · lanza un planeta';
-    if (created >= 3 && !milestones.created) { milestones.created = true; notify('✦ ¡Ya eres un creador de mundos!'); }
+    if (created >= 3) discover('created', '✦ ¡Tres cuerpos creados!');
     if (created >= 5) $('hint').style.opacity = '0';
     var types = {};
     bodies.forEach(function (body) { types[body.type] = true; });
-    if (Object.keys(types).length >= 5 && !milestones.family) { milestones.family = true; notify('✦ ¡Una familia de cinco mundos!'); }
+    if (Object.keys(types).length >= 5) discover('family', '✦ ¡Cinco tipos reunidos!');
     save(false);
   }
   function pointerDown(e, paletteType) {
-    if (!started || !$('templates').hidden || !$('help-dialog').hidden || e.button > 0) return;
+    if (familyPaused || learningLocked || !started || !$('templates').hidden || !$('help-dialog').hidden || e.button > 0) return;
     if (Object.keys(pointers).length >= 10) return;
     if (paletteType) select(paletteType);
     var point = { x: e.clientX, y: e.clientY };
@@ -295,6 +309,7 @@
   });
   canvas.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && started) {
+      if (familyPaused || learningLocked) return;
       var angle = created * 2.4, radius = 130 + (created % 4) * 43;
       var p = project(cameraX + Math.cos(angle) * radius, cameraY + Math.sin(angle) * radius);
       create({ start: p, end: p, type: selected, palette: false }); e.preventDefault();
@@ -315,7 +330,7 @@
   $('reset').addEventListener('click', function () { previousFocus = document.activeElement; $('templates').hidden = false; $('close-templates').focus(); });
   function closeTemplates() { $('templates').hidden = true; if (previousFocus) previousFocus.focus(); }
   $('close-templates').addEventListener('click', closeTemplates);
-  $('help').addEventListener('click', function () { previousFocus = document.activeElement; $('help-dialog').hidden = false; $('close-help').focus(); });
+  $('help').addEventListener('click', function () { var familyDialog = document.querySelector('family-v2-shell').shadowRoot.querySelector('dialog'); if (familyDialog.open) familyDialog.close(); previousFocus = document.activeElement; $('help-dialog').hidden = false; $('close-help').focus(); });
   function closeHelp() { $('help-dialog').hidden = true; if (previousFocus) previousFocus.focus(); }
   $('close-help').addEventListener('click', closeHelp);
   $('help-dialog').addEventListener('keydown', function (e) {
@@ -400,7 +415,7 @@
       var climate = L.climate(b, bodies);
       ctx.strokeStyle = climate.habitable ? '#94edaa' : climate.flux > 1.65 ? '#ff9874' : '#83baff'; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.arc(0, 0, radius + 3, 0, Math.PI * 2); ctx.stroke();
-      if (b.lifeStage) { ctx.font = '16px system-ui'; ctx.textAlign = 'center'; ctx.fillStyle = '#f0fff6'; ctx.fillText(L.stages[b.lifeStage], 0, -radius - 8); }
+      if (b.lifeStage) { ctx.font = '16px "' + (window.FamilyV2 ? FamilyV2.fontFamily : 'system-ui') + '"'; ctx.textAlign = 'center'; ctx.fillStyle = '#f0fff6'; ctx.fillText(L.stages[b.lifeStage], 0, -radius - 8); }
     }
     if (b.type === 'giant') {
       ctx.save(); ctx.rotate(-0.45); ctx.strokeStyle = '#d8c0ee'; ctx.lineWidth = radius * 0.24;
@@ -462,7 +477,7 @@
       $('body-age').value = P.lifetimes[selectedBody.type] ? Math.min(1, selectedBody.stageAge / P.lifetimes[selectedBody.type]) : 1;
     }
     if (!started) {
-      var veil = ctx.createLinearGradient(0, 0, width, 0); veil.addColorStop(0, '#080e22ee'); veil.addColorStop(width > 650 ? 0.44 : 0.15, '#080e22bb'); veil.addColorStop(1, '#080e2200');
+      var veil = ctx.createLinearGradient(0, 0, width, 0); veil.addColorStop(0, '#f7f8fcee'); veil.addColorStop(width > 650 ? 0.44 : 0.15, '#f7f8fcbb'); veil.addColorStop(1, '#f7f8fc00');
       ctx.fillStyle = veil; ctx.fillRect(0, 0, width, height);
     }
   }
@@ -475,7 +490,7 @@
   }
   function tick(time) {
     if (learningGate) learningGate.check();
-    if (learningLocked) { lastTime = 0; accumulator = 0; requestAnimationFrame(tick); return; }
+    if (learningLocked || familyPaused) { lastTime = 0; accumulator = 0; requestAnimationFrame(tick); return; }
     requestAnimationFrame(tick);
     if (document.hidden) return;
     var dt = lastTime ? Math.min((time - lastTime) / 1000, 0.08) : 0;
@@ -505,7 +520,8 @@
             b.lastAngle = angle;
             if (Math.abs(b.angleTravel) >= Math.PI * 2) {
               b.angleTravel = 0; b.orbits++; orbitCount++; updateStatus();
-              if (started && !milestones.orbit) { milestones.orbit = true; notify('↻ ¡Tu primera vuelta al sol!'); tone(800); }
+              if (started && window.FamilyV2) FamilyV2.award(sessionId + ':orbit:' + b.id + ':' + b.orbits, 1);
+              if (started && !milestones.orbit) { discover('orbit', '↻ ¡Tu primera vuelta al sol!'); tone(800); }
             }
           }
         });
@@ -525,6 +541,7 @@
   if (location.search.indexOf('test=1') !== -1) {
     Object.defineProperty(window, '__orbitDiagnostics', { get: function () { return { started: started, paused: paused, speed: speed, sound: sound, tool: tool, size: sizes[sizeIndex], ships: ships.length, bodyCount: bodies.length, particles: particles.length, orbitCount: orbitCount, pointers: Object.keys(pointers).length, bodies: bodies.map(function (b) { var s = project(b.x, b.y); return { id: b.id, type: b.type, x: b.x, y: b.y, vx: b.vx, vy: b.vy, mass: b.mass, radius: b.radius, screenX: s.x, screenY: s.y, age: b.age, stageAge: b.stageAge, lifeStage: b.lifeStage || 0, locked: b.locked, held: b.held, orbitLocked: !!b.orbitLocked }; }) }; } });
   }
+  if (window.FamilyV2) FamilyV2.register({home:function(){cancelAllPointers();save(false);started=false;$('welcome').hidden=false;$('game-ui').hidden=true;$('resume').hidden=false;$('templates').hidden=true;$('help-dialog').hidden=true;},pause:function(){familyPaused=true;cancelAllPointers();lastTime=0;accumulator=0;if(audioContext)audioContext.suspend().catch(function(){});},resume:function(){familyPaused=false;lastTime=0;accumulator=0;if(!learningLocked&&sound&&audioContext)audioContext.resume().catch(function(){});}});
   makeUniverse('solar'); resize(); scale = Math.min(width, height) / 680; requestAnimationFrame(tick);
   learningGate = LearningGate.mount({gameId:'orbit-lab',onLock:function(){
     learningLocked=true;cancelAllPointers();lastTime=0;accumulator=0;
@@ -532,7 +549,7 @@
     if(learningAudioWasRunning)audioContext.suspend().catch(function(){});
   },onUnlock:function(){
     learningLocked=false;lastTime=0;accumulator=0;
-    if(learningAudioWasRunning&&sound)audioContext.resume().catch(function(){});
+    if(learningAudioWasRunning&&sound&&!familyPaused)audioContext.resume().catch(function(){});
   }});
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     window.addEventListener('load', function () { navigator.serviceWorker.register('./sw.js').catch(function () { /* Online play also works without offline installation. */ }); });

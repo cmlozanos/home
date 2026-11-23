@@ -1,0 +1,7 @@
+
+Running 2 tests using 1 worker
+
+  ✓  1 [tablet] › tests/games.spec.cjs:70:1 › orbit: create bodies, pause, save, reload, resume and templates (2.2s)
+  ✓  2 [tablet] › tests/games.spec.cjs:96:1 › orbit: launch gesture and simultaneous touches are independent (1.7s)
+
+  2 passed (5.0s)

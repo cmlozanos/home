@@ -1,4 +1,6 @@
 const { test, expect, solveGate } = require('./helpers/learning-fixture.cjs');
+// Native assertions pass; macOS Chromium151 trace finalization can stall after driving.
+test.use({trace:'off'});
 
 for (const [slug, debug] of [['nitro-highway', '__highway'], ['pocket-karts', '__karts']]) {
   test(slug + ': choose car/course, drive with touch, cancel, pause and retry', async ({ page }) => {

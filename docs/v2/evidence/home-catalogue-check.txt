@@ -1,0 +1,2 @@
+node --check apps.js
+Static app links verified: 18

@@ -1,0 +1,7 @@
+node tools/browser-check.cjs
+Jump native route and retry {"state":"won","jumps":4,"points":10,"distance":2440.5}
+Render diagnostic (desktop engine, not Android hardware) [{"mode":"normal","pixels":720000,"backgroundBuilds":0,"ms":8.2},{"mode":"light","pixels":320000,"backgroundBuilds":0,"ms":7.7}]
+PASS 1280x800 entry/touch/10min/hidden audio/zero paused draws/caches/light world invariance/HUD invalidation/explosion/timers/offline persistence
+Render diagnostic (desktop engine, not Android hardware) [{"mode":"normal","pixels":720000,"backgroundBuilds":0,"ms":7.7},{"mode":"light","pixels":320000,"backgroundBuilds":0,"ms":7.5}]
+PASS 360x740 entry/touch/10min/hidden audio/zero paused draws/caches/light world invariance/HUD invalidation/explosion/timers/offline persistence
+Browser 95.0.4630.0

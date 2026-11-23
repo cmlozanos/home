@@ -1,0 +1,8 @@
+
+Running 3 tests using 1 worker
+
+  ✓  1 tests/v2/native-family.spec.cjs:4:67 › burbujas:2.0 real entry/native home/settings/offline (1.3s)
+  ✓  2 tests/v2/native-family.spec.cjs:4:67 › buscaminas:2.0 real entry/native home/settings/offline (1.7s)
+  ✓  3 tests/v2/native-family.spec.cjs:4:67 › little-chef-academy:2.0 real entry/native home/settings/offline (14.1s)
+
+  3 passed (21.1s)

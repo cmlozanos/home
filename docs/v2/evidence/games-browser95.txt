@@ -1,0 +1,10 @@
+
+Running 5 tests using 1 worker
+
+  ✓  1 tests/catalogue-chef.spec.cjs:4:1 › catalogue links only to games, in the same tab, on a narrow phone (1.0s)
+  ✓  2 tests/catalogue-chef.spec.cjs:19:1 › Chef: Chrome95 layout, challenge, pause and isolated offline cache (25.0s)
+  ✓  3 tests/v2/native-family.spec.cjs:4:67 › burbujas:2.0 real entry/native home/settings/offline (704ms)
+  ✓  4 tests/v2/native-family.spec.cjs:4:67 › buscaminas:2.0 real entry/native home/settings/offline (778ms)
+  ✓  5 tests/v2/native-family.spec.cjs:4:67 › little-chef-academy:2.0 real entry/native home/settings/offline (11.2s)
+
+  5 passed (40.9s)

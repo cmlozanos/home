@@ -15,8 +15,8 @@
 (function () {
   'use strict';
   if (!window.LearningGate || !window.AnimalQuiz) { document.body.textContent = 'No se pudo cargar el reto. Recarga para jugar.'; return; }
-  var Q = window.AnimalQuiz, KEY = 'animal-quiz:local:v1', VERSION = '20260927-2';
-  var state, mode = null, current = null, typed = '', locked = true, hidden = document.hidden, helping = false;
+  var Q = window.AnimalQuiz, KEY = 'animal-quiz:local:v1', VERSION = '2.0.0';
+  var state, mode = null, current = null, typed = '', locked = true, hidden = document.hidden, helping = false, familyPaused = false, roundId = 0, sessionId = Date.now().toString(36) + Math.random().toString(36).slice(2);
   var timers = LearningGate.createTimers(), transition = null, feedbackTimer = null;
   var trophyNames = { primer_acierto:'Primer acierto', racha_3:'Tres aciertos seguidos', racha_5:'Cinco aciertos seguidos', escritor_novato:'Primera palabra', experto_animales:'Experto: cincuenta estrellas' };
   function $(id) { return document.getElementById(id); }
@@ -24,7 +24,7 @@
   function warning() { $('storage-status').hidden = false; }
   try { state = Q.restore(localStorage.getItem(KEY)); } catch (ignore) { state = Q.fresh(); warning(); }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (ignore) { warning(); } }
-  function canPlay() { return !locked && !hidden && !helping; }
+  function canPlay() { return !locked && !hidden && !helping && !familyPaused; }
   function syncTimers() { if (canPlay()) timers.resume(); else timers.pause(); }
   function clearTimers() { if (transition !== null) timers.clear(transition); if (feedbackTimer !== null) timers.clear(feedbackTimer); transition = feedbackTimer = null; }
   function player() { return state.profiles[mode]; }
@@ -47,7 +47,7 @@
   }
   function next() {
     if (!canPlay() || !mode) return;
-    clearTimers(); typed = ''; current = Q.round(player(), mode);
+    roundId++; clearTimers(); typed = ''; current = Q.round(player(), mode);
     screen('play'); $('play-layout').className = 'play-layout';
     $('quiz-phase').hidden = false; $('write-phase').hidden = true; $('result').hidden = true;
     $('feedback').textContent = ''; setAnimal(current.question.id); score();
@@ -66,6 +66,7 @@
     var correct = Q.answer(player(), current, index);
     if (correct === null) return;
     save(); score();
+    if (correct && window.FamilyV2) FamilyV2.award(sessionId + ':' + roundId + ':answer', 1);
     Array.prototype.forEach.call($('options').children, function (option) {
       option.disabled = true;
       if (option.getAttribute('aria-label') === current.question.name) option.classList.add('correct');
@@ -107,7 +108,7 @@
     typed += letter; renderWord();
     if (typed.length !== Q.target(current).length) return;
     if (Q.write(player(), current, typed)) {
-      save(); score(); $('write-phase').hidden = true; $('result').hidden = false; $('play-layout').className = 'play-layout';
+      save(); score(); if (window.FamilyV2) FamilyV2.award(sessionId + ':' + roundId + ':word', 1); $('write-phase').hidden = true; $('result').hidden = false; $('play-layout').className = 'play-layout';
       $('new-trophies').innerHTML = current.earned.map(trophy).join(''); $('feedback').innerHTML = icon('check');
     } else {
       typed = ''; $('word-slots').classList.add('wrong'); $('feedback').innerHTML = icon('retry');
@@ -133,7 +134,7 @@
   });
   $('profiles-button').addEventListener('click', profiles); $('ranking-back').addEventListener('click', profiles);
   $('ranking-button').addEventListener('click', ranking); $('next').addEventListener('click', next); $('erase').addEventListener('click', erase);
-  $('help-button').addEventListener('click', function () { if (locked) return; helping = true; $('help').hidden = false; syncTimers(); $('close-help').focus(); });
+  $('help-button').addEventListener('click', function () { var familyDialog = document.querySelector('family-v2-shell').shadowRoot.querySelector('dialog'); if (familyDialog.open) familyDialog.close(); if (locked) return; helping = true; $('help').hidden = false; syncTimers(); $('close-help').focus(); });
   function closeHelp() { if (locked) return; helping = false; $('help').hidden = true; syncTimers(); $('help-button').focus(); }
   $('close-help').addEventListener('click', closeHelp);
   $('help').addEventListener('keydown', function (event) {
@@ -150,6 +151,7 @@
     if (/^[A-ZÑÁÉÍÓÚÜ]$/.test(letter)) { event.preventDefault(); press(letter); }
   });
   document.addEventListener('visibilitychange', function () { hidden = document.hidden; syncTimers(); });
+  if (window.FamilyV2) FamilyV2.register({home:function () { clearTimers(); current = null; screen('profiles'); score(); },pause:function () { familyPaused = true; syncTimers(); },resume:function () { familyPaused = false; syncTimers(); }});
   score();
   LearningGate.mount({ gameId:'animal-quiz', onLock:function () { locked = true; syncTimers(); }, onUnlock:function () { locked = false; hidden = document.hidden; syncTimers(); } });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=' + VERSION).catch(function () {});

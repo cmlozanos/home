@@ -1,3 +1,4 @@
+const {clickSetting,adults}=require('./helpers/adult-settings.cjs');
 const {test,expect,solveGate}=require('./helpers/learning-fixture.cjs');
 const read=page=>page.evaluate(()=>window.__pulse.read());
 test('Salto Neón never jumps without input by default, including after retry',async({page})=>{
@@ -21,13 +22,13 @@ test('Salto Neón accepts taps and keys, pauses, retries and exposes child-frien
   expect((await read(page)).state.jumps).toBe(1);
   await page.locator('#retry').click();expect((await read(page)).state.status).toBe('playing');
   await page.keyboard.press('Space');await expect.poll(async()=>(await read(page)).state.jumps).toBeGreaterThan(0);
-  await page.locator('#home').click();await page.locator('[data-level="2"]').click();await page.locator('#difficulty').click();
+  await page.getByRole('button',{name:'Elegir circuito',exact:true}).click();await page.locator('[data-level="2"]').click();await clickSetting(page,'#difficulty');
   expect((await read(page)).selected).toBe(2);expect((await read(page)).difficulty).toBe('normal');
-  await page.locator('#help').click();await expect(page.locator('#sound')).toHaveAttribute('aria-pressed','false');await page.locator('#close-help').click();
+  await adults(page);await page.locator('#help').click();await expect(page.locator('#sound')).toHaveAttribute('aria-pressed','false');await page.locator('#close-help').click();await page.locator('family-v2-shell #close').click();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(errors).toEqual([]);
 });
 test('Salto Neón completes an actual authored course when assistance is explicitly enabled',async({page},info)=>{
-  test.setTimeout(45000);await page.goto('pulse-path/?test=1');await page.locator('#assist').click();await expect(page.locator('#assist')).toHaveAttribute('aria-pressed','true');await page.locator('#play').click();
+  test.setTimeout(45000);await page.goto('pulse-path/?test=1');await clickSetting(page,'#assist');await expect(page.locator('#assist')).toHaveAttribute('aria-pressed','true');await page.locator('#play').click();
   await expect(page.locator('#next')).toBeVisible({timeout:26000});const before=await read(page);expect(before.state.status).toBe('won');expect(before.completed[0]).toBe(true);expect(before.state.stars.length).toBeGreaterThan(0);
   await page.screenshot({path:info.outputPath('pulse-path-finish.png')});await page.locator('#next').click();expect((await read(page)).selected).toBe(1);expect((await read(page)).state.status).toBe('playing');
   await page.reload();expect((await read(page)).completed[0]).toBe(true);expect((await read(page)).assist).toBe(false);

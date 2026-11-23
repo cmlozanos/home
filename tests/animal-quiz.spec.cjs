@@ -1,3 +1,4 @@
+const {adults}=require('./helpers/adult-settings.cjs');
 const {test,expect} = require('@playwright/test');
 const {solveGate} = require('./helpers/learning-fixture.cjs');
 const KEY = 'animal-quiz:local:v1';
@@ -31,7 +32,7 @@ test('animal quiz starts gated without personal data, API calls or automatic pro
   await expect(page.locator('#play')).toBeHidden();
   await solveGate(page);
   expect(await page.evaluate(key=>localStorage.getItem(key),KEY)).toBeNull();
-  await expect(page.getByRole('link',{name:'Todos los juegos'})).toHaveAttribute('href','https://cmlozanos.github.io/games/');
+  const url=page.url();await page.getByRole('button',{name:'Inicio del juego',exact:true}).click();expect(page.url()).toBe(url);await adults(page);await expect(page.locator('family-v2-shell #catalogue')).toHaveAttribute('href','https://cmlozanos.github.io/games/');await page.locator('family-v2-shell #close').click();
   expect(requests.filter(url=>/\/api\/|trycloudflare|cdnjs/.test(url))).toEqual([]);
   expect(errors).toEqual([]);
 });
@@ -86,7 +87,7 @@ test('animal quiz pauses feedback timers and preserves writing through timed gat
   await solveGate(page);
   await expect(page.locator('#write-phase')).toBeVisible();
   await page.locator('[data-letter="L"]').click();
-  await page.getByRole('button',{name:'Ayuda',exact:true}).click();
+  await adults(page);await page.getByRole('button',{name:'Ayuda',exact:true}).click();
   await expect(page.locator('#close-help')).toBeFocused();
   await page.keyboard.press('Shift+Tab');
   await expect(page.locator('#help a')).toBeFocused();
@@ -97,7 +98,7 @@ test('animal quiz pauses feedback timers and preserves writing through timed gat
   await expect(page.locator('#word-slots')).toHaveAttribute('aria-label','Letras escritas: L');
   await page.keyboard.press('Escape');
   await expect(page.locator('#help')).toBeHidden();
-  await expect(page.locator('#help-button')).toBeFocused();
+  await expect(page.locator('#help')).toBeHidden();
   await typeWord(page,'EÓN');
   await expect(page.locator('#result')).toBeVisible();
   await expect(page.locator('#stars')).toHaveText('2');

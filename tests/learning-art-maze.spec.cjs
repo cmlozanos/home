@@ -1,3 +1,4 @@
+const {adults}=require('./helpers/adult-settings.cjs');
 const {test,expect}=require('./helpers/learning-fixture.cjs');
 
 async function artState(page){return page.evaluate(()=>window.__atelier.read());}
@@ -52,7 +53,7 @@ test('Meadow blocks walls, accepts touch, solves real paths, advances and change
   await page.touchscreen.tap(box.x+state.geometry.x+(next%state.size+.5)*state.geometry.cell,box.y+state.geometry.y+(Math.floor(next/state.size)+.5)*state.geometry.cell);
   expect((await mazeState(page)).position).toBe(next);
   await page.getByRole('button',{name:'Mostrar camino de ayuda',exact:true}).click();expect((await mazeState(page)).hint).toBe(true);
-  const names=['Arriba','Derecha','Abajo','Izquierda'];state=await mazeState(page);const route=state.path.slice();
+  const names=['Arriba','Derecha','Abajo','Izquierda'];state=await mazeState(page);const route=state.path.slice(state.path.indexOf(state.position));
   for(let i=1;i<route.length;i++){const delta=route[i]-route[i-1];const d=delta===1?1:delta===-1?3:delta===state.size?2:0;await page.getByRole('button',{name:names[d],exact:true}).click();}
   await expect(page.getByRole('button',{name:'Jugar siguiente laberinto',exact:true})).toBeVisible();state=await mazeState(page);expect(state.won).toBe(true);expect(state.position).toBe(15);expect(state.completed).toBe(1);expect(state.collected.length).toBe(3);
   await page.getByRole('button',{name:'Jugar siguiente laberinto',exact:true}).click();expect((await mazeState(page)).round).toBe(1);expect((await mazeState(page)).position).toBe(0);
@@ -68,8 +69,8 @@ for(const slug of ['little-atelier','maze-meadow']){
   test(slug+' remains playable without storage and at 320px width',async({page})=>{
     await page.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw new Error('storage disabled for test');}});});
     await page.setViewportSize({width:320,height:640});const errors=await start(page,slug);
-    await page.getByRole('button',{name:'Ayuda y opciones',exact:true}).click();await expect(page.getByRole('button',{name:'Activar sonido',exact:true})).toBeVisible();await page.getByRole('button',{name:'Cerrar ayuda',exact:true}).click();
-    if(slug==='maze-meadow'){const state=await mazeState(page);const delta=state.path[1];await page.keyboard.press(delta===1?'ArrowRight':'ArrowDown');expect((await mazeState(page)).position).not.toBe(0);}
+    await adults(page);await expect(page.getByRole('button',{name:'Activar sonido',exact:true})).toBeVisible();await page.locator('family-v2-shell #close').click();
+    if(slug==='maze-meadow'){const state=await mazeState(page);const delta=state.path[1];await page.locator('#maze').focus();await page.keyboard.press(delta===1?'ArrowRight':'ArrowDown');expect((await mazeState(page)).position).not.toBe(0);}
     else{const box=await page.locator('#paper').boundingBox();await page.touchscreen.tap(box.x+box.width/2,box.y+box.height/2);expect((await artState(page)).actions.length).toBe(1);}
     expect(errors).toEqual([]);
   });

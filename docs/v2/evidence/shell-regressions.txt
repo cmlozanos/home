@@ -1,0 +1,15 @@
+
+Running 10 tests using 1 worker
+
+  ✓   1 [tablet] › tests/v2/shell-regressions.spec.cjs:34:1 › learning deadline closes Adult modal and leaves the actual challenge usable (762ms)
+  ✓   2 [tablet] › tests/v2/shell-regressions.spec.cjs:58:1 › theme keyboard events stay inside the shell, native controls still receive keys (324ms)
+  ✓   3 [tablet] › tests/v2/shell-regressions.spec.cjs:73:1 › cookie remains authoritative when localStorage reads succeed but writes throw (281ms)
+  ✓   4 [tablet] › tests/v2/shell-regressions.spec.cjs:95:55 › keyboard extends session activity without disabling genuine expiry (296ms)
+  ✓   5 [tablet] › tests/v2/shell-regressions.spec.cjs:95:55 › pointer movement extends session activity without disabling genuine expiry (309ms)
+  ✓   6 [safari] › tests/v2/shell-regressions.spec.cjs:34:1 › learning deadline closes Adult modal and leaves the actual challenge usable (1.4s)
+  ✓   7 [safari] › tests/v2/shell-regressions.spec.cjs:58:1 › theme keyboard events stay inside the shell, native controls still receive keys (312ms)
+  ✓   8 [safari] › tests/v2/shell-regressions.spec.cjs:73:1 › cookie remains authoritative when localStorage reads succeed but writes throw (269ms)
+  ✓   9 [safari] › tests/v2/shell-regressions.spec.cjs:95:55 › keyboard extends session activity without disabling genuine expiry (304ms)
+  ✓  10 [safari] › tests/v2/shell-regressions.spec.cjs:95:55 › pointer movement extends session activity without disabling genuine expiry (313ms)
+
+  10 passed (8.4s)

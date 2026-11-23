@@ -165,6 +165,14 @@
     solverReadyReject = reject;
   });
 
+  let familyPaused = false;
+  const familyWaiters = [];
+  function familyReady() { return familyPaused ? new Promise(resolve => familyWaiters.push(resolve)) : Promise.resolve(); }
+  if (window.FamilyV2) FamilyV2.register({
+    home() { setInputMode("manual"); elements.solutionPanel.hidden = true; window.scrollTo(0, 0); },
+    pause() { familyPaused = true; document.documentElement.classList.add("rubik-family-paused"); },
+    resume() { familyPaused = false; document.documentElement.classList.remove("rubik-family-paused"); familyWaiters.splice(0).forEach(resolve => resolve()); },
+  });
   init();
 
   function init() {
@@ -271,6 +279,7 @@
     });
 
     elements.clearBtn.addEventListener("click", () => {
+      if (!window.confirm("¿Vaciar las caras pintadas?")) return;
       cubeState = createEmptyState();
       saveState();
       renderCube3d();
@@ -291,12 +300,14 @@
       if (solutionAnimating || currentStepIndex >= solutionMoves.length) return;
       await executeCurrentSolutionMove();
       currentStepIndex += 1;
+      if (currentStepIndex === solutionMoves.length && window.FamilyV2) FamilyV2.award("completed:" + solutionInitialFacelets, 3);
       renderCurrentStep();
     });
 
     elements.copySolutionBtn.addEventListener("click", async () => {
       const algorithm = solutionMoves.join(" ");
       if (!algorithm) return;
+      if (!window.confirm("¿Copiar el algoritmo al portapapeles?")) return;
       if (!navigator.clipboard) {
         showValidation("warn", "Tu navegador no permite copiar automáticamente. Selecciona los movimientos desde la lista.");
         return;
@@ -344,16 +355,18 @@
         });
       }
     } catch {
-      localStorage.removeItem(STORAGE_KEY);
+      // Restricted storage must not prevent manual input or solving.
     }
   }
 
   function saveState() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cubeState));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cubeState)); }
+    catch { showValidation("warn", "Guardado no disponible. Puedes resolver durante esta sesión."); }
   }
 
   function loadSavedSpeed() {
-    const savedSpeed = Number.parseFloat(localStorage.getItem(SPEED_STORAGE_KEY));
+    let savedSpeed;
+    try { savedSpeed = Number.parseFloat(localStorage.getItem(SPEED_STORAGE_KEY)); } catch { return; }
     if (Number.isFinite(savedSpeed)) {
       animationSpeed = clamp(savedSpeed, MIN_ANIMATION_SPEED, MAX_ANIMATION_SPEED);
     }
@@ -363,7 +376,8 @@
     const nextSpeed = clamp(Number.parseFloat(value), MIN_ANIMATION_SPEED, MAX_ANIMATION_SPEED);
     animationSpeed = Number.isFinite(nextSpeed) ? nextSpeed : DEFAULT_ANIMATION_SPEED;
     applyMotionSpeed();
-    localStorage.setItem(SPEED_STORAGE_KEY, String(animationSpeed));
+    try { localStorage.setItem(SPEED_STORAGE_KEY, String(animationSpeed)); }
+    catch { showValidation("warn", "La velocidad solo se conservará durante esta sesión."); }
   }
 
   function applyMotionSpeed() {
@@ -530,6 +544,7 @@
   }
 
   function paintSticker(face, index) {
+    if (familyPaused) return;
     if (index === 4) return;
     cubeState[face][index] = activeColor;
     selectedFace = face;
@@ -545,6 +560,7 @@
   }
 
   function startCubeDrag(event) {
+    if (familyPaused) return;
     dragState = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -920,7 +936,9 @@
       const algorithm = await requestSolution(validation.facelets);
       solutionMoves = algorithm.trim() ? algorithm.trim().split(/\s+/) : [];
       showValidation("ok", `Solución calculada con ${solutionMoves.length} movimientos.`);
+      await familyReady();
       renderSolution(solutionMoves, validation.facelets);
+
     } catch (error) {
       showValidation("error", `No se pudo resolver este estado: ${error.message || error}`);
     } finally {
@@ -1136,6 +1154,7 @@
     renderSolutionCube(faceletsToState(cube.asString()), turn);
     elements.solutionMoveBadge.textContent = `Ejecutando ${move}...`;
     await wait(turn.duration);
+    await familyReady();
     cube.move(move);
     renderSolutionCube(faceletsToState(cube.asString()));
     solutionAnimating = false;

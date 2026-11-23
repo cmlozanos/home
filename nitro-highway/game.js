@@ -15,32 +15,32 @@
 (function () {
   'use strict';
   var H = Highway, $ = function (id) { return document.getElementById(id); }, canvas = $('road'), ctx = canvas.getContext('2d');
-  var selectedCar = 0, selectedTrack = 0, s = H.make(0, 0), input = { assist: true }, running = false, paused = false, blocked = true, sound = false, audio, gate;
-  var w = 800, h = 600, last = 0, accumulator = 0, shown = false, pointerKeys = {};
-  function resize() { w = innerWidth; h = innerHeight; var d = Math.min(1.5, devicePixelRatio || 1); canvas.width = Math.round(w * d); canvas.height = Math.round(h * d); ctx.setTransform(d, 0, 0, d, 0, 0); }
-  function clearInput() { var assist = input.assist; input = { assist: assist }; pointerKeys = {}; document.querySelectorAll('[data-input]').forEach(function (b) { b.classList.remove('held'); }); }
+  var selectedCar = 0, selectedTrack = 0, s = H.make(0, 0), input = { assist: true }, running = false, paused = false, blocked = true, familyPaused = false, sound = false, audio, gate;
+  var w = 800, h = 600, last = 0, accumulator = 0, shown = false, pointerKeys = {}, keyboardKeys = {};
+  function resize() { w = innerWidth; h = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--family-height')) || innerHeight; var d = Math.min(1, devicePixelRatio || 1); canvas.width = Math.round(w * d); canvas.height = Math.round(h * d); ctx.setTransform(d, 0, 0, d, 0, 0); }
+  function clearInput() { var assist = input.assist; input = { assist: assist }; pointerKeys = {}; keyboardKeys = {}; document.querySelectorAll('[data-input]').forEach(function (b) { b.classList.toggle('held', !!input[b.dataset.input]); }); }
   function allowed() { if (gate) gate.check(); return !blocked; }
-  function tone(freq) { if (!sound || blocked) return; try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); var o = audio.createOscillator(), g = audio.createGain(); o.frequency.value = freq; g.gain.setValueAtTime(.055, audio.currentTime); g.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .16); o.connect(g); g.connect(audio.destination); o.start(); o.stop(audio.currentTime + .17); } catch (_) {} }
+  function tone(freq) { if (!sound || blocked || familyPaused || paused) return; try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); var o = audio.createOscillator(), g = audio.createGain(); o.frequency.value = freq; g.gain.setValueAtTime(.055, audio.currentTime); g.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .16); o.connect(g); g.connect(audio.destination); o.start(); o.stop(audio.currentTime + .17); } catch (_) {} }
   function choices(id, choices, car) { choices.forEach(function (item, i) { var b = document.createElement('button'); b.setAttribute('aria-label', item.name); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); b.className = i === 0 ? 'selected' : ''; b.dataset.choice = String(i); if (car) { var swatch = document.createElement('span'); swatch.className = 'swatch'; swatch.style.background = item.color; b.appendChild(swatch); } else b.textContent = item.icon; b.onclick = function () { if (!allowed()) return; if (car) selectedCar = i; else selectedTrack = i; $(id).querySelectorAll('button').forEach(function (el, j) { el.classList.toggle('selected', j === i); el.setAttribute('aria-pressed', String(j === i)); }); if (!running) s = H.make(selectedTrack, selectedCar); }; $(id).appendChild(b); }); }
   choices('cars', H.cars, true); choices('tracks', H.tracks, false);
-  function start() { if (!allowed()) return; s = H.make(selectedTrack, selectedCar); running = true; paused = false; shown = false; accumulator = 0; clearInput(); $('menu').hidden = true; $('result').hidden = true; $('hud').hidden = false; $('controls').hidden = false; $('pause').setAttribute('aria-label', 'Pausar'); tone(460); }
+  function start() { raceInstance++;  if (!allowed()) return; s = H.make(selectedTrack, selectedCar); running = true; paused = false; shown = false; last = 0; accumulator = 0; clearInput(); $('menu').hidden = true; $('result').hidden = true; $('hud').hidden = false; $('controls').hidden = false; $('pause').setAttribute('aria-label', 'Pausar'); tone(460); }
   function result(finish) { paused = true; clearInput(); $('result').hidden = false; $('result-icon').textContent = finish ? '🏆' : 'Ⅱ'; $('result-title').textContent = finish ? '¡Meta!' : 'Pausa'; $('result-stats').textContent = finish ? '⭐ ' + Math.round(s.time) + ' s   ·   ↗ ' + s.jumps : '🚘  ' + H.tracks[s.track].icon; $('next').setAttribute('aria-label', finish ? 'Siguiente circuito' : 'Continuar'); }
   $('play').onclick = start; $('retry').onclick = start;
-  $('next').onclick = function () { if (!allowed()) return; if (s.finished) { selectedTrack = (selectedTrack + 1) % H.tracks.length; $('tracks').querySelectorAll('button')[selectedTrack].click(); start(); } else { paused = false; accumulator = 0; $('result').hidden = true; } };
+  $('next').onclick = function () { if (!allowed()) return; if (s.finished) { selectedTrack = (selectedTrack + 1) % H.tracks.length; $('tracks').querySelectorAll('button')[selectedTrack].click(); start(); } else { paused = false; last = 0; accumulator = 0; $('result').hidden = true; } };
   $('garage').onclick = function () { if (!allowed()) return; running = false; paused = false; $('result').hidden = true; $('menu').hidden = false; $('controls').hidden = true; $('hud').hidden = true; clearInput(); };
   $('pause').onclick = function () { if (!allowed() || !running || s.finished) return; if (paused) $('next').click(); else result(false); };
   $('assist').onclick = function () { if (!allowed()) return; input.assist = !input.assist; $('assist').setAttribute('aria-pressed', String(input.assist)); $('assist').setAttribute('aria-label', 'Ayuda de aceleración ' + (input.assist ? 'activada' : 'desactivada')); $('assist').textContent = input.assist ? '🤝 ✓' : '🤝 ○'; };
-  $('help').onclick = function () { if (allowed()) $('guide').hidden = !$('guide').hidden; };
-  $('sound').onclick = function () { if (!allowed()) return; sound = !sound; $('sound').textContent = sound ? '🔊' : '🔇'; $('sound').setAttribute('aria-pressed', String(sound)); $('sound').setAttribute('aria-label', sound ? 'Desactivar sonido' : 'Activar sonido'); if (sound && audio) audio.resume().catch(function () {}); tone(620); };
+  $('help').onclick = function () { if (allowed()) { $('guide').setAttribute('slot', 'family-settings'); this.parentNode.appendChild($('guide')); $('guide').hidden = !$('guide').hidden; } };
+  $('sound').onclick = function () { if (!allowed()) return; sound = !sound; $('sound').textContent = sound ? '🔊' : '🔇'; $('sound').setAttribute('aria-pressed', String(sound)); $('sound').setAttribute('aria-label', sound ? 'Desactivar sonido' : 'Activar sonido'); if (sound && audio && !familyPaused && !paused) audio.resume().catch(function () {}); tone(620); };
   document.querySelectorAll('[data-input]').forEach(function (b) {
-    b.addEventListener('pointerdown', function (e) { if (!allowed() || paused || !running) return; e.preventDefault(); input[b.dataset.input] = true; pointerKeys[e.pointerId] = b.dataset.input; b.classList.add('held'); try { b.setPointerCapture(e.pointerId); } catch (_) {} });
-    function up(e) { delete pointerKeys[e.pointerId]; input[b.dataset.input] = Object.keys(pointerKeys).some(function (id) { return pointerKeys[id] === b.dataset.input; }); b.classList.remove('held'); }
+    b.addEventListener('pointerdown', function (e) { if (!allowed() || familyPaused || paused || !running) return; e.preventDefault(); input[b.dataset.input] = true; pointerKeys[e.pointerId] = b.dataset.input; b.classList.add('held'); try { b.setPointerCapture(e.pointerId); } catch (_) {} });
+    function up(e) { delete pointerKeys[e.pointerId]; input[b.dataset.input] = Object.keys(keyboardKeys).some(function (key) { return keyboardKeys[key] === b.dataset.input; }) || Object.keys(pointerKeys).some(function (id) { return pointerKeys[id] === b.dataset.input; }); b.classList.toggle('held', !!input[b.dataset.input]); }
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('lostpointercapture', up);
   });
   var keyMap = { ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right', ArrowUp: 'throttle', w: 'throttle', ArrowDown: 'brake', s: 'brake', ' ': 'boost' };
-  addEventListener('keydown', function (e) { if (!allowed()) return; if (e.key === 'Escape') $('pause').click(); if (keyMap[e.key] && running && !paused) { e.preventDefault(); input[keyMap[e.key]] = true; } });
-  addEventListener('keyup', function (e) { if (keyMap[e.key]) input[keyMap[e.key]] = false; });
-  addEventListener('blur', clearInput); document.addEventListener('visibilitychange', function () { clearInput(); last = 0; accumulator = 0; }); addEventListener('resize', resize);
+  addEventListener('keydown', function (e) { if ((e.composedPath&&e.composedPath().some(function(n){return n.tagName==='FAMILY-V2-SHELL';})) || !allowed() || familyPaused || (e.target.closest && e.target.closest('input,select,textarea,dialog'))) return; if (e.key === 'Escape') $('pause').click(); if (keyMap[e.key] && running && !paused) { e.preventDefault(); keyboardKeys[e.key] = keyMap[e.key]; input[keyMap[e.key]] = true; } });
+  addEventListener('keyup', function (e) { if (keyMap[e.key]) { delete keyboardKeys[e.key]; input[keyMap[e.key]] = Object.keys(keyboardKeys).some(function (key) { return keyboardKeys[key] === keyMap[e.key]; }) || Object.keys(pointerKeys).some(function (id) { return pointerKeys[id] === keyMap[e.key]; }); } });
+  addEventListener('blur', clearInput); document.addEventListener('visibilitychange', function () { clearInput(); last = 0; accumulator = 0; }); addEventListener('resize', function () { requestAnimationFrame(resize); });
   function polygon(points, fill) { ctx.fillStyle = fill; ctx.beginPath(); points.forEach(function (p, i) { if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); }); ctx.closePath(); ctx.fill(); }
   function car(x, y, size, color, boost, tilt) {
     ctx.save(); ctx.translate(x, y); ctx.rotate(tilt || 0); ctx.scale(size / 120, size / 120);
@@ -63,8 +63,8 @@
     function bend(z) { return (Math.sin((s.z + z) / 2100) - Math.sin(s.z / 2100) - Math.cos(s.z / 2100) * z / 2100) * 420 * track.curve; }
     // Camera sits behind the player: objects at race distance zero meet its wheels.
     function point(z) { return H.project({ x: bend(z), y: 0, z: z + 1000 }, s.x * 1100, 620, 0, 1, w, h, 1100); }
-    for (var z = 10000; z > -550; z -= 150) {
-      var far = point(z), near = point(z - 150), stripe = Math.floor((s.z + z) / 300) % 2;
+    for (var z = 10000; z > -550; z -= 250) {
+      var far = point(z), near = point(z - 250), stripe = Math.floor((s.z + z) / 300) % 2;
       polygon([[far.x - far.w * 1.10, far.y], [far.x + far.w * 1.10, far.y], [near.x + near.w * 1.10, near.y], [near.x - near.w * 1.10, near.y]], stripe ? '#fff2d1' : '#e37566');
       polygon([[far.x - far.w, far.y], [far.x + far.w, far.y], [near.x + near.w, near.y], [near.x - near.w, near.y]], stripe ? track.road : '#465867');
       if (stripe) [-.33, .33].forEach(function (lane) { polygon([[far.x + far.w * (lane - .008), far.y], [far.x + far.w * (lane + .008), far.y], [near.x + near.w * (lane + .008), near.y], [near.x + near.w * (lane - .008), near.y]], '#f7efdccc'); });
@@ -74,16 +74,24 @@
     var lift = s.flight ? Math.sin(Math.PI * s.flight / s.jumpTime) * Math.min(h * .20, 95) : 0;
     car(w / 2, h * .81 - lift, Math.min(155, w * .20), H.cars[s.car].color, s.boosted, ((input.left ? -1 : 0) + (input.right ? 1 : 0)) * .035);
     if (s.cool > 1.1) { ctx.fillStyle = '#ffd37722'; ctx.fillRect(0, 0, w, h); }
-    if (s.flight) { ctx.font = 'bold 28px sans-serif'; ctx.fillStyle = '#fff4c3'; ctx.textAlign = 'center'; ctx.fillText('↗ ✨', w / 2, h * .35); }
+    if (s.flight) { ctx.font = '28px "Family School", sans-serif'; ctx.fillStyle = '#fff4c3'; ctx.textAlign = 'center'; ctx.fillText('↗ ✨', w / 2, h * .35); }
   }
   function frame(now) { requestAnimationFrame(frame); if (gate) gate.check(); var dt = last ? Math.min(.08, (now - last) / 1000) : 0; last = now;
-    if (!document.hidden && running && !paused && !blocked) { accumulator += dt; while (accumulator >= 1 / 120) { var oldBumps = s.bumps, oldJumps = s.jumps; H.step(s, input, 1 / 120); if (s.bumps !== oldBumps) tone(140); if (s.jumps !== oldJumps) tone(790); accumulator -= 1 / 120; } if (s.finished && !shown) { shown = true; tone(880); result(true); } } else accumulator = 0;
-    $('speed').textContent = Math.round(s.speed * .18); $('progress').value = s.z / H.tracks[s.track].length; $('energy').value = s.nitro; draw();
+    if (!document.hidden && running && !paused && !blocked && !familyPaused) { accumulator += dt; while (accumulator >= 1 / 120) { var oldBumps = s.bumps, oldJumps = s.jumps; H.step(s, input, 1 / 120); if (s.bumps !== oldBumps) tone(140); if (s.jumps !== oldJumps) { tone(790); award('jump-' + s.track + '-' + s.jumps, 1); } accumulator -= 1 / 120; } if (s.finished && !shown) { shown = true; award('finish-' + s.track + '-' + s.car, 3); tone(880); result(true); } } else accumulator = 0;
+    $('progress').value = s.z / H.tracks[s.track].length; $('energy').value = s.nitro; draw();
   }
+  // Family overlays are a separate pause reason: never clear a gate or manual pause.
+  var raceInstance=0;
+  function award(id, points) { id='race-'+raceInstance+':'+id; if (window.FamilyV2) { FamilyV2.touch(); FamilyV2.award(id, points); } }
+  function familyPause() { familyPaused = true; clearInput(); last = 0; accumulator = 0; if (audio) audio.suspend().catch(function () {}); }
+  function familyResume() { familyPaused = false; clearInput(); last = 0; accumulator = 0; if (sound && audio && !blocked && !paused) audio.resume().catch(function () {}); }
+  addEventListener('familyv2:pause', familyPause);
+  addEventListener('familyv2:resume', familyResume);
+  document.addEventListener('DOMContentLoaded', function () { if (window.FamilyV2) FamilyV2.register({ pause: familyPause, resume: familyResume, home: function () { $('garage').click(); } }); resize(); });
   resize();
-  if (window.LearningGate) gate = LearningGate.mount({ gameId: 'nitro-highway', onLock: function () { blocked = true; clearInput(); last = 0; accumulator = 0; if (audio) audio.suspend().catch(function () {}); }, onUnlock: function () { blocked = false; last = 0; accumulator = 0; if (sound && audio) audio.resume().catch(function () {}); } });
+  if (window.LearningGate) gate = LearningGate.mount({ gameId: 'nitro-highway', onLock: function () { blocked = true; clearInput(); last = 0; accumulator = 0; if (audio) audio.suspend().catch(function () {}); }, onUnlock: function () { blocked = false; last = 0; accumulator = 0; if (sound && audio && !familyPaused && !paused) audio.resume().catch(function () {}); } });
   else { $('play').disabled = true; $('guide').hidden = false; $('guide').textContent = 'No se pudo cargar el reto. Recarga la página.'; }
-  if (location.search.indexOf('test=1') !== -1) Object.defineProperty(window, '__highway', { get: function () { return { running: running, paused: paused, blocked: blocked, sound: sound, z: s.z, x: s.x, speed: s.speed, nitro: s.nitro, jumps: s.jumps, bumps: s.bumps, finished: s.finished, track: s.track, car: s.car, time: s.time, held: Object.keys(input).filter(function (k) { return k !== 'assist' && input[k]; }) }; } });
+  if (location.search.indexOf('test=1') !== -1) Object.defineProperty(window, '__highway', { get: function () { return { running: running, paused: paused, familyPaused: familyPaused, blocked: blocked, sound: sound, z: s.z, x: s.x, speed: s.speed, nitro: s.nitro, jumps: s.jumps, bumps: s.bumps, finished: s.finished, track: s.track, car: s.car, time: s.time, held: Object.keys(input).filter(function (k) { return k !== 'assist' && input[k]; }) }; } });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(function () {});
   requestAnimationFrame(frame);
 })();

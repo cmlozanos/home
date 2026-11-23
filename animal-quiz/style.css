@@ -7,3 +7,21 @@
 /* Long presses must not open touch callouts or select game artwork. */
 body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 input, textarea, select, [contenteditable]:not([contenteditable="false"]) { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
+
+/* Family V2: fit the activity, without clipping a small viewport. */
+html.family-v2 body{background:var(--family-page);color:var(--family-ink)}
+.family-v2 .app{height:var(--family-height,100vh);display:flex;flex-direction:column;padding:8px 12px;gap:4px}
+.family-v2 .topbar{flex-wrap:wrap;gap:6px;padding-bottom:6px}
+.family-v2 .topbar h1{font-size:16px;letter-spacing:0;max-width:none}
+.family-v2 .icon-button{border:0;background:var(--family-button);color:var(--family-ink);width:44px;height:44px}
+.family-v2 .play-screen{flex:1;min-height:0;display:flex;flex-direction:column}
+.family-v2 .play-layout{flex:1;min-height:0;gap:12px}
+.family-v2 .option,.family-v2 .letter-key,.family-v2 .word-slot,.family-v2 .profile-card,.family-v2 .ranking-card{background:var(--family-panel);color:var(--family-ink)}
+.family-v2 .option.correct{background:#d0e9bd;color:#21473c}.family-v2 .option.wrong{background:#ffe3d3;color:#21473c}
+.family-v2 .feedback{margin:0;min-height:32px}.family-v2 .scorebar{min-height:36px}
+.family-v2 .option-number{display:none}.family-v2 .option{min-height:72px;letter-spacing:0}
+.family-v2 .help-card{background:var(--family-panel);color:var(--family-ink)}
+@media(max-width:620px){.family-v2 .topbar h1{display:none}.family-v2 .play-layout{grid-template-rows:minmax(80px,1fr) auto}.family-v2 .animal-card{width:min(210px,50vw);padding:4px}.family-v2 .animal-card>svg{max-height:20vh}.family-v2 .phase-writing{display:flex;align-items:center}.family-v2 .write-phase{width:100%}.family-v2 .profile-screen{padding:4px 0}.family-v2 .intro-art{width:min(150px,24vh)}.family-v2 .profile-grid{margin:10px auto}.family-v2 .profile-card{min-height:130px;gap:12px}.family-v2 h2{font-size:20px}}
+@media(max-height:500px) and (min-width:621px){.family-v2 .topbar h1{display:none}.family-v2 .option{min-height:64px}.family-v2 .animal-card>svg{max-height:165px}.family-v2 .word-model{margin:0 0 4px}.family-v2 .word-slots{margin-bottom:4px}.family-v2 .letter-key{min-height:44px}.family-v2 .erase{margin-top:4px}}
+@media(max-height:500px) and (min-width:621px){.family-v2 .profile-card{min-height:130px;padding:12px 8px}.family-v2 .profile-grid{margin:8px auto}.family-v2 .profile-screen{padding:0}}
+.family-v2 [data-family-setting]{width:auto;gap:8px;padding:8px 12px}

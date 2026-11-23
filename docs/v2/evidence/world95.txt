@@ -1,0 +1,13 @@
+node tools/check-browser.cjs
+Playable trajectory start-button: {"state":"ROUND_COMPLETE","progress":8,"trajectory":[{"position":[0,2.5962926851022843,0.16666666666666666],"progress":0,"remaining":68.35000000000038},{"position":[0,1.875428218654554,10.166666666666664],"progress":2,"remaining":67.35000000000043},{"position":[0,1.3141057901152582,20.16666666666667],"progress":5,"remaining":66.35000000000049},{"position":[0,0.9858320887775904,30.166666666666742],"progress":7,"remaining":65.35000000000055}]}
+start-button: movement, challenge, audio and internal menu passed
+word-mode-button: movement, challenge, audio and internal menu passed
+number-mode-button: movement, challenge, audio and internal menu passed
+Playable trajectory racing-mode-button: {"state":"ROUND_COMPLETE","progress":1,"trajectory":[{"position":[-214.03782455834082,3.8039106498985547,-198.92598531275635],"progress":0,"remaining":77.1333333333335},{"position":[-201.60168276657538,5.068130954953798,-206.7638662339687],"progress":0,"remaining":76.13333333333355},{"position":[-174.11761775541615,4.55230915255412,-222.7666572287754],"progress":0,"remaining":75.13333333333361},{"position":[-141.05252084814038,2.6055076892981575,-234.34642717277112],"progress":0,"remaining":74.13333333333367},{"position":[-85.4092805155189,-0.07255490341593085,-233.80291130350417],"progress":0,"remaining":73.13333333333372},{"position":[-29.509407671968425,-1.0491169011351749,-230.63122472905184],"progress":0,"remaining":72.13333333333378}]}
+Racing round 2: ROUND_COMPLETE / samples 7
+Racing round 3: ROUND_COMPLETE / samples 7
+Racing round 4: ROUND_COMPLETE / samples 7
+Racing round 5: ROUND_COMPLETE / samples 9
+Racing round 6: ROUND_COMPLETE / samples 9
+racing-mode-button: movement, challenge, audio and internal menu passed
+World of Joy 95.0.4630.0: four modes move, freeze/resume, same-game home, real randomized mission completion and offline gate passed.

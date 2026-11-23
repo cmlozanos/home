@@ -11,7 +11,8 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css?v=20260928-1">
+  <link rel="stylesheet" href="style.css?v=2.0.0">
+<link rel="stylesheet" href="family-v2/family.css?v=2.0.0">
 </head>
 <body>
   <svg class="symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
@@ -29,16 +30,16 @@
     <symbol id="i-install" viewBox="0 0 24 24"><path d="M12 2v13m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
   </defs></svg>
   <canvas id="game" aria-label="Zona de juego: mantén pulsado y desliza para cortar las frutas" role="img"></canvas>
-  <header class="toolbar">
-    <a class="icon-button" href="https://cmlozanos.github.io/games/" aria-label="Todos los juegos" title="Todos los juegos"><svg><use href="#i-home"/></svg></a>
-    <div class="brand">FRUIT <b>SPLASH</b><span>EL JARDÍN DE LOS PEQUEÑOS NINJAS</span></div>
-    <button class="icon-button" id="sound" aria-label="Activar sonido" aria-pressed="false" title="Activar sonido"><svg><use href="#i-mute"/></svg></button>
+  <header class="toolbar"><span data-family-slot></span>
+
+    <div class="brand">Fruit Splash</div>
+    <button class="icon-button" id="sound" data-family-setting aria-label="Activar sonido" aria-pressed="false" title="Activar sonido"><svg viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5ZM17 9l5 6m0-6-5 6"/></svg><span>Sonido</span></button>
   </header>
   <main>
     <section id="menu" class="screen menu">
-      <div class="eyebrow"><span></span> UN PUÑADO DE DIVERSIÓN</div>
-      <h1>Corta.<br><em>Salpica.</em><br>Sonríe.</h1>
-      <p class="subtitle">Tu dedo hace la magia.</p>
+
+      <h1>Corta frutas</h1>
+
       <div class="modes" role="group" aria-label="Modo de juego">
         <button class="mode selected" data-mode="garden" aria-label="Jardín: sin bombas ni límite de tiempo" aria-pressed="true"><svg><use href="#i-leaf"/></svg><span>Jardín</span></button>
         <button class="mode" data-mode="rush" aria-label="Reto de sesenta segundos, sin bombas" aria-pressed="false"><svg><use href="#i-clock"/></svg><span>60 segundos</span></button>
@@ -50,7 +51,7 @@
     </section>
     <section id="hud" class="hud" hidden aria-label="Marcador">
       <div class="score"><svg><use href="#i-star"/></svg><strong id="score">0</strong></div>
-      <div class="progress"><span id="mode-icon"></span><strong id="remaining">∞</strong></div>
+      <span id="harvest" class="harvest" role="status">0/100</span><div class="progress"><span id="mode-icon"></span><strong id="remaining">∞</strong></div>
       <button id="pause" class="icon-button" aria-label="Pausar"><svg><use href="#i-pause"/></svg></button>
     </section>
     <div id="hint" class="swipe-hint" hidden><span class="swipe-line"></span><span class="finger">☝</span><span>Desliza</span></div>
@@ -64,7 +65,8 @@
     </section>
   </main>
   <noscript>Activa JavaScript en el navegador para jugar.</noscript>
-  <script src="core.js?v=20260928-1"></script>
-  <script src="learning-profile.js?v=20260928-4"></script><script src="reading-words.js?v=20260928-1"></script><script src="learning-gate.js?v=20260928-4"></script><script src="game.js?v=20260928-1"></script>
+  <script defer src="core.js?v=2.0.0"></script>
+  <script defer src="learning-profile.js?v=2.0.0"></script><script defer src="reading-words.js?v=2.0.0"></script><script defer src="learning-gate.js?v=2.0.0"></script><script defer src="family-v2/family.js?v=2.0.0" data-game="fruit-splash"></script>
+<script defer src="game.js?v=2.0.0"></script>
 </body>
 </html>

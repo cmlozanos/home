@@ -3,3 +3,31 @@
 /* Long presses must not open touch callouts or select game artwork. */
 body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 input, textarea, select, [contenteditable]:not([contenteditable="false"]) { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
+
+/* V2: every piece and silhouette stays in the measured play viewport. */
+.app{height:var(--family-height,100vh);min-height:0;padding:10px 14px 8px;gap:8px}
+header{flex-shrink:0}.brand>span{display:none}.toolbar{margin:0;flex-shrink:0}.levels button{font-size:16px;letter-spacing:0}
+.workspace{min-height:0;margin:0;gap:12px}.puzzle-panel{min-height:0}.panel-caption{padding:8px;font-size:10px}.tray-panel{min-height:0;padding:10px}
+.slots{min-height:0;padding:8px 14px 16px;gap:8px}.slot{min-height:0}.slot svg{min-height:0}
+.tray{min-height:0;grid-auto-rows:minmax(0,1fr);height:100%;margin:0}.piece{min-height:0;aspect-ratio:auto}.piece svg{max-height:100%;min-height:0}
+footer{height:26px;flex-shrink:0}.icon-button{border:0}
+@media(max-width:650px) and (min-height:501px){
+  .workspace{display:grid;grid-template-rows:minmax(0,1fr) minmax(100px,30%);grid-template-columns:minmax(0,1fr)}
+  .tray,.tray-panel{height:100%}.tray,.app .tray{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  .app .piece{aspect-ratio:auto;max-height:none}.app .slot{min-height:0}.app .slot svg{max-height:100%}
+}
+@media(max-height:500px) and (min-width:600px){.app{grid-template-rows:55px 1fr 26px}.workspace{grid-template-columns:minmax(0,1fr) 135px}.tray{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Native surfaces consume the same public theme tokens as the family shell. */
+html.family-v2 body{background:var(--family-page);color:var(--family-ink)}
+html.family-v2 header{gap:8px}html.family-v2 .brand{flex:1;min-width:0}
+html.family-v2 .brand h1,html.family-v2 h1{color:var(--family-ink)}
+html.family-v2 .modal,html.family-v2 .dialog,html.family-v2 .puzzle-panel,html.family-v2 .tray-panel,html.family-v2 .garden,html.family-v2 .tools{background:var(--family-panel);color:var(--family-ink)}
+html.family-v2 .icon-button,html.family-v2 .round,html.family-v2 .direction,html.family-v2 .levels{background:var(--family-button);color:var(--family-ink)}
+@media(max-width:600px){html.family-v2 header{flex-wrap:wrap;height:auto;min-height:52px}html.family-v2 header .brand{flex:1}html.family-v2 header h1{font-size:19px}html.family-v2 [data-family-slot]{margin-left:auto}html.family-v2 header>a{width:42px;flex-basis:42px}}
+@media(max-height:500px) and (min-width:600px){.app{grid-template-columns:205px minmax(0,1fr);grid-template-rows:145px minmax(0,1fr) 26px}html.family-v2 header{height:auto;align-content:flex-start;flex-wrap:wrap}html.family-v2 header .brand{flex-basis:140px}html.family-v2 header [data-family-slot]{flex-basis:100%;margin-top:8px}}
+
+#game-menu{z-index:10000}#game-menu .dialog,#game-menu .modal{text-align:center}#game-menu button{border:0;border-radius:16px;min-height:48px;padding:10px 18px;background:var(--family-button);color:var(--family-ink);font:inherit}.menu-levels{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
+
+/* Keep the session/Home/Adult shell reachable from the native menu overlay. */
+[data-family-slot]{position:relative;z-index:10001}

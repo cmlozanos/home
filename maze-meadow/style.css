@@ -6,3 +6,23 @@
 /* Long presses must not open touch callouts or select game artwork. */
 body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 input, textarea, select, [contenteditable]:not([contenteditable="false"]) { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
+
+/* V2: preserve the maze and direction pad inside the measured viewport. */
+.app{height:var(--family-height,100vh);min-height:0}
+header{height:64px}.brand>span{display:none}.brand h1{font-family:inherit;font-size:26px}
+footer{height:26px;justify-content:flex-end}.level span{font-size:12px}
+@media(max-width:650px) and (orientation:portrait){.app{min-height:0}header{height:58px}.controls{height:158px}.garden-bar{height:34px}}
+@media(orientation:landscape) and (max-height:520px){.app{min-height:0}header{height:50px}}
+
+/* Native surfaces consume the same public theme tokens as the family shell. */
+html.family-v2 body{background:var(--family-page);color:var(--family-ink)}
+html.family-v2 header{gap:8px}html.family-v2 .brand{flex:1;min-width:0}
+html.family-v2 .brand h1,html.family-v2 h1{color:var(--family-ink)}
+html.family-v2 .modal,html.family-v2 .dialog,html.family-v2 .puzzle-panel,html.family-v2 .tray-panel,html.family-v2 .garden,html.family-v2 .tools{background:var(--family-panel);color:var(--family-ink)}
+html.family-v2 .icon-button,html.family-v2 .round,html.family-v2 .direction,html.family-v2 .levels{background:var(--family-button);color:var(--family-ink)}
+@media(max-width:600px){html.family-v2 header{flex-wrap:wrap;height:auto;min-height:52px}html.family-v2 header .brand{flex:1}html.family-v2 header h1{font-size:19px}html.family-v2 [data-family-slot]{margin-left:auto}html.family-v2 header>a{width:42px;flex-basis:42px}}
+
+#game-menu{z-index:10000}#game-menu .dialog,#game-menu .modal{text-align:center}#game-menu button{border:0;border-radius:16px;min-height:48px;padding:10px 18px;background:var(--family-button);color:var(--family-ink);font:inherit}.menu-levels{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
+
+/* Keep the session/Home/Adult shell reachable from the native menu overlay. */
+[data-family-slot]{position:relative;z-index:10001}

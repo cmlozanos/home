@@ -1,0 +1,6 @@
+
+Running 120 tests using 1 worker
+
+  ✘    1 [tablet] › tests/animal-quiz.spec.cjs:23:1 › animal quiz starts gated without personal data, API calls or automatic progress (6.8s)
+  ✓    2 [tablet] › tests/animal-quiz.spec.cjs:38:1 › animal quiz keeps independent local profiles and accepts full accented words (7.4s)
+  ✓    3 [tablet] › tests/animal-quiz.spec.cjs:69:1 › animal quiz increases repetition after a wrong answer without removing stars (4.1s)

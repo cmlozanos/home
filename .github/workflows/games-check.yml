@@ -1,15 +1,19 @@
 name: Check family games
 on:
   push:
-    paths: ['animal-quiz/**', 'fruit-splash/**', 'orbit-lab/**', 'memory-garden/**', 'shape-studio/**', 'little-atelier/**', 'maze-meadow/**', 'nitro-highway/**', 'pocket-karts/**', 'pulse-path/**', 'learning-gate/**', 'rubik-solver/sw.js', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'Makefile', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
+    paths: ['animal-quiz/**', 'fruit-splash/**', 'orbit-lab/**', 'memory-garden/**', 'shape-studio/**', 'little-atelier/**', 'maze-meadow/**', 'nitro-highway/**', 'pocket-karts/**', 'pulse-path/**', 'learning-gate/**', 'rubik-solver/**', 'family-v2/**', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'Makefile', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
   pull_request:
-    paths: ['animal-quiz/**', 'fruit-splash/**', 'orbit-lab/**', 'memory-garden/**', 'shape-studio/**', 'little-atelier/**', 'maze-meadow/**', 'nitro-highway/**', 'pocket-karts/**', 'pulse-path/**', 'learning-gate/**', 'rubik-solver/sw.js', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'Makefile', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
+    paths: ['animal-quiz/**', 'fruit-splash/**', 'orbit-lab/**', 'memory-garden/**', 'shape-studio/**', 'little-atelier/**', 'maze-meadow/**', 'nitro-highway/**', 'pocket-karts/**', 'pulse-path/**', 'learning-gate/**', 'rubik-solver/**', 'family-v2/**', 'tests/**', 'tools/**', 'apps.js', 'index.html', 'Makefile', 'package*.json', 'playwright.config.cjs', '.github/workflows/games-check.yml']
 permissions:
   contents: read
 jobs:
   games:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [tablet, phone, phone-landscape, safari]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,10 +23,11 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium webkit
       - run: make check check-games
-      - run: make test-games
+      - run: make check-release-v2
+      - run: npx --no-install playwright test --project=${{ matrix.project }} --workers=1
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: browser-test-results
+          name: browser-test-results-${{ matrix.project }}
           path: test-results/
           retention-days: 7

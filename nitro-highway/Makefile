@@ -9,3 +9,8 @@ serve:
 	python3 -m http.server 8080
 icons:
 	node tools/icons.mjs
+
+.PHONY: check-family-browser
+# Focal V2 integration only; uses the existing home test runtime and running server.
+check-family-browser:
+	cd .. && node nitro-highway/tools/check-family-browser.cjs

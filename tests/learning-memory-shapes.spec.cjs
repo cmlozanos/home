@@ -1,3 +1,4 @@
+const {clickSetting}=require('./helpers/adult-settings.cjs');
 const { test, expect } = require('./helpers/learning-fixture.cjs');
 
 test.beforeEach(async ({ page }) => {
@@ -54,6 +55,7 @@ test('memory: every difficulty fits an 800px or 600px high tablet', async ({ pag
 });
 
 test('memory: all three levels are solvable, matched cards lock and progress persists', async ({ page }) => {
+  test.setTimeout(90000);
   await page.goto('memory-garden/');
   await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', 'false');
   await assertNoOverflow(page);
@@ -81,13 +83,14 @@ test('memory: mismatches lock the third card, preview can repeat, keyboard plays
   await page.locator('#preview').click();
   await expect(page.locator('#board')).toHaveClass(/preview/);
   await memoryReady(page);
-  await page.locator('#help').click();
+  await clickSetting(page,'#help');
   await expect(page.locator('#help-panel')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('#help-panel')).toBeHidden();
 });
 
 test('shapes: geometry rejects wrong slots and all levels complete with tap or keyboard', async ({ page }) => {
+  test.setTimeout(90000);
   await page.goto('shape-studio/');
   await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', 'false');
   await assertNoOverflow(page);

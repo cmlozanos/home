@@ -10,7 +10,7 @@ Cada apertura exige el reto común (suma, resta o trazo); se repite cada diez mi
 
 La partida usa únicamente la clave `animal-quiz:local:v1` de localStorage. No escribe nada antes de responder en el Quiz, no recupera perfiles de otro servidor ni realiza llamadas API. Si el navegador impide guardar, funciona durante la sesión y muestra un aviso. No se borran otras claves. Limpiar los datos del navegador elimina el progreso local; otra tablet tendrá su propio progreso.
 
-Juego silencioso, sin WebGL, emojis como gráficos de animales, CDNs, dependencias de red para jugar ni fuentes remotas. Los dibujos son SVG propios. La PWA conserva sus recursos y el reto educativo sin borrar cachés de otros juegos. Instalar desde el menú del navegador después de una primera carga con conexión. El botón de casa abre el catálogo `https://cmlozanos.github.io/games/`.
+Juego silencioso, sin WebGL, emojis como gráficos de animales, CDNs, dependencias de red para jugar ni fuentes remotas. Los dibujos son SVG propios. La PWA conserva sus recursos y el reto educativo sin borrar cachés de otros juegos. Instalar desde el menú del navegador después de una primera carga con conexión. En V2, Inicio vuelve a los perfiles del Quiz; el catálogo queda en Adultos.
 
 ## Desarrollo y validación
 
@@ -28,3 +28,13 @@ pantallas de perfiles, preguntas y escritura, y las veinte ilustraciones.
 `make check check-games` del catálogo también comprueba los recursos versionados
 y que la caché del Quiz no borra las de otros juegos. Falta probar el dispositivo
 Android físico; no se presenta el motor de escritorio como esa tablet.
+
+## Family V2 · 2.0.0
+
+Kit local `family-v2/`: fuente Playwrite ES (OFL), tema claro, controles de familia y puntos de la última hora. Los ajustes usan los mismos botones y conservan sus manejadores; la pausa familiar es independiente del reto educativo y de la pausa manual. Todos los modos y contenidos siguen disponibles sin requisitos de rango. No se migran ni borran partidas. Sonido apagado en cada carga. Los cuatro recursos del kit se precachean para uso offline.
+
+Validación local: `make check`. Las pruebas de navegador no sustituyen una tablet física ni conceden permisos de cámara.
+
+Inicio V2 conserva la URL y los guardados. Los controles de Adultos no sustituyen permisos del navegador; la cámara de Rubik sigue requiriendo permiso explícito.
+
+`make check-family-browser` ejecuta una regresión Chromium acotada de los cuatro juegos de esta entrega (requiere el servidor del catálogo en :4177). Incluye ronda completa, cosecha real, herramientas orbitales, validación de cubo, Inicio sin navegación, guardados, pausa familiar, recarga y offline en tres viewports.

@@ -41,7 +41,7 @@
     for (var i = 0; i < s.traffic.length; i++) {
       var rival = s.traffic[i], before = rival.z - oldZ; rival.z += rival.speed * dt;
       var after = rival.z - s.z;
-      if (before >= -80 && after < 95 && Math.abs(s.x - rival.x) < .27 && !s.cool && !s.flight) { s.speed *= .42; s.cool = 1.4; s.bumps++; }
+      if (s.speed > rival.speed && before >= -80 && after < 95 && Math.abs(s.x - rival.x) < .27 && !s.cool && !s.flight) { s.speed *= .42; s.cool = 1.4; s.bumps++; }
     }
     for (var j = 0; j < s.ramps.length; j++) {
       var ramp = s.ramps[j];

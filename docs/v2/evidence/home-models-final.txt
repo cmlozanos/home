@@ -1,0 +1,147 @@
+/Applications/Xcode.app/Contents/Developer/usr/bin/make check-gates
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C learning-gate check
+node --check gate.js
+node tools/check.cjs
+Learning gate: 10,000 arithmetic samples, 54 letters / 92 strokes, rejection/cancellation and pausable timer checks passed.
+node tools/profile-check.cjs
+Profiles: exclusive selections, reject empty/unknown/duplicates, v1 compatibility without writes, 1-year expiry, shared path, secure cookie and blocked/missing fallback PASS.
+node tools/selection-check.cjs
+Challenge selections: all 15 nonempty combinations, exclusive single types, invalid fallback and reading failure containment PASS.
+node tools/reading-check.cjs
+Reading: 10,000 random rounds, 100 words, 3 answer positions, no overlapping distractors, full rotation and additive minimum challenges PASS.
+node tools/reading-assets.cjs
+Reading assets: 100 unique lowercase words <=5 letters, PNGs <=300px, SHA-256 verified; 935825 bytes total.
+node tools/sync-learning-gate.mjs --check
+nitro-highway: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+pocket-karts: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+pulse-path: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+fruit-splash: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+orbit-lab: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+memory-garden: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+shape-studio: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+little-atelier: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+maze-meadow: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+animal-quiz: verified profile, gate, 100 words/images and local offline loading (935825 image bytes)
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C fruit-splash check
+node --check family-v2/family.js
+node --check learning-gate.js
+node --check game.js
+node --check core.js
+node --check sw.js
+node tools/check.cjs
+Fruit Splash: swipe collision and launch geometry checks passed.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C orbit-lab check
+node --check family-v2/family.js
+node --check learning-gate.js
+node --check game.js
+node --check physics.js
+node --check life.js
+node --check vendor/gravity.js
+node --check sw.js
+node tools/check.mjs
+✓ 12 orbital periods stable: 218.985–220.000 world units
+✓ Momentum, collision mass/momentum, dense 24-body stability, Chrome 95 API checks, PWA icons
+✓ Visible-rim and swept collisions, chain mergers, ignition, collapse and black-hole accretion
+✓ Accelerated stellar stages and four mass-dependent remnants, nebula condensation, legacy saves, size and lock helpers
+✓ Scaled-body orbital placement clears the true collision rims.
+node tools/check-life.mjs
+✓ Habitability, six life stages, colony ships, loss of conditions and black-hole darkness.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C memory-garden check
+node --check learning-gate.js
+node --check core.js
+node --check game.js
+node --check sw.js
+node tools/check.cjs
+Memory Garden: deck, pair locking, completion, shuffle and offline shell checks passed.
+Family V2: local assets, version 2.0.0 and exact offline URLs verified.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C shape-studio check
+node --check learning-gate.js
+node --check core.js
+node --check game.js
+node --check sw.js
+node tools/check.cjs
+Shape Studio: drop hit-tests, geometry matching, locking, levels and offline shell checks passed.
+Family V2: local assets, version 2.0.0 and exact offline URLs verified.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C little-atelier check
+node --check learning-gate.js
+node tools/check.cjs
+Atelier: normalized stroke, tap dots, invalid saves, bounded history, syntax and offline assets verified.
+Family V2: local assets, version 2.0.0 and exact offline URLs verified.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C maze-meadow check
+node --check learning-gate.js
+node tools/check.cjs
+Meadow: 300 mazes verify connectivity, determinism, walls, legal hint routes; assets and Chrome95 syntax checks pass.
+Family V2: local assets, version 2.0.0 and exact offline URLs verified.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C nitro-highway check
+node --check core.js
+node --check game.js
+node --check sw.js
+node --check learning-gate.js
+node tools/check.cjs
+PASS: 9 car/course finishes, projection, traffic, turbo jump, fixed 30/60/120 Hz, finished freeze, canonical gate
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pocket-karts check
+node --check core.js
+node --check game.js
+node --check sw.js
+node --check learning-gate.js
+node tools/check.cjs
+PASS: 9 physical car/course finishes, ordered 24 checkpoints, no shortcut, reverse, fixed 30/60/120 Hz, canonical gate
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pulse-path check
+node --check core.js
+node --check game.js
+node --check learning-gate.js
+node --check sw.js
+node tools/check.cjs
+Course 1 easy: 30/60/120Hz equal, finish at 18.07s, 7 stars.
+Course 1 normal: 30/60/120Hz equal, finish at 13.96s, 7 stars.
+Course 2 easy: 30/60/120Hz equal, finish at 22.77s, 6 stars.
+Course 2 normal: 30/60/120Hz equal, finish at 17.59s, 6 stars.
+Course 3 easy: 30/60/120Hz equal, finish at 26.88s, 7 stars.
+Course 3 normal: 30/60/120Hz equal, finish at 20.77s, 7 stars.
+Pulse Path collision, gravity, checkpoint and solvability checks passed.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C animal-quiz check
+node --check family-v2/family.js
+node --check quiz-core.js
+node --check learning-gate.js
+node --check game.js
+node --check sw.js
+node tools/check.cjs
+Animal Quiz: 20 original questions, 40 writing paths, accents, weighting, trophies, independent local profiles and PWA verified.
+node tools/check-static-games.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow nitro-highway pocket-karts pulse-path animal-quiz
+fruit-splash: offline resources and versions verified (190 KiB game + 914 KiB reading images + 331 KiB local font).
+orbit-lab: offline resources and versions verified (245 KiB game + 914 KiB reading images + 331 KiB local font).
+memory-garden: offline resources and versions verified (182 KiB game + 914 KiB reading images + 331 KiB local font).
+shape-studio: offline resources and versions verified (172 KiB game + 914 KiB reading images + 331 KiB local font).
+little-atelier: offline resources and versions verified (177 KiB game + 914 KiB reading images + 331 KiB local font).
+maze-meadow: offline resources and versions verified (173 KiB game + 914 KiB reading images + 331 KiB local font).
+nitro-highway: offline resources and versions verified (167 KiB game + 914 KiB reading images + 331 KiB local font).
+pocket-karts: offline resources and versions verified (179 KiB game + 914 KiB reading images + 331 KiB local font).
+pulse-path: offline resources and versions verified (172 KiB game + 914 KiB reading images + 331 KiB local font).
+animal-quiz: offline resources and versions verified (202 KiB game + 914 KiB reading images + 331 KiB local font).
+node tools/check-cache-isolation.mjs fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow nitro-highway pocket-karts pulse-path animal-quiz rubik-solver
+fruit-splash: cache activation preserves every other game.
+orbit-lab: cache activation preserves every other game.
+memory-garden: cache activation preserves every other game.
+shape-studio: cache activation preserves every other game.
+little-atelier: cache activation preserves every other game.
+maze-meadow: cache activation preserves every other game.
+nitro-highway: cache activation preserves every other game.
+pocket-karts: cache activation preserves every other game.
+pulse-path: cache activation preserves every other game.
+animal-quiz: cache activation preserves every other game.
+rubik-solver: cache activation preserves every other game.
+node --check family-v2/family.js
+node tools/verify-family-v2.mjs animal-quiz nitro-highway pocket-karts pulse-path fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow rubik-solver
+Family2 asset integration animal-quiz 132e25722a47
+Family2 asset integration nitro-highway 132e25722a47
+Family2 asset integration pocket-karts 132e25722a47
+Family2 asset integration pulse-path 132e25722a47
+Family2 asset integration fruit-splash 132e25722a47
+Family2 asset integration orbit-lab 132e25722a47
+Family2 asset integration memory-garden 132e25722a47
+Family2 asset integration shape-studio 132e25722a47
+Family2 asset integration little-atelier 132e25722a47
+Family2 asset integration maze-meadow 132e25722a47
+Family2 asset integration rubik-solver 132e25722a47
+node tools/check-release-v2.mjs
+V2 exact kit/version/slot integration 11 games

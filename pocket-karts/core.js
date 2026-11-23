@@ -17,7 +17,7 @@
     forward += (input.brake ? -220 : throttle ? 112 : -Math.sign(forward) * 30) * dt;
     forward = clamp(forward, input.brake ? -45 : 0, c.speed * (input.assist ? .88 : 1));
     var steer = (input.right ? 1 : 0) - (input.left ? 1 : 0);
-    s.angle += steer * 1.85 * clamp(Math.abs(forward) / 45, 0, 1) * (forward < 0 ? -1 : 1) * dt;
+    s.angle += steer * 1.85 * clamp(Math.abs(forward) / 45, input.throttle || input.assist || input.brake ? .35 : 0, 1) * (forward < 0 ? -1 : 1) * dt;
     lateral *= Math.exp(-c.grip * dt); forward *= Math.exp(-.10 * dt);
     s.vx = Math.cos(s.angle) * forward - Math.sin(s.angle) * lateral;
     s.vy = Math.sin(s.angle) * forward + Math.cos(s.angle) * lateral;
@@ -26,7 +26,8 @@
     if (s.offroad) { s.vx *= Math.exp(-1.5 * dt); s.vy *= Math.exp(-1.5 * dt); }
     if (n.distance > 62) { var nx = (s.x - n.x) / n.distance, ny = (s.y - n.y) / n.distance; s.x = n.x + nx * 62; s.y = n.y + ny * 62; var outward = s.vx * nx + s.vy * ny; if (outward > 0) { s.vx -= outward * nx * 1.2; s.vy -= outward * ny * 1.2; } if (!s.hitCooldown) { s.hits++; s.hitCooldown = 1; } }
     var target = s.points[s.next * 10];
-    if (Math.hypot(s.x - target.x, s.y - target.y) < 47) { s.gates++; if (s.next === 0) s.laps++; s.next = (s.next + 1) % 12; }
+    var afterTarget = s.points[(s.next * 10 + 1) % 120], tx = afterTarget.x - target.x, ty = afterTarget.y - target.y;
+    if (dt > 0 && s.vx * tx + s.vy * ty > 0 && Math.hypot(s.x - target.x, s.y - target.y) < 47) { s.gates++; if (s.next === 0) s.laps++; s.next = (s.next + 1) % 12; }
     s.speed = Math.hypot(s.vx, s.vy);
     if (s.laps >= 2) s.finished = true;
   }

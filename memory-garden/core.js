@@ -15,7 +15,7 @@
     return { cards: shuffle(keys.concat(keys), random), selected: [], matched: [], moves: 0 };
   }
   function choose(round, index) {
-    if (round.selected.length === 2 || round.selected.indexOf(index) !== -1 || round.matched.indexOf(index) !== -1 || index < 0 || index >= round.cards.length) return 'ignored';
+    if (!Number.isInteger(index) || round.selected.length === 2 || round.selected.indexOf(index) !== -1 || round.matched.indexOf(index) !== -1 || index < 0 || index >= round.cards.length) return 'ignored';
     round.selected.push(index);
     if (round.selected.length < 2) return 'first';
     round.moves++;

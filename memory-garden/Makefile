@@ -9,3 +9,7 @@ serve:
 	python3 -m http.server 8080
 icons:
 	node tools/icons.mjs
+
+.PHONY: check-browser
+check-browser:
+	node tools/check-v2-browser.cjs

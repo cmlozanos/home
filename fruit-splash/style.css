@@ -6,3 +6,19 @@
 /* Long presses must not open touch callouts or select game artwork. */
 body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 input, textarea, select, [contenteditable]:not([contenteditable="false"]) { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
+
+/* Family V2: the canvas is the play surface, not an overflow mask. */
+html.family-v2,html.family-v2 body{height:var(--family-height,100vh);overflow:visible;background:var(--family-page);color:var(--family-ink)}
+.family-v2 #game{height:var(--family-height,100vh)}
+.family-v2 .toolbar{padding:8px 12px;gap:8px}.family-v2 .brand{font-size:16px;letter-spacing:0;text-align:right}
+.family-v2 .screen{inset:72px 12px 8px;gap:12px}.family-v2 h1{font-size:clamp(26px,6vh,48px);line-height:1.6;letter-spacing:0;margin:0;text-shadow:none}
+.family-v2 .icon-button{border:0;background:var(--family-button);color:var(--family-ink)}
+.family-v2 .mode{background:var(--family-panel);color:var(--family-ink);border:0;min-width:94px;height:88px}.family-v2 .mode.selected{background:#d7ec9e;color:#244b31}
+.family-v2 .play-button{font-size:18px;letter-spacing:0}.family-v2 .record{margin:4px;color:var(--family-ink)}.family-v2 .record-label,.family-v2 .quiet{color:var(--family-ink);letter-spacing:0}
+.family-v2 .hud{top:72px}.family-v2 .score,.family-v2 .progress,.family-v2 .swipe-hint{color:#244b31}.family-v2 .swipe-line{border-color:#244b31}
+.family-v2 .dialog-card{background:var(--family-panel);color:var(--family-ink);max-height:calc(var(--family-height,100vh) - 24px);overflow:auto;box-shadow:none}
+@media(max-height:500px) and (orientation:landscape){.family-v2 .screen{grid-template-rows:1fr auto auto;column-gap:24px}.family-v2 h1{grid-column:1;grid-row:1/4;align-self:center;font-size:34px}.family-v2 .modes{margin:0;align-self:center}.family-v2 .menu-footer{grid-row:3;margin:0}.family-v2 .record{display:none}.family-v2 .mode{height:74px}.family-v2 .dialog h2{font-size:24px}}
+.family-v2 .harvest{font-size:12px;color:#244b31;max-width:100px}.family-v2 .hud{gap:8px}.family-v2 .score{font-size:26px}
+/* Family Home and adult controls remain reachable during a manual/game-over pause. */
+.family-v2 .toolbar{z-index:6}
+.family-v2 [data-family-setting]{width:auto;gap:8px;padding:8px 12px}

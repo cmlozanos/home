@@ -6,11 +6,19 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui", "browser"],
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
   "orientation": "portrait",
-  "background_color": "#111827",
-  "theme_color": "#111827",
-  "categories": ["utilities", "education", "games"],
+  "background_color": "#f7f8fc",
+  "theme_color": "#f7f8fc",
+  "categories": [
+    "utilities",
+    "education",
+    "games"
+  ],
   "icons": [
     {
       "src": "./icons/icon.svg",
@@ -30,5 +38,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "version": "2.0.0"
 }

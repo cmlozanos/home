@@ -1,0 +1,7 @@
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chrome95] › tests/cole-aventura-catalog.spec.cjs:3:1 › Cole Aventura aparece una vez con icono y acceso público en pestaña nueva (1.1s)
+  ✓  2 [chrome95] › tests/v2/family-shell.spec.cjs:2:1 › shared2 shell preserves native settings IDs, parent gate, score, theme, audio and pauses (493ms)
+
+  2 passed (2.7s)

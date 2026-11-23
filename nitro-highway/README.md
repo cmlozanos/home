@@ -23,3 +23,42 @@ Instalable desde HTTPS; una primera carga completa prepara el juego y el reto of
 - `make icons`: rasteriza el SVG original con Playwright ya instalado en el repositorio.
 - Desde la raíz: `npx playwright test tests/new-racing.spec.cjs --workers=1`.
 - `?test=1` expone una instantánea de solo lectura para comprobar entradas, tiempos y progresión; no incluye funciones de desbloqueo ni mutación.
+
+## Versión 2.0.0 — Family V2
+
+Integra la copia local del kit canónico `../family-v2/`: tema público con selector
+nativo, fuente manuscrita local, ajustes para adultos y sesión de una hora. Los
+botones originales de sonido, ayuda y opciones se trasladan conservando sus
+listeners; el audio siempre arranca apagado. La pausa familiar es independiente
+del reto educativo y de la pausa manual: cerrar un diálogo no desbloquea ninguno.
+
+Todos los coches/circuitos siguen accesibles. Se simplifica el HUD y se reducen
+los efectos y la resolución de render a un máximo de 1× para tablets antiguas;
+se conservan los circuitos y las claves de progreso existentes. Las correcciones
+de mecánica acotadas se detallan abajo. Las
+metas y logros reales aportan puntos con IDs estables por circuito, sin premiar
+abrir menús. La caché propia `2.0.0` precarga CSS/JS del kit con `?v=2.0.0`,
+`playwrite-es.ttf` y `OFL.txt`; conserva las cachés ajenas y el progreso guardado.
+
+Autorización de este lote: solo cambios locales en este juego; integración Git
+a cargo del agente principal, sin commit/push desde esta tarea.
+
+### Mecánicas V2 verificadas
+
+El tráfico que se aleja de un coche parado ya no cuenta como colisión.
+Las fuentes teclado/táctil conservan su pulsación independiente: soltar un dedo
+no cancela otro ni una tecla activa. Reiniciar limpia entradas y reloj de frame.
+
+`make check` incluye regresiones de estos casos y las nueve combinaciones
+coche/circuito completadas con física de paso fijo. La prueba existente
+`tests/racing-finish.spec.cjs` conduce con teclado real, comprueba meta y abre
+el siguiente circuito; no modifica el estado del juego.
+
+`make check-family-browser` (servidor del repositorio ya activo) comprueba los
+tres juegos de este lote: mínimos de 44px, 320×568/740×360/1280×800, ajustes,
+pausas, entradas mixtas, reinicio, tema y Home nativo sin cambiar URL.
+
+Inicio usa el menú nativo del juego y mantiene la URL. En carreras abandona
+la carrera actual sin premiarla y conserva coche/circuito seleccionados; Jugar
+inicia una carrera nueva. En Salto Neón mantiene selección y progreso guardado.
+El catálogo solo se ofrece desde el área de adultos del kit.

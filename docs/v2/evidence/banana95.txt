@@ -1,0 +1,7 @@
+node tools/browser-check.cjs
+Banana native physics route {"level":2,"visited":[5925,5418,4818,4218,3618,3018],"y":5812.888888888889}
+PASS 1280x800 entry/layout/rotation/touch/keyboard/10min/pause/resume/offline
+PASS 800x1280 entry/layout/rotation/touch/keyboard/10min/pause/resume/offline
+PASS 360x740 entry/layout/rotation/touch/keyboard/10min/pause/resume/offline
+PASS 740x360 entry/layout/rotation/touch/keyboard/10min/pause/resume/offline
+Browser 95.0.4630.0

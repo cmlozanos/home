@@ -1,3 +1,4 @@
+const {clickSetting}=require('./helpers/adult-settings.cjs');
 const { test, expect } = require('./helpers/learning-fixture.cjs');
 
 const SAVE_KEY = 'orbit-lab-universe-v1';
@@ -29,7 +30,7 @@ async function bodyAt(page, id) {
   return page.evaluate(id => window.__orbitDiagnostics.bodies.find(b => b.id === id), id);
 }
 async function preset(page, name) {
-  await page.locator('#reset').click();
+  await page.getByRole('button',{name:'Elegir un nuevo universo',exact:true}).click();
   await page.locator(`[data-template="${name}"]`).click();
 }
 
@@ -38,7 +39,7 @@ test('orbit evolution: collision preset forms a black hole with conserved mass',
   await page.goto('orbit-lab/?test=1');
   await page.locator('#start').click();
   await preset(page, 'collision');
-  await page.locator('#speed').click();
+  await clickSetting(page,'#speed');
   await expect.poll(async () => (await snapshot(page)).bodies.some(b => b.type === 'blackhole'), { timeout: 12000 }).toBe(true);
   await pause(page);
   const state = await snapshot(page);
@@ -53,7 +54,7 @@ test('orbit evolution: nursery preset resumes near condensation and creates prot
   await page.locator('#start').click();
   await preset(page, 'nursery');
   await pause(page);
-  await page.locator('#save').click();
+  await clickSetting(page,'#save');
   const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), SAVE_KEY);
   expect(saved.bodies.every(b => b.type === 'nebula')).toBe(true);
   saved.bodies.forEach(b => { b.age = 9.8; b.stageAge = 9.8; });
@@ -115,7 +116,7 @@ test('orbit life: habitable planets develop ships and retain civilization after 
   await expect.poll(async () => (await bodyAt(page, 1002)).lifeStage).toBe(6);
   await expect.poll(async () => (await snapshot(page)).ships).toBeGreaterThan(0);
   await pause(page);
-  await page.locator('#save').click();
+  await clickSetting(page,'#save');
   const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), SAVE_KEY);
   expect(saved.version).toBe(2);
   expect(saved.bodies.find(b => b.id === 1002).lifeStage).toBe(6);

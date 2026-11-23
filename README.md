@@ -357,3 +357,9 @@ Three.js se usa **solo para fondos y efectos** (escenarios, partículas, platafo
 /* ❌ Nunca hacer */
 /* createAnimal() con SphereGeometry + CylinderGeometry → parece un muñeco roto */
 ```
+
+## Renovación familiar 2.0.0
+
+La suite infantil comparte un contrato técnico documentado en [docs/v2/CONTRACT.md](docs/v2/CONTRACT.md) y una [matriz de entrega](docs/v2/MATRIX.md). Tipografía ligada, aspecto público, ajustes protegidos, puntos locales y Home al menú de cada juego. No basta un cambio de apariencia: [notas2.0](docs/v2/RELEASE_2.0.0.md) recogen correcciones de mecánica y alcance real de pruebas. Los datos y URLs anteriores se conservan; cámara/editor Rubik y catálogos no se recortan para fingir ausencia de scroll.
+
+`make check-release-v2` valida kit idéntico/versiones/recursos offline. `make test-family-v2` comprueba shell, pausa, controles, Home, almacenamiento y offline. No se descargan navegadores como efecto de esos comandos; `CHROME95_PATH` permite reutilizar uno existente. Cada juego mantiene Makefile y tools propios.

@@ -1,3 +1,4 @@
+const {clickSetting}=require('./helpers/adult-settings.cjs');
 const {test,expect} = require('./helpers/learning-fixture.cjs');
 
 function trackErrors(page) {
@@ -81,12 +82,12 @@ test('orbit: create bodies, pause, save, reload, resume and templates',async({pa
   const positions=await page.evaluate(()=>window.__orbitDiagnostics.bodies.map(({screenX,screenY,...body})=>body));
   await page.waitForTimeout(180);
   expect(await page.evaluate(()=>window.__orbitDiagnostics.bodies.map(({screenX,screenY,...body})=>body))).toEqual(positions);
-  await page.locator('#save').click();
+  await clickSetting(page,'#save');
   await page.reload();
   await expect(page.locator('#resume')).toBeVisible();
   await page.locator('#resume').click();
   expect(await page.evaluate(()=>window.__orbitDiagnostics.bodyCount)).toBe(initial+1);
-  await page.locator('#reset').click();
+  await page.getByRole('button',{name:'Elegir un nuevo universo',exact:true}).click();
   await page.locator('[data-template="binary"]').click();
   expect(await page.evaluate(()=>window.__orbitDiagnostics.bodies.filter(b=>b.type==='star').length)).toBe(2);
   expect(errors).toEqual([]);
@@ -95,7 +96,7 @@ test('orbit: create bodies, pause, save, reload, resume and templates',async({pa
 test('orbit: launch gesture and simultaneous touches are independent',async({page})=>{
   const errors=trackErrors(page);
   await page.goto('orbit-lab/?test=1');await page.locator('#start').click();await page.locator('#pause').click();
-  await page.locator('#reset').click();await page.locator('[data-template="empty"]').click();await page.locator('#pause').click();
+  await page.getByRole('button',{name:'Elegir un nuevo universo',exact:true}).click();await page.locator('[data-template="empty"]').click();await page.locator('#pause').click();
   await page.locator('[data-body="comet"]').click();
   const box=await page.locator('#space').boundingBox();
   await page.mouse.move(box.width*.25,box.height*.37);await page.mouse.down();await page.mouse.move(box.width*.35,box.height*.3,{steps:8});await page.mouse.up();

@@ -197,14 +197,15 @@
       }
     });
   }
-  function orbit(type, x, y, primary) {
+  function orbit(type, x, y, primary, radius) {
     normalize(primary);
     var spec = TYPES[type] || TYPES.ocean;
+    radius = radius || spec.radius;
     var dx = x - primary.x, dy = y - primary.y;
     var distance = Math.sqrt(dx * dx + dy * dy);
-    if (distance < primary.radius + spec.radius + 22) {
+    if (distance < primary.radius + radius + 22) {
       var angle = Math.atan2(dy, dx);
-      distance = primary.radius + spec.radius + 45;
+      distance = primary.radius + radius + 45;
       dx = Math.cos(angle) * distance; dy = Math.sin(angle) * distance;
       x = primary.x + dx; y = primary.y + dy;
     }

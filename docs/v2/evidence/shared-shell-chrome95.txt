@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 [chrome95] › tests/v2/family-shell.spec.cjs:2:1 › shared2 shell preserves native settings IDs, parent gate, score, theme, audio and pauses (2.6s)
+
+  1 passed (36.8s)

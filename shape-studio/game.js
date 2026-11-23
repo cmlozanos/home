@@ -15,7 +15,66 @@
 (function () {
   'use strict';
   if (!window.LearningGate) { document.body.textContent = '↻ Recarga para cargar el reto'; return; }
-  var learningLocked = true, learningTimers = LearningGate.createTimers(), learningAudioWasRunning = false;
+  var learningLocked = true, learningTimers = LearningGate.createTimers();
+  var menuPaused = false, helpPaused = false, familyPaused = false, gamePaused = false, pausedAt = 0, audioWasRunning = false;
+  function syncPause() {
+    var paused = learningLocked || familyPaused || helpPaused || menuPaused;
+    if (paused === gamePaused) return;
+    gamePaused = paused;
+    if (paused) {
+      pausedAt = performance.now();
+      learningTimers.pause();
+      cancelDrag();
+      document.querySelectorAll('.slot').forEach(function (slot) { slot.classList.remove('hover'); });
+      audioWasRunning = !!audio && audio.state === 'running';
+      if (audioWasRunning) audio.suspend().catch(function () {});
+    } else {
+      learningTimers.resume();
+      if (audioWasRunning && sound) audio.resume().catch(function () {});
+    }
+  }
+  document.getElementById('help').addEventListener('click', function () {
+    helpPaused = true; syncPause();
+    var shell = document.querySelector('family-v2-shell');
+    if (shell && shell.shadowRoot) shell.shadowRoot.querySelector('dialog').close();
+  }, true);
+  function closeMenu() {
+    document.getElementById('game-menu').hidden = true; menuPaused = false; syncPause();
+    var shell = document.querySelector('family-v2-shell'); if (shell) shell.shadowRoot.querySelector('#home').focus();
+  }
+  function openMenu() {
+    menuPaused = true; syncPause();
+    document.getElementById('game-menu').hidden = false; document.getElementById('menu-continue').focus();
+  }
+  document.getElementById('menu-continue').addEventListener('click', closeMenu);
+  document.querySelectorAll('[data-menu-level]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      closeMenu();
+      var index = Number(button.dataset.menuLevel);
+      var choices = document.querySelectorAll('button[data-level],button.level[data-size]');
+      if (choices[index]) choices[index].click();
+    });
+  });
+  window.addEventListener('keydown', function (event) {
+    var menu = document.getElementById('game-menu'); if (menu.hidden || learningLocked) return;
+    if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); closeMenu(); }
+    if (event.key === 'Tab') {
+      var buttons = menu.querySelectorAll('button'), first = buttons[0], last = buttons[buttons.length - 1];
+      event.stopImmediatePropagation();
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+  }, true);
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.FamilyV2) FamilyV2.register({pause:familyPause,resume:familyResume,home:openMenu});
+  });
+  function familyPause() { familyPaused = true; syncPause(); }
+  function familyResume() { familyPaused = false; syncPause(); }
+  document.addEventListener('familyv2:pause', familyPause);
+  document.addEventListener('familyv2:resume', familyResume);
+  window.addEventListener('familyv2:pause', familyPause);
+  window.addEventListener('familyv2:resume', familyResume);
+  var roundId = 0;
   var $ = function (id) { return document.getElementById(id); };
   var shapes = [
     { id:'circle', name:'Círculo', color:'#dcaa52', shape:'<circle cx="50" cy="50" r="33"/>', detail:'<path d="M31 51q19-23 38 0M33 57q17 18 34 0"/>' },
@@ -30,47 +89,47 @@
   var level = 0, selected = null, placed = [], current = [], sound = false, audio, drag = null, ignoreClickUntil = 0, completed = [], installEvent, finishTimer, feedbackTimer, previousFocus;
   try { var saved = JSON.parse(localStorage.getItem('shape-studio-progress') || '[]'); if (Array.isArray(saved)) completed = saved.filter(function (n) { return n === 0 || n === 1 || n === 2; }); } catch (_) {}
   function art(shape, outline) { return '<svg viewBox="0 0 100 100" aria-hidden="true"><g class="geometry" fill="' + (outline ? '#d6d1c1' : level === 2 ? '#d8a65c' : shape.color) + '" stroke="' + (outline ? '#a6ad99' : '#4b514024') + '" stroke-width="' + (outline ? '2' : '1.5') + '"' + (outline ? ' stroke-dasharray="4 4"' : '') + '>' + shape.shape + '</g>' + (outline ? '' : '<g fill="none" stroke="#fff5df" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".58">' + shape.detail + '</g>') + '</svg>'; }
-  function chime(frequency) { if (learningLocked || !sound) return; try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); var oscillator = audio.createOscillator(), gain = audio.createGain(); oscillator.connect(gain); gain.connect(audio.destination); oscillator.frequency.setValueAtTime(frequency, audio.currentTime); gain.gain.setValueAtTime(.065, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .18); oscillator.start(); oscillator.stop(audio.currentTime + .2); } catch (_) {} }
+  function chime(frequency) { if (learningLocked || familyPaused || !sound) return; try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); var oscillator = audio.createOscillator(), gain = audio.createGain(); oscillator.connect(gain); gain.connect(audio.destination); oscillator.frequency.setValueAtTime(frequency, audio.currentTime); gain.gain.setValueAtTime(.065, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .18); oscillator.start(); oscillator.stop(audio.currentTime + .2); } catch (_) {} }
   function update() { $('progress').innerHTML = current.map(function (_, i) { return '<span class="' + (i < placed.length ? 'filled' : '') + '" aria-hidden="true">◆</span>'; }).join(''); $('progress').setAttribute('aria-label', placed.length + ' de ' + current.length + ' formas colocadas'); $('saved').textContent = completed.length ? '★ '.repeat(completed.length) : '◇ ◇ ◇'; }
   function cancelDrag() { if (!drag) return; var active = drag; drag = null; active.ghost.remove(); active.button.classList.remove('dragging'); try { active.button.releasePointerCapture(active.pointer); } catch (_) {} }
   function start(nextLevel) {
+    roundId++;
     cancelDrag(); learningTimers.clear(finishTimer); learningTimers.clear(feedbackTimer); level = nextLevel; selected = null; placed = []; current = shapes.slice(0, [4,6,8][level]); $('win').hidden = true; $('slots').innerHTML = ''; $('tray').innerHTML = ''; document.body.dataset.level = level; $('scene-name').textContent = ['EL JARDÍN', 'LA ALDEA', 'EL TALLER DORADO'][level];
     ShapeStudio.shuffle(current).forEach(function (shape) { var slot = document.createElement('button'); slot.className = 'slot'; slot.dataset.shape = shape.id; slot.setAttribute('aria-label', 'Hueco: ' + shape.name); slot.innerHTML = art(shape, true) + '<span class="slot-check" aria-hidden="true">✓</span>'; slot.addEventListener('click', function () { if (selected) attempt(selected, shape.id); else { $('status').textContent = 'Primero elige una pieza.'; $('tray').classList.add('nudge'); learningTimers.set(function () { $('tray').classList.remove('nudge'); }, 400); } }); $('slots').appendChild(slot); });
     ShapeStudio.shuffle(current).forEach(function (shape) { var piece = document.createElement('button'); piece.className = 'piece'; piece.dataset.shape = shape.id; piece.setAttribute('aria-label', 'Pieza: ' + shape.name); piece.setAttribute('aria-pressed', 'false'); piece.innerHTML = art(shape, false); piece.addEventListener('click', function () { if (Date.now() < ignoreClickUntil) return; select(shape.id); }); piece.addEventListener('pointerdown', function (event) { beginDrag(event, piece, shape.id); }); $('tray').appendChild(piece); });
     document.querySelectorAll('.levels [data-level]').forEach(function (button) { button.setAttribute('aria-pressed', Number(button.dataset.level) === level ? 'true' : 'false'); }); $('status').textContent = 'Lleva cada forma a su silueta.'; update();
   }
-  function select(id) { if (placed.indexOf(id) !== -1) return; selected = id; document.querySelectorAll('.piece').forEach(function (piece) { piece.setAttribute('aria-pressed', String(piece.dataset.shape === id)); }); $('slots').classList.add('ready'); }
+  function select(id) { if (learningLocked || familyPaused || helpPaused || menuPaused) return; if (placed.indexOf(id) !== -1) return; selected = id; document.querySelectorAll('.piece').forEach(function (piece) { piece.setAttribute('aria-pressed', String(piece.dataset.shape === id)); }); $('slots').classList.add('ready'); }
   function attempt(pieceId, slotId) {
-    if (learningLocked) return;
+    if (learningLocked || familyPaused || helpPaused || menuPaused) return;
     var slot = $('slots').querySelector('[data-shape="' + slotId + '"]'), piece = $('tray').querySelector('[data-shape="' + pieceId + '"]');
     if (!slot || !piece || placed.indexOf(slotId) !== -1) return;
     if (!ShapeStudio.place(placed, pieceId, slotId)) { slot.classList.remove('wrong'); void slot.offsetWidth; slot.classList.add('wrong'); $('status').textContent = 'Esa forma tiene otro sitio. Prueba otra silueta.'; learningTimers.clear(feedbackTimer); feedbackTimer = learningTimers.set(function () { slot.classList.remove('wrong'); }, 500); return; }
+    if (window.FamilyV2) FamilyV2.award(roundId + ':' + pieceId, 1);
     slot.innerHTML = art(current.filter(function (shape) { return shape.id === pieceId; })[0], false) + '<span class="slot-check" aria-hidden="true">✓</span>'; slot.classList.add('placed'); slot.disabled = true; slot.setAttribute('aria-label', piece.getAttribute('aria-label').replace('Pieza: ', '') + ', colocada'); piece.classList.add('placed'); piece.disabled = true; piece.setAttribute('aria-pressed', 'false'); selected = null; $('slots').classList.remove('ready'); $('status').textContent = '¡Encaja!'; update(); chime(620 + placed.length * 50);
     if (placed.length === current.length) finishTimer = learningTimers.set(finish, 450);
   }
   function beginDrag(event, button, id) {
-    if (event.button !== 0 || button.disabled || drag) return;
+    if (gamePaused || event.isPrimary === false || event.button !== 0 || button.disabled || drag) return;
     select(id); var rect = button.getBoundingClientRect(), ghost = document.createElement('div'); ghost.className = 'drag-ghost'; ghost.innerHTML = button.innerHTML; ghost.style.width = rect.width + 'px'; ghost.style.height = rect.height + 'px'; ghost.hidden = true; document.body.appendChild(ghost);
     drag = { id:id, pointer:event.pointerId, startX:event.clientX, startY:event.clientY, moved:false, ghost:ghost, button:button, width:rect.width, height:rect.height };
     try { button.setPointerCapture(event.pointerId); } catch (_) {}
   }
   document.addEventListener('pointermove', function (event) { if (!drag || drag.pointer !== event.pointerId) return; if (Math.abs(event.clientX - drag.startX) + Math.abs(event.clientY - drag.startY) > 8) drag.moved = true; if (!drag.moved) return; event.preventDefault(); drag.ghost.hidden = false; drag.button.classList.add('dragging'); drag.ghost.style.left = event.clientX - drag.width / 2 + 'px'; drag.ghost.style.top = event.clientY - drag.height / 2 + 'px'; document.querySelectorAll('.slot').forEach(function (slot) { slot.classList.toggle('hover', !slot.disabled && ShapeStudio.contains(slot.getBoundingClientRect(), event.clientX, event.clientY)); }); }, { passive:false });
   document.addEventListener('pointerup', function (event) { if (!drag || drag.pointer !== event.pointerId) return; var moving = drag; cancelDrag(); document.querySelectorAll('.slot').forEach(function (slot) { slot.classList.remove('hover'); if (moving.moved && !slot.disabled && ShapeStudio.contains(slot.getBoundingClientRect(), event.clientX, event.clientY)) attempt(moving.id, slot.dataset.shape); }); if (moving.moved) ignoreClickUntil = Date.now() + 350; });
-  document.addEventListener('pointercancel', function () { cancelDrag(); document.querySelectorAll('.slot').forEach(function (slot) { slot.classList.remove('hover'); }); }); window.addEventListener('blur', cancelDrag);
+  document.addEventListener('pointercancel', function (event) { if (!drag || drag.pointer !== event.pointerId) return; cancelDrag(); document.querySelectorAll('.slot').forEach(function (slot) { slot.classList.remove('hover'); }); }); window.addEventListener('blur', cancelDrag);
   function finish() { if (completed.indexOf(level) === -1) completed.push(level); try { localStorage.setItem('shape-studio-progress', JSON.stringify(completed)); } catch (_) {} update(); $('next').setAttribute('aria-label', level < 2 ? 'Siguiente dificultad' : 'Volver al jardín fácil'); $('win').hidden = false; $('next').focus(); chime(950); }
   document.querySelectorAll('.levels [data-level]').forEach(function (button) { button.addEventListener('click', function () { start(Number(button.dataset.level)); }); }); $('restart').addEventListener('click', function () { start(level); }); $('replay').addEventListener('click', function () { start(level); }); $('next').addEventListener('click', function () { start((level + 1) % 3); });
   $('sound').addEventListener('click', function () { sound = !sound; $('sound').setAttribute('aria-pressed', String(sound)); $('sound').setAttribute('aria-label', sound ? 'Desactivar sonido' : 'Activar sonido'); chime(660); });
-  function closeHelp() { $('help-panel').hidden = true; if (previousFocus) previousFocus.focus(); }
+  function closeHelp() { $('help-panel').hidden = true; helpPaused = false; syncPause(); if (previousFocus && previousFocus.getRootNode() === document) previousFocus.focus(); else { var shell = document.querySelector('family-v2-shell'); if (shell) shell.shadowRoot.querySelector('#adults').focus(); } }
   $('help').addEventListener('click', function () { previousFocus = document.activeElement; $('help-panel').hidden = false; $('close-help').focus(); }); $('close-help').addEventListener('click', closeHelp);
   document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { if (!$('help-panel').hidden) closeHelp(); cancelDrag(); selected = null; $('slots').classList.remove('ready'); document.querySelectorAll('.piece').forEach(function (piece) { piece.setAttribute('aria-pressed', 'false'); }); } var overlay = !$('help-panel').hidden ? $('help-panel') : !$('win').hidden ? $('win') : null; if (event.key === 'Tab' && overlay) { var buttons = Array.prototype.filter.call(overlay.querySelectorAll('button,a'), function (node) { return !node.hidden && !node.disabled; }); var first = buttons[0], last = buttons[buttons.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } } });
   window.addEventListener('beforeinstallprompt', function (event) { event.preventDefault(); installEvent = event; $('install').hidden = false; }); $('install').addEventListener('click', function () { if (installEvent) { installEvent.prompt(); installEvent = null; $('install').hidden = true; } }); if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {}); start(0);
   LearningGate.mount({gameId:'shape-studio',onLock:function(){
-    learningLocked=true;learningTimers.pause();cancelDrag();
-    document.querySelectorAll('.slot').forEach(function(slot){slot.classList.remove('hover');});
-    learningAudioWasRunning=!!audio&&audio.state==='running';
-    if(learningAudioWasRunning)audio.suspend().catch(function(){});
+    learningLocked=true;syncPause();
+    var shell=document.querySelector('family-v2-shell');
+    if(shell&&shell.shadowRoot){var dialog=shell.shadowRoot.querySelector('dialog');if(dialog.open)dialog.close();}
   },onUnlock:function(){
-    learningLocked=false;learningTimers.resume();
-    if(learningAudioWasRunning&&sound)audio.resume().catch(function(){});
+    learningLocked=false;syncPause();
   }});
 }());

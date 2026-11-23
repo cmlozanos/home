@@ -15,7 +15,64 @@
 (function () {
   'use strict';
   if (!window.LearningGate) { document.body.textContent = '↻ Recarga para cargar el reto'; return; }
-  var learningLocked = true, learningAudioWasRunning = false;
+  var learningLocked = true;
+  var menuPaused = false, helpPaused = false, familyPaused = false, gamePaused = false, pausedAt = 0, audioWasRunning = false;
+  function syncPause() {
+    var paused = learningLocked || familyPaused || helpPaused || menuPaused;
+    if (paused === gamePaused) return;
+    gamePaused = paused;
+    if (paused) {
+      pausedAt = performance.now();
+      if (pointer !== null) { try { canvas.releasePointerCapture(pointer); } catch (_) {} }
+      commit(); flushSave();
+      audioWasRunning = !!audio && audio.state === 'running';
+      if (audioWasRunning) audio.suspend().catch(function () {});
+    } else {
+      schedule();
+      if (audioWasRunning && enabledSound) audio.resume().catch(function () {});
+    }
+  }
+  document.getElementById('help').addEventListener('click', function () {
+    helpPaused = true; syncPause();
+    var shell = document.querySelector('family-v2-shell');
+    if (shell && shell.shadowRoot) shell.shadowRoot.querySelector('dialog').close();
+  }, true);
+  function closeMenu() {
+    document.getElementById('game-menu').hidden = true; menuPaused = false; syncPause();
+    var shell = document.querySelector('family-v2-shell'); if (shell) shell.shadowRoot.querySelector('#home').focus();
+  }
+  function openMenu() {
+    menuPaused = true; syncPause();
+    document.getElementById('game-menu').hidden = false; document.getElementById('menu-continue').focus();
+  }
+  document.getElementById('menu-continue').addEventListener('click', closeMenu);
+  document.querySelectorAll('[data-menu-level]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      closeMenu();
+      var index = Number(button.dataset.menuLevel);
+      var choices = document.querySelectorAll('button[data-level],button.level[data-size]');
+      if (choices[index]) choices[index].click();
+    });
+  });
+  window.addEventListener('keydown', function (event) {
+    var menu = document.getElementById('game-menu'); if (menu.hidden || learningLocked) return;
+    if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); closeMenu(); }
+    if (event.key === 'Tab') {
+      var buttons = menu.querySelectorAll('button'), first = buttons[0], last = buttons[buttons.length - 1];
+      event.stopImmediatePropagation();
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+  }, true);
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.FamilyV2) FamilyV2.register({pause:familyPause,resume:familyResume,home:openMenu});
+  });
+  function familyPause() { familyPaused = true; syncPause(); }
+  function familyResume() { familyPaused = false; syncPause(); }
+  document.addEventListener('familyv2:pause', familyPause);
+  document.addEventListener('familyv2:resume', familyResume);
+  window.addEventListener('familyv2:pause', familyPause);
+  window.addEventListener('familyv2:resume', familyResume);
   var paths = {
     home: '<path d="m3 11 9-8 9 8M6 10v10h12V10M10 20v-6h4v6"/>',
     help: '<circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 5 2c-2 1-2 2-2 3M12 17h.01"/>',
@@ -57,7 +114,7 @@
     select('#backgrounds button', document.querySelector('[data-background="' + background + '"]'));
   }
   function ping() {
-    if (learningLocked) return;
+    if (learningLocked || familyPaused || helpPaused || menuPaused) return;
     if (!enabledSound) return;
     try { var Audio = window.AudioContext || window.webkitAudioContext; audio = audio || new Audio(); if (audio.state === 'suspended') audio.resume();
       var oscillator = audio.createOscillator(), gain = audio.createGain(); oscillator.type = 'sine'; oscillator.frequency.value = 620; gain.gain.setValueAtTime(.035, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .15); oscillator.connect(gain); gain.connect(audio.destination); oscillator.start(); oscillator.stop(audio.currentTime + .15);
@@ -78,7 +135,7 @@
     remember(); actions = AtelierCore.bounded(actions.concat([current])); current = null; pointer = null; sync(); schedule(); persist(); ping();
   }
   canvas.addEventListener('pointerdown', function (event) {
-    if (pointer !== null || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    if (learningLocked || familyPaused || helpPaused || menuPaused || pointer !== null || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
     event.preventDefault(); pointer = event.pointerId; canvas.setPointerCapture(event.pointerId);
     current = { tool:tool, color:color, size:size, points:[point(event)] }; sync(); schedule();
   });
@@ -135,13 +192,13 @@
   document.getElementById('undo').addEventListener('click',function(){commit();if(!undo.length)return;redo.push(snapshot());restoreSnapshot(undo.pop());});
   document.getElementById('redo').addEventListener('click',function(){commit();if(!redo.length)return;undo.push(snapshot());restoreSnapshot(redo.pop());});
   function show(id){commit();lastFocus=document.activeElement;document.getElementById(id).hidden=false;document.getElementById(id).querySelector('button').focus();}
-  function hide(id){document.getElementById(id).hidden=true;if(lastFocus)lastFocus.focus();}
+  function hide(id){document.getElementById(id).hidden=true;if(id==='help-dialog'){helpPaused=false;syncPause();}if(lastFocus&&lastFocus.getRootNode()===document)lastFocus.focus();else{var shell=document.querySelector('family-v2-shell');if(shell)shell.shadowRoot.querySelector('#adults').focus();}}
   document.getElementById('clear').onclick=function(){show('clear-dialog');};document.getElementById('cancel-clear').onclick=function(){hide('clear-dialog');};
   document.getElementById('confirm-clear').onclick=function(){remember();actions=[];sync();schedule();persist();hide('clear-dialog');};
   document.getElementById('help').onclick=function(){show('help-dialog');};document.getElementById('close-help').onclick=function(){hide('help-dialog');};
   document.getElementById('sound').onclick=function(){enabledSound=!enabledSound;this.innerHTML=icon(enabledSound?'sound':'muted');this.setAttribute('aria-label',enabledSound?'Desactivar sonido':'Activar sonido');this.setAttribute('aria-pressed',String(enabledSound));ping();};
   document.getElementById('download').onclick=function(){commit();render();canvas.toBlob(function(blob){if(!blob){notice('No se pudo exportar');return;}var url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='mi-pequeno-atelier.png';document.body.appendChild(link);link.click();link.remove();setTimeout(function(){URL.revokeObjectURL(url);},10000);notice('✓');},'image/png');};
-  window.addEventListener('keydown',function(e){var dialog=document.querySelector('.overlay:not([hidden])');if(dialog){if(e.key==='Escape')hide(dialog.id);if(e.key==='Tab'){var buttons=dialog.querySelectorAll('button,a[href]'),first=buttons[0],last=buttons[buttons.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}return;}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();document.getElementById(e.shiftKey?'redo':'undo').click();}});
+  window.addEventListener('keydown',function(e){var dialog=document.querySelector('.overlay:not([hidden])');if(dialog){if(e.key==='Escape')hide(dialog.id);if(e.key==='Tab'){var buttons=dialog.querySelectorAll('button,a[href]'),first=buttons[0],last=buttons[buttons.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}return;}if(gamePaused)return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();document.getElementById(e.shiftKey?'redo':'undo').click();}});
   window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();installEvent=e;});document.getElementById('install').onclick=function(){if(installEvent){installEvent.prompt();installEvent=null;}else document.getElementById('install-help').hidden=false;};
   try{var raw=localStorage.getItem(STORE);if(raw&&raw.length<2000000){var saved=JSON.parse(raw);if(AtelierCore.validSave(saved)){actions=saved.actions;background=saved.background;}}}catch(e){/* An empty canvas remains playable when storage is unavailable. */}
   window.addEventListener('resize',resize);if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas.parentNode);
@@ -149,12 +206,11 @@
   window.addEventListener('pagehide',function(){if(current)commit();flushSave();});
   sync();resize();
   LearningGate.mount({gameId:'little-atelier',onLock:function(){
-    learningLocked=true;if(pointer!==null){try{canvas.releasePointerCapture(pointer);}catch(ignore){}}commit();flushSave();
-    learningAudioWasRunning=!!audio&&audio.state==='running';
-    if(learningAudioWasRunning)audio.suspend().catch(function(){});
+    learningLocked=true;syncPause();
+    var shell=document.querySelector('family-v2-shell');
+    if(shell&&shell.shadowRoot){var dialog=shell.shadowRoot.querySelector('dialog');if(dialog.open)dialog.close();}
   },onUnlock:function(){
-    learningLocked=false;
-    if(learningAudioWasRunning&&enabledSound)audio.resume().catch(function(){});
+    learningLocked=false;syncPause();
   }});
   if('serviceWorker'in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
   if(new URLSearchParams(location.search).get('test')==='1')window.__atelier={read:function(){return JSON.parse(JSON.stringify({actions:actions,background:background,undo:undo.length,redo:redo.length,sound:enabledSound}));}};

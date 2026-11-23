@@ -95,8 +95,10 @@
   /* Long presses must not open touch callouts or select game artwork. */
 body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 input, textarea, select, [contenteditable]:not([contenteditable="false"]) { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
-  </style>
-</head>
+
+html.family-v2 body{background:var(--family-page);color:var(--family-ink)}html.family-v2 .card{background:var(--family-panel);color:var(--family-ink);border-color:var(--family-button)}html.family-v2 .card-desc{color:var(--family-ink);opacity:.8}
+</style>
+<link rel="stylesheet" href="family-v2/family.css?v=2.0.0"></head>
 <body>
   <div class="hero">
     <img class="avatar" src="https://github.com/cmlozanos.png" alt="cmlozanos" />
@@ -111,5 +113,5 @@ input, textarea, select, [contenteditable]:not([contenteditable="false"]) { -web
   <footer>© 2026 cmlozanos · Proyectos personales en GitHub Pages y Cloudflare Tunnel</footer>
 
   <script src="apps.js?v=20261122-cole-aventura"></script>
-</body>
+<script src="family-v2/family.js?v=2.0.0" data-game="projects-catalogue" defer></script></body>
 </html>

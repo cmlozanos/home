@@ -1,0 +1,17 @@
+
+Running 12 tests using 1 worker
+
+  ✓   1 [phone] › tests/v2/family-shell.spec.cjs:2:1 › shared2 shell preserves native settings IDs, parent gate, score, theme, audio and pauses (985ms)
+  ✓   2 [phone] › tests/v2/shell-regressions.spec.cjs:34:1 › learning deadline closes Adult modal and leaves the actual challenge usable (630ms)
+  ✓   3 [phone] › tests/v2/shell-regressions.spec.cjs:58:1 › theme keyboard events stay inside the shell, native controls still receive keys (316ms)
+  ✓   4 [phone] › tests/v2/shell-regressions.spec.cjs:73:1 › cookie remains authoritative when localStorage reads succeed but writes throw (487ms)
+  ✓   5 [phone] › tests/v2/shell-regressions.spec.cjs:95:55 › keyboard extends session activity without disabling genuine expiry (283ms)
+  ✓   6 [phone] › tests/v2/shell-regressions.spec.cjs:95:55 › pointer movement extends session activity without disabling genuine expiry (316ms)
+  ✓   7 [phone-landscape] › tests/v2/family-shell.spec.cjs:2:1 › shared2 shell preserves native settings IDs, parent gate, score, theme, audio and pauses (957ms)
+  ✓   8 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:34:1 › learning deadline closes Adult modal and leaves the actual challenge usable (423ms)
+  ✓   9 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:58:1 › theme keyboard events stay inside the shell, native controls still receive keys (344ms)
+  ✓  10 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:73:1 › cookie remains authoritative when localStorage reads succeed but writes throw (310ms)
+  ✓  11 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:95:55 › keyboard extends session activity without disabling genuine expiry (301ms)
+  ✓  12 [phone-landscape] › tests/v2/shell-regressions.spec.cjs:95:55 › pointer movement extends session activity without disabling genuine expiry (295ms)
+
+  12 passed (7.9s)

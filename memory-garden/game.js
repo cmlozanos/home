@@ -15,7 +15,64 @@
 (function () {
   'use strict';
   if (!window.LearningGate) { document.body.textContent = '↻ Recarga para cargar el reto'; return; }
-  var learningLocked = true, learningTimers = LearningGate.createTimers(), learningAudioWasRunning = false;
+  var learningLocked = true, learningTimers = LearningGate.createTimers();
+  var menuPaused = false, helpPaused = false, familyPaused = false, gamePaused = false, pausedAt = 0, audioWasRunning = false;
+  function syncPause() {
+    var paused = learningLocked || familyPaused || helpPaused || menuPaused;
+    if (paused === gamePaused) return;
+    gamePaused = paused;
+    if (paused) {
+      pausedAt = performance.now();
+      learningTimers.pause();
+      audioWasRunning = !!audio && audio.state === 'running';
+      if (audioWasRunning) audio.suspend().catch(function () {});
+    } else {
+      learningTimers.resume();
+      if (audioWasRunning && sound) audio.resume().catch(function () {});
+    }
+  }
+  document.getElementById('help').addEventListener('click', function () {
+    helpPaused = true; syncPause();
+    var shell = document.querySelector('family-v2-shell');
+    if (shell && shell.shadowRoot) shell.shadowRoot.querySelector('dialog').close();
+  }, true);
+  function closeMenu() {
+    document.getElementById('game-menu').hidden = true; menuPaused = false; syncPause();
+    var shell = document.querySelector('family-v2-shell'); if (shell) shell.shadowRoot.querySelector('#home').focus();
+  }
+  function openMenu() {
+    menuPaused = true; syncPause();
+    document.getElementById('game-menu').hidden = false; document.getElementById('menu-continue').focus();
+  }
+  document.getElementById('menu-continue').addEventListener('click', closeMenu);
+  document.querySelectorAll('[data-menu-level]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      closeMenu();
+      var index = Number(button.dataset.menuLevel);
+      var choices = document.querySelectorAll('button[data-level],button.level[data-size]');
+      if (choices[index]) choices[index].click();
+    });
+  });
+  window.addEventListener('keydown', function (event) {
+    var menu = document.getElementById('game-menu'); if (menu.hidden || learningLocked) return;
+    if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); closeMenu(); }
+    if (event.key === 'Tab') {
+      var buttons = menu.querySelectorAll('button'), first = buttons[0], last = buttons[buttons.length - 1];
+      event.stopImmediatePropagation();
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+  }, true);
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.FamilyV2) FamilyV2.register({pause:familyPause,resume:familyResume,home:openMenu});
+  });
+  function familyPause() { familyPaused = true; syncPause(); }
+  function familyResume() { familyPaused = false; syncPause(); }
+  document.addEventListener('familyv2:pause', familyPause);
+  document.addEventListener('familyv2:resume', familyResume);
+  window.addEventListener('familyv2:pause', familyPause);
+  window.addEventListener('familyv2:resume', familyResume);
+  var roundId = 0;
   var $ = function (id) { return document.getElementById(id); };
   var animals = [
     ['fox', 'Zorro', '#ed8a51', '<path fill="#de7141" d="m20 32 2-25 24 18h10L80 7l1 28 7 20-18 31H34L13 57Z"/><path fill="#fff0cc" d="M17 43 50 59 83 43 71 78 50 90 29 78Z"/><path fill="#f9bd81" d="m27 18 1 19 15-7m30-12-1 19-15-7"/><path fill="#273b39" d="m43 62 7 10 7-10Z"/><circle cx="34" cy="48" r="3"/><circle cx="65" cy="48" r="3"/>'],
@@ -32,7 +89,7 @@
   function picture(animal) { return '<svg viewBox="0 0 100 100" aria-hidden="true" fill="#293c37">' + animal[3] + '</svg>'; }
   function say(message) { $('status').textContent = message; }
   function chime(frequency) {
-    if (learningLocked) return;
+    if (learningLocked || familyPaused || helpPaused || menuPaused) return;
     if (!sound) return;
     try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); var oscillator = audio.createOscillator(), gain = audio.createGain(); oscillator.connect(gain); gain.connect(audio.destination); oscillator.frequency.setValueAtTime(frequency, audio.currentTime); gain.gain.setValueAtTime(.07, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .18); oscillator.start(); oscillator.stop(audio.currentTime + .2); } catch (_) {}
   }
@@ -55,6 +112,7 @@
     say('Mira los animales.'); previewTimer = learningTimers.set(hidePreview, 2200);
   }
   function start(nextLevel) {
+    roundId++;
     learningTimers.clear(timer); learningTimers.clear(previewTimer); level = nextLevel; busy = false; previewing = false;
     $('win').hidden = true; $('board').classList.remove('preview');
     var keys = MemoryGarden.shuffle(animals.map(function (_, i) { return i; })).slice(0, [4, 6, 8][level]);
@@ -68,7 +126,7 @@
     update(); preview();
   }
   function select(index) {
-    if (busy || previewing) return;
+    if (learningLocked || familyPaused || helpPaused || menuPaused || busy || previewing) return;
     var result = MemoryGarden.choose(round, index); if (result === 'ignored') return;
     var card = $('board').children[index]; card.classList.add('open'); card.setAttribute('aria-label', animals[round.cards[index]][1]); chime(420);
     if (result === 'first') return;
@@ -80,7 +138,7 @@
         else { item.classList.remove('open'); item.setAttribute('aria-label', 'Carta ' + (selected + 1)); }
       });
       MemoryGarden.release(round); busy = false; update();
-      if (result === 'match') { chime(740); say('¡Pareja encontrada!'); } else say('Prueba otra pareja.');
+      if (result === 'match') { if (window.FamilyV2) FamilyV2.award(roundId + ':' + animals[round.cards[index]][0], 1); chime(740); say('¡Pareja encontrada!'); } else say('Prueba otra pareja.');
       if (round.matched.length === round.cards.length) finish();
     }, result === 'match' ? 380 : 950);
   }
@@ -92,18 +150,17 @@
   document.querySelectorAll('.levels [data-level]').forEach(function (button) { button.addEventListener('click', function () { start(Number(button.dataset.level)); }); });
   $('preview').addEventListener('click', preview); $('restart').addEventListener('click', function () { start(level); }); $('replay').addEventListener('click', function () { start(level); }); $('next').addEventListener('click', function () { start((level + 1) % 3); });
   $('sound').addEventListener('click', function () { sound = !sound; $('sound').setAttribute('aria-pressed', String(sound)); $('sound').setAttribute('aria-label', sound ? 'Desactivar sonido' : 'Activar sonido'); chime(660); });
-  function closeHelp() { $('help-panel').hidden = true; if (previousFocus) previousFocus.focus(); }
+  function closeHelp() { $('help-panel').hidden = true; helpPaused = false; syncPause(); if (previousFocus && previousFocus.getRootNode() === document) previousFocus.focus(); else { var shell = document.querySelector('family-v2-shell'); if (shell) shell.shadowRoot.querySelector('#adults').focus(); } }
   $('help').addEventListener('click', function () { previousFocus = document.activeElement; $('help-panel').hidden = false; $('close-help').focus(); }); $('close-help').addEventListener('click', closeHelp);
   document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && !$('help-panel').hidden) closeHelp(); var overlay = !$('help-panel').hidden ? $('help-panel') : !$('win').hidden ? $('win') : null; if (event.key === 'Tab' && overlay) { var buttons = Array.prototype.filter.call(overlay.querySelectorAll('button,a'), function (node) { return !node.hidden && !node.disabled; }); var first = buttons[0], last = buttons[buttons.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } } });
   window.addEventListener('beforeinstallprompt', function (event) { event.preventDefault(); installEvent = event; $('install').hidden = false; }); $('install').addEventListener('click', function () { if (installEvent) { installEvent.prompt(); installEvent = null; $('install').hidden = true; } });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
   start(0);
   LearningGate.mount({gameId:'memory-garden',onLock:function(){
-    learningLocked=true;learningTimers.pause();
-    learningAudioWasRunning=!!audio&&audio.state==='running';
-    if(learningAudioWasRunning)audio.suspend().catch(function(){});
+    learningLocked=true;syncPause();
+    var shell=document.querySelector('family-v2-shell');
+    if(shell&&shell.shadowRoot){var dialog=shell.shadowRoot.querySelector('dialog');if(dialog.open)dialog.close();}
   },onUnlock:function(){
-    learningLocked=false;learningTimers.resume();
-    if(learningAudioWasRunning&&sound)audio.resume().catch(function(){});
+    learningLocked=false;syncPause();
   }});
 }());

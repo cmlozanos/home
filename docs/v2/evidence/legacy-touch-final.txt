@@ -1,0 +1,17 @@
+
+Running 12 tests using 1 worker
+
+  ✓   1 [chrome95] › tests/long-press.spec.cjs:5:26 › : touch context menu is suppressed without blocking editing (1.2s)
+  ✓   2 [chrome95] › tests/long-press.spec.cjs:5:26 › fruit-splash: touch context menu is suppressed without blocking editing (605ms)
+  ✓   3 [chrome95] › tests/long-press.spec.cjs:5:26 › orbit-lab: touch context menu is suppressed without blocking editing (521ms)
+  ✓   4 [chrome95] › tests/long-press.spec.cjs:5:26 › memory-garden: touch context menu is suppressed without blocking editing (475ms)
+  ✓   5 [chrome95] › tests/long-press.spec.cjs:5:26 › shape-studio: touch context menu is suppressed without blocking editing (573ms)
+  ✓   6 [chrome95] › tests/long-press.spec.cjs:5:26 › little-atelier: touch context menu is suppressed without blocking editing (313ms)
+  ✓   7 [chrome95] › tests/long-press.spec.cjs:5:26 › maze-meadow: touch context menu is suppressed without blocking editing (434ms)
+  ✓   8 [chrome95] › tests/long-press.spec.cjs:5:26 › nitro-highway: touch context menu is suppressed without blocking editing (526ms)
+  ✓   9 [chrome95] › tests/long-press.spec.cjs:5:26 › pocket-karts: touch context menu is suppressed without blocking editing (579ms)
+  ✓  10 [chrome95] › tests/long-press.spec.cjs:5:26 › pulse-path: touch context menu is suppressed without blocking editing (645ms)
+  ✓  11 [chrome95] › tests/long-press.spec.cjs:5:26 › animal-quiz: touch context menu is suppressed without blocking editing (497ms)
+  ✓  12 [chrome95] › tests/long-press.spec.cjs:5:26 › rubik-solver: touch context menu is suppressed without blocking editing (567ms)
+
+  12 passed (8.7s)

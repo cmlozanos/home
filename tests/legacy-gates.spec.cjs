@@ -21,7 +21,7 @@ for(const game of games){
     await prepare(page);
     await page.goto(game+'/?test=1');
     await expect(page.locator('#learning-gate')).toBeVisible();
-    await expect(page.getByRole('link',{name:/todos los juegos/i})).toHaveAttribute('href','https://cmlozanos.github.io/games/');
+    await expect(page.getByRole('button',{name:'Inicio del juego',exact:true})).toBeVisible();
     const prompt=await page.locator('#gate-prompt').textContent();
     const numbers=prompt.match(/(\d)\s*([+−-])\s*(\d)/);
     const answer=numbers[2]==='+'?+numbers[1]+ +numbers[3]:+numbers[1]- +numbers[3];

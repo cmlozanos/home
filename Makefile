@@ -1,3 +1,8 @@
+.DEFAULT_GOAL := help
+.PHONY: help
+help:
+	@printf "Family games: make check | check-games | check-release-v2 | test-family-v2 | serve\n"
+
 .PHONY: check serve install-tests test-games check-games icons screenshots sync-gates check-gates test-touch check-reading-proposal test-reading test-reading-games test-selected-games
 
 check:
@@ -59,3 +64,14 @@ icons:
 
 screenshots:
 	node tools/game-screenshots.mjs $(GAME)
+
+.PHONY: check-family-v2 test-family-v2
+check-family-v2:
+	node --check family-v2/family.js
+	node tools/verify-family-v2.mjs animal-quiz nitro-highway pocket-karts pulse-path fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow rubik-solver
+test-family-v2:
+	npx --no-install playwright test tests/v2/
+
+.PHONY: check-release-v2
+check-release-v2: check-family-v2
+	node tools/check-release-v2.mjs
