@@ -1,6 +1,6 @@
 # V2 delivery matrix
 
-Status in progress; this file records evidence, not a promise that every row is accepted.
+Historical investigation matrix; final delivery acceptance is in ACCEPTANCE.md and STATUS.md. This is not a promise of zero defects.
 
 | Source | Games | Responsible scope | Initial state |
 |---|---|---|---|

@@ -1,6 +1,6 @@
 # Evidence and status — 2.0.0
 
-This is a coordinated release candidate until all publication checks below finish. Not a promise of zero defects.
+Coordinated 2.0.0 renovation of 19 games in seven repositories. Final release acceptance below supersedes historical candidate entries. Not a promise of zero defects.
 
 ## Repositories and native delivery
 
@@ -40,3 +40,17 @@ Horizontal serial final116passed3skips exposed one real issue: Quiz status feedb
 Quiz horizontal correction focused2/2passed, no force-click. Full root tablet120passed; Safari104passed16skips; modern entry12+11WebKit and genuine95entry11+regressions5 passed. Public eight standalone/games native entry/Home/Adult checked and home11URLs follow. Gates recorded without zero-bug or physical-device claims.
 
 Final Quiz correction accepted separately:quiz-landscape-accepted2/2green on current source (the earlier same-name log was overwritten by an older concurrent process, so it is retained as historical failure, not acceptance). Final same-runtime public Home11/11passed. Pages accepted742e40e. CI matrix in progress, release tags await its result. Tests do not require hidden clicks or suppress game errors.
+
+## Final delivery reconciliation — 2026-11-23
+
+- Current Home runtime:742e40e; documentation head54f2115. Latest CI45221073670 passed tablet120/120, phone117passed/3skipped, landscape117passed/3skipped. Safari job still installing external browser dependencies when recorded; not counted as a pass. Earlier runtime Safari CI passed, complemented by current local Safari104passed/16explicit skips; final CI acceptance recorded separately below.
+- Games59d72de aligns all four gitlinks with the accepted standalone commits. Pages45222274488 succeeded. Local `make check-v2` passes exact bundle checks. Existing runtime browser/playability evidence reused: gitlink-only alignment changes no local engine bytes.
+- Publishedv2.0.0 releases: Banana75bd573, Jump54bd7a9, Fancy8390882, World4196bab, Turbo1ef90de, Games59d72de. Home release waits final CI.
+- Re-ran `make check check-games check-release-v2`:exit0; public Quiz nativeHome/Adult/error smoke:exit0 after final landscape fix. Compact CI summaries and model output retained under evidence/.
+- Removed only task-owned `.v2-task` Chromium95 archive/extraction after all old-engine processes stopped. Sources, tests, licensing, screenshots and necessary evidence retained. Shared browsers/caches and unrelated `.DS_Store` untouched.
+
+## Accepted final CI
+
+[Home CI45221073670](https://github.com/cmlozanos/home/actions/runs/45221073670):SUCCESS, four projects. Tablet120passed; phone117passed/3skipped; landscape117passed/3skipped; Safari104passed/16skipped. Total458passed/22explicit skips. Runtime742e40e; subsequent changes only documentation/evidence. Current-source local Safari repeated104passed/16skipped. Earlier failed runs remain historical diagnostics, not acceptance. No CI failure outstanding for this accepted runtime.
+
+All seven repositories accepted forv2.0.0; release map in DELIVERY.md. Public Pages and native Home/Adult checks recorded. Physical-device and camera limits remain unchanged.

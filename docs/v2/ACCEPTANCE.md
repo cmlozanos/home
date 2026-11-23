@@ -21,3 +21,20 @@ No zero-bug guarantee or physical GalaxyGPU certification. All tracks/cars/missi
 ## User-driven follow-up
 
 A supervised play pass on the actual Galaxy Tab4 remains necessary for tactile comfort/GPU/thermal behaviour, especially3D. New reports should record game/version, mode/car/track, touch sequence and expected/observed; reproduce as regression before repair.
+
+## Publicación y verificación final
+
+- Gitlinks del catálogo alineados con las cuatro versiones2.0.0:Games59d72de; Pages correcto. Seis repositorios con releasev2.0.0 verificado; Home pendiente de la última matriz CI al escribir esta entrada.
+- CI actual de Home:tablet120passed,phone117passed/3skipped,landscape117passed/3skipped. No se ha cambiado código para el fallo intermitente de foco del primer candidato: la matriz actual conserva la aserción y pasa. Si se reproduce de nuevo, sigue siendo una regresión a investigar, no una prueba de ausencia universal de carreras de foco.
+- 19×4archivos de la base común comparados byte a byte; iguales. Modelos, presupuestos, cachés, fuentes/licencias y sintaxis revalidados con `make check check-games check-release-v2` (exit0).
+- Revisión final:corregida una frase histórica del contrato que aún decía que Inicio abría el catálogo; la implementación y los tests ya vuelven al menú nativo. No altera el runtime.
+
+### Autoevaluación de cierre
+
+Exactitud4/5:evidencia nativa, navegador, offline y publicación diferenciada de hardware físico. Completitud4/5:19juegos cubiertos; no todas las campañas ni cámara real. Claridad4/5:contrato y límites explícitos, logs históricos conservados. Accionabilidad5/5:catálogo público, releases y comandos por proyecto. Concisión4/5:resumen de entrega separado de logs. Mejoras futuras:prueba supervisada en GalaxyTab4 física y regresiones concretas a partir de secuencias que reporte el niño.
+
+## Accepted final CI
+
+[Home CI45221073670](https://github.com/cmlozanos/home/actions/runs/45221073670):SUCCESS, four projects. Tablet120passed; phone117passed/3skipped; landscape117passed/3skipped; Safari104passed/16skipped. Total458passed/22explicit skips. Runtime742e40e; subsequent changes only documentation/evidence. Current-source local Safari repeated104passed/16skipped. Earlier failed runs remain historical diagnostics, not acceptance. No CI failure outstanding for this accepted runtime.
+
+All seven repositories accepted forv2.0.0; release map in DELIVERY.md. Public Pages and native Home/Adult checks recorded. Physical-device and camera limits remain unchanged.

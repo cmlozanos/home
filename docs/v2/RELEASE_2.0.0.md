@@ -31,3 +31,5 @@ Modern browser and actual Chromium95 desktop engines tested with touch viewports
 ## Publication references
 
 Initial coordinated application commits: Homef9d5f24, Games77ed59b (test-route followupb328bb3), Banana75bd573, Jump54bd7a9, Fancy8390882, World4196bab, Turbo1ef90de. Final release tags point to accepted heads; later documentation-only commits do not change runtime bytes. See STATUS/ACCEPTANCE for public checks and limits.
+
+Final catalogue gitlinks aligned in Games59d72de to the four accepted standalone revisions. Seven repository release records cover all19games; Cole Aventura is unchanged. Home final CI/public acceptance and tag target are recorded in STATUS.md and DELIVERY.md.

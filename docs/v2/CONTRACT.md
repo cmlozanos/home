@@ -10,7 +10,7 @@ Inventory: home/{animal-quiz,nitro-highway,pocket-karts,pulse-path,fruit-splash,
 
 - Version2.0.0, source/release notes and public Git delivery. No v2 acceptance while checks fail.
 - Linked Playwrite ES original OFL font local, whole words, discreet underlines only for explicitly curated vocabulary; no guessing syllables or splitting glyph shaping. Unknown words stay intact, not falsely annotated. Canvas/engine text needs native integration separately.
-- Child controls minimal, ≥44px where feasible; native play tools preserved. Home returns game catalogue. Theme light/dark/system public, settings behind fresh multiplication. Gate is convenience, not authentication.
+- Child controls minimal, ≥44px where feasible; native play tools preserved. Home returns the same game’s native menu, never the shared catalogue. Theme light/dark/system public, settings behind fresh multiplication. Gate is convenience, not authentication.
 - Existing learning challenge entry/every10minutes remains: its prior explicit contract not silently removed. It pauses simulation/input/audio and preserves manual pause.
 - Audio starts OFF every load. Adult audio setting controls native game audio; no automatic sound/voice. No recording.
 - Mode/level/vehicle selection available without achievement locks. Preserve save data. Physics/goals and functional variants not flattened.
