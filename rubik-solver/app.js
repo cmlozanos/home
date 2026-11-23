@@ -1,3 +1,27 @@
+
+// Native presentation follows the public API; attributes cover older/offline shells.
+(function () {
+  var root = document.documentElement, appearance = {};
+  var dark = window.matchMedia('(prefers-color-scheme: dark)');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function sync(event) {
+    if (event && event.detail) appearance = event.detail;
+    var api = window.FamilyV2;
+    var theme = api && typeof api.theme === 'function' ? api.theme() :
+      appearance.theme || root.getAttribute('data-family-theme') || (dark.matches ? 'dark' : 'light');
+    var motion = api && typeof api.motionAllowed === 'function' ? api.motionAllowed() :
+      appearance.motion !== false && !root.classList.contains('family-no-motion') && !reduced.matches;
+    root.setAttribute('data-native-theme', theme);
+    root.setAttribute('data-native-motion', String(motion && !reduced.matches));
+    root.style.setProperty('--native-font', '"' + (api && api.fontFamily || 'Family School') + '"');
+  }
+  window.addEventListener('familyv2:appearance', sync);
+  new MutationObserver(function () { sync(); }).observe(root, {attributes:true, attributeFilter:['data-family-theme','class']});
+  if (dark.addEventListener) { dark.addEventListener('change', sync); reduced.addEventListener('change', sync); }
+  else { dark.addListener(sync); reduced.addListener(sync); }
+  sync();
+}());
+
 // Keep touch holds inside the game; preserve desktop menus and editable fields.
 (function () {
   var lastTouch = -Infinity;
@@ -380,6 +404,7 @@
     catch { showValidation("warn", "La velocidad solo se conservará durante esta sesión."); }
   }
 
+  window.addEventListener('familyv2:appearance', () => applyMotionSpeed());
   function applyMotionSpeed() {
     const rootStyle = document.documentElement.style;
     rootStyle.setProperty("--cube-view-transition-duration", `${getAnimationDuration(BASE_CUBE_VIEW_DURATION_MS)}ms`);
@@ -726,6 +751,12 @@
     cameraFrameRequest = requestAnimationFrame(drawCameraFrameLoop);
   }
 
+  function canvasFont(size) {
+    return size + 'px "' + (window.FamilyV2 && FamilyV2.fontFamily || 'Family School') + '"';
+  }
+  if (window.FamilyV2 && FamilyV2.fontReady) FamilyV2.fontReady.then(() => {
+    if (!cameraStream) { if (currentPhoto) drawPhoto(true); else drawEmptyPhotoCanvas(); }
+  });
   function drawEmptyPhotoCanvas() {
     const canvas = elements.photoCanvas;
     const ctx = canvas.getContext("2d");
@@ -733,10 +764,10 @@
     ctx.fillStyle = "#0f172a";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#94a3b8";
-    ctx.font = "600 24px system-ui";
+    ctx.font = canvasFont(24);
     ctx.textAlign = "center";
     ctx.fillText("Activa cámara o sube foto", canvas.width / 2, canvas.height / 2 - 8);
-    ctx.font = "400 16px system-ui";
+    ctx.font = canvasFont(16);
     ctx.fillText("Alinea una cara por vez", canvas.width / 2, canvas.height / 2 + 24);
   }
 
@@ -808,7 +839,7 @@
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = "#ffffff";
-      ctx.font = "800 14px system-ui";
+      ctx.font = canvasFont(14);
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(String(index + 1), point.x, point.y);

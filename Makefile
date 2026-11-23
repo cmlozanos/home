@@ -79,3 +79,8 @@ check-release-v2: check-family-v2
 .PHONY: check-published-v2
 check-published-v2:
 	node tools/check-published-v2.mjs $(URLS)
+
+.PHONY: check-refinement-kits
+# Explicit roots only: reusable exact-copy validation, no writes or downloads.
+check-refinement-kits:
+	node tools/check-refinement-kits.mjs $(GAMES)

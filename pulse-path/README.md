@@ -33,3 +33,19 @@ Inicio usa el menú nativo del juego y mantiene la URL. En carreras abandona
 la carrera actual sin premiarla y conserva coche/circuito seleccionados; Jugar
 inicia una carrera nueva. En Salto Neón mantiene selección y progreso guardado.
 El catálogo solo se ofrece desde el área de adultos del kit.
+
+### Refinamiento nativo — 23 noviembre 2026
+
+Escena Canvas con materiales facetados, profundidad y paletas de día/noche.
+Consume `FamilyV2.theme()`, `motionAllowed()` y `familyv2:appearance`;
+sin kit usa el atributo de tema y `prefers-reduced-motion`. El texto Canvas
+usa `FamilyV2.fontFamily` y redibuja tras `fontReady`, con fallback ligado.
+La preferencia de movimiento elimina decoración, no movimiento de juego.
+Física, controles, guardado y límite de resolución 1× conservados.
+
+Desde la raíz, con el servidor existente activo:
+`node nitro-highway/tools/check-native-appearance.cjs` (también
+`make -C nitro-highway check-native-appearance`). Admite `GAMES_BASE_URL`.
+Verifica paletas Canvas, evento/getters/fallback, pausa, juego sin decoración,
+tipografía y resolución en 1280×800 y 740×360. Capturas en
+`docs/v2/refinement/evidence/racing/`. No acredita rendimiento físico Android.

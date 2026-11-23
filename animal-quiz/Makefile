@@ -20,3 +20,8 @@ serve:
 # Run from this game; the bounded harness uses the existing home Playwright runtime.
 check-family-browser:
 	cd .. && node animal-quiz/tools/family-browser.cjs
+
+.PHONY: check-refinement-browser
+# Seven activity renderers; existing runtime/server, captures scoped under refinement.
+check-refinement-browser:
+	cd .. && node animal-quiz/tools/check-refinement-browser.cjs

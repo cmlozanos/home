@@ -25,6 +25,7 @@
   var bodies = [], particles = [], pointers = {}, ships = [], waves = [];
   var L = window.OrbitLife, tool = 'create', sizeIndex = 0, sizes = [1, 1.7, 2.5], showHabitat = false, inspected = null;
   var names = { ocean: '🌍 Mundo oceánico', rock: '🪨 Mundo rocoso', giant: '🪐 Gigante gaseoso', comet: '☄ Cometa', nebula: '☁ Nebulosa', protostar: '✦ Protoestrella', 'red-dwarf': '🔴 Enana roja', star: '☀ Estrella', 'white-star': '✦ Estrella blanca', 'blue-star': '🔵 Estrella azul', 'red-giant': '🔴 Gigante roja', supergiant: '✦ Supergigante', 'mega-giant': '✦ Megagigante', 'white-dwarf': '⚪ Enana blanca', pulsar: '✧ Púlsar', magnetar: '✧ Magnetar', blackhole: '◉ Agujero negro' };
+  var menuPaused = false;
   var started = false, paused = false, speed = 1, selected = 'ocean', trails = true, sound = false;
   var width = 1, height = 1, scale = 1, centerX = 0, centerY = 0, cameraX = 0, cameraY = 0;
   var dpr = Math.min(window.devicePixelRatio || 1, 1.5), background = document.createElement('canvas');
@@ -102,7 +103,7 @@
   function start(restore) {
     makeUniverse('solar');
     if (restore) load();
-    started = true; paused = false;
+    started = true; paused = false; menuPaused = false;
     $('welcome').hidden = true; $('game-ui').hidden = false;
     updatePause(); resize(); canvas.focus();
   }
@@ -153,20 +154,24 @@
       updateStatus();
     } catch (e) { /* Invalid save falls back to a fresh solar system. */ }
   }
+  function sceneTheme() { return window.FamilyV2 && FamilyV2.theme ? FamilyV2.theme() : 'light'; }
+  function decorativeMotion() { return window.FamilyV2 && FamilyV2.motionAllowed ? FamilyV2.motionAllowed() : true; }
   function resize() {
-    width = window.innerWidth; height = window.innerHeight;
+    var rect = canvas.getBoundingClientRect();
+    width = Math.max(1, rect.width || innerWidth); height = Math.max(1, rect.height || innerHeight);
     canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
     background.width = canvas.width; background.height = canvas.height;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); bg.setTransform(dpr, 0, 0, dpr, 0, 0);
-    bg.fillStyle = '#f7f8fc'; bg.fillRect(0, 0, width, height);
+    var dark = sceneTheme() === 'dark';
+    bg.fillStyle = dark ? '#080f24' : '#f7f8fc'; bg.fillRect(0, 0, width, height);
     var nebula = bg.createRadialGradient(width * 0.8, height * 0.55, 0, width * 0.8, height * 0.55, width * 0.65);
-    nebula.addColorStop(0, '#dce8f7'); nebula.addColorStop(0.48, '#edf1fb'); nebula.addColorStop(1, '#f7f8fc');
+    nebula.addColorStop(0, dark ? '#263657' : '#dce8f7'); nebula.addColorStop(0.48, dark ? '#17213e' : '#edf1fb'); nebula.addColorStop(1, dark ? '#080f24' : '#f7f8fc');
     bg.fillStyle = nebula; bg.fillRect(0, 0, width, height);
     var seed = 187;
     function rand() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
     for (var i = 0; i < Math.min(230, width * height / 2800); i++) {
       var x = rand() * width, y = rand() * height, radius = rand() > 0.95 ? 1.6 : rand() * 0.8 + 0.3;
-      bg.globalAlpha = 0.18 + rand() * 0.65; bg.fillStyle = '#647b9e'; bg.beginPath(); bg.arc(x, y, radius, 0, Math.PI * 2); bg.fill();
+      bg.globalAlpha = 0.18 + rand() * 0.65; bg.fillStyle = dark ? '#e1edff' : '#647b9e'; bg.beginPath(); bg.arc(x, y, radius, 0, Math.PI * 2); bg.fill();
     }
     bg.globalAlpha = 1;
   }
@@ -356,10 +361,13 @@
     button.addEventListener('click', function () { makeUniverse(button.getAttribute('data-template')); paused = false; updatePause(); closeTemplates(); save(false); });
   });
   window.addEventListener('resize', resize);
+  if (window.visualViewport) visualViewport.addEventListener('resize', resize);
+  window.addEventListener('familyv2:appearance', function () { if (!decorativeMotion()) { particles = []; waves = []; } resize(); render(elapsed); });
   document.addEventListener('visibilitychange', function () { accumulator = 0; lastTime = 0; if (document.hidden) { cancelAllPointers(); save(false); } });
   window.addEventListener('pagehide', function () { cancelAllPointers(); save(false); });
 
   function drawPlanet(b, screen, radius, time) {
+    if (!decorativeMotion()) time = 0;
     var color = P.types[b.type].color;
     if (L.luminous(b) || b.type === 'protostar') {
       var halo = ctx.createRadialGradient(screen.x, screen.y, radius * 0.6, screen.x, screen.y, radius * 4);
@@ -410,7 +418,18 @@
     if (b.type === 'rock') {
       ctx.fillStyle = '#673c342e'; [[-0.35, -0.2, 0.2], [0.4, 0.2, 0.3], [-0.3, 0.6, 0.18]].forEach(function (crater) { ctx.beginPath(); ctx.arc(crater[0] * radius, crater[1] * radius, crater[2] * radius, 0, Math.PI * 2); ctx.fill(); });
     }
+    if (!L.luminous(b) && b.type !== 'protostar') {
+      var shade = ctx.createLinearGradient(-radius, -radius, radius, radius);
+      shade.addColorStop(0, '#ffffff38'); shade.addColorStop(0.48, '#ffffff00'); shade.addColorStop(1, '#020816a8');
+      ctx.fillStyle = shade; ctx.fillRect(-radius, -radius, radius * 2, radius * 2);
+    }
     ctx.restore();
+    if (b.type === 'ocean') {
+      ctx.strokeStyle = '#b7edff99'; ctx.lineWidth = Math.max(1, radius * 0.065);
+      ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = '#ffffff70'; ctx.lineWidth = Math.max(1, radius * 0.07);
+      ctx.beginPath(); ctx.ellipse(-radius * .16, -radius * .18, radius * .72, radius * .23, -.35, .15, 2.7); ctx.stroke();
+    }
     if ((b.type === 'ocean' || b.type === 'rock') && (b.lifeStage || showHabitat)) {
       var climate = L.climate(b, bodies);
       ctx.strokeStyle = climate.habitable ? '#94edaa' : climate.flux > 1.65 ? '#ff9874' : '#83baff'; ctx.lineWidth = 1.5;
@@ -477,7 +496,7 @@
       $('body-age').value = P.lifetimes[selectedBody.type] ? Math.min(1, selectedBody.stageAge / P.lifetimes[selectedBody.type]) : 1;
     }
     if (!started) {
-      var veil = ctx.createLinearGradient(0, 0, width, 0); veil.addColorStop(0, '#f7f8fcee'); veil.addColorStop(width > 650 ? 0.44 : 0.15, '#f7f8fcbb'); veil.addColorStop(1, '#f7f8fc00');
+      var veil = ctx.createLinearGradient(0, 0, width, 0), veilColor = sceneTheme() === 'dark' ? '#080f24' : '#f7f8fc'; veil.addColorStop(0, veilColor + 'ee'); veil.addColorStop(width > 650 ? 0.44 : 0.15, veilColor + 'bb'); veil.addColorStop(1, veilColor + '00');
       ctx.fillStyle = veil; ctx.fillRect(0, 0, width, height);
     }
   }
@@ -495,7 +514,7 @@
     if (document.hidden) return;
     var dt = lastTime ? Math.min((time - lastTime) / 1000, 0.08) : 0;
     lastTime = time; elapsed += dt;
-    if ((!started || !paused) && $('templates').hidden && $('help-dialog').hidden) {
+    if (!menuPaused && (!started || !paused) && $('templates').hidden && $('help-dialog').hidden) {
       accumulator += dt * (started ? speed : 0.6);
       var steps = 0;
       while (accumulator >= 1 / 120 && steps < 20) {
@@ -532,6 +551,7 @@
       });
       updateStatus();
     }
+    if (!decorativeMotion()) { particles = []; waves = []; }
     particles.forEach(function (p) { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt * 0.8; });
     particles = particles.filter(function (p) { return p.life > 0; });
     waves.forEach(function (wave) { wave.life -= dt; }); waves = waves.filter(function (wave) { return wave.life > 0; });
@@ -539,9 +559,10 @@
     render(time / 1000);
   }
   if (location.search.indexOf('test=1') !== -1) {
-    Object.defineProperty(window, '__orbitDiagnostics', { get: function () { return { started: started, paused: paused, speed: speed, sound: sound, tool: tool, size: sizes[sizeIndex], ships: ships.length, bodyCount: bodies.length, particles: particles.length, orbitCount: orbitCount, pointers: Object.keys(pointers).length, bodies: bodies.map(function (b) { var s = project(b.x, b.y); return { id: b.id, type: b.type, x: b.x, y: b.y, vx: b.vx, vy: b.vy, mass: b.mass, radius: b.radius, screenX: s.x, screenY: s.y, age: b.age, stageAge: b.stageAge, lifeStage: b.lifeStage || 0, locked: b.locked, held: b.held, orbitLocked: !!b.orbitLocked }; }) }; } });
+    Object.defineProperty(window, '__orbitDiagnostics', { get: function () { return { theme: sceneTheme(), menuPaused: menuPaused, started: started, paused: paused, speed: speed, sound: sound, tool: tool, size: sizes[sizeIndex], ships: ships.length, bodyCount: bodies.length, particles: particles.length, orbitCount: orbitCount, pointers: Object.keys(pointers).length, bodies: bodies.map(function (b) { var s = project(b.x, b.y); return { id: b.id, type: b.type, x: b.x, y: b.y, vx: b.vx, vy: b.vy, mass: b.mass, radius: b.radius, screenX: s.x, screenY: s.y, age: b.age, stageAge: b.stageAge, lifeStage: b.lifeStage || 0, locked: b.locked, held: b.held, orbitLocked: !!b.orbitLocked }; }) }; } });
   }
-  if (window.FamilyV2) FamilyV2.register({home:function(){cancelAllPointers();save(false);started=false;$('welcome').hidden=false;$('game-ui').hidden=true;$('resume').hidden=false;$('templates').hidden=true;$('help-dialog').hidden=true;},pause:function(){familyPaused=true;cancelAllPointers();lastTime=0;accumulator=0;if(audioContext)audioContext.suspend().catch(function(){});},resume:function(){familyPaused=false;lastTime=0;accumulator=0;if(!learningLocked&&sound&&audioContext)audioContext.resume().catch(function(){});}});
+  if (window.FamilyV2) FamilyV2.register({home:function(){cancelAllPointers();save(false);started=false;menuPaused=true;lastTime=0;accumulator=0;$('welcome').hidden=false;$('game-ui').hidden=true;$('resume').hidden=false;$('templates').hidden=true;$('help-dialog').hidden=true;},pause:function(){familyPaused=true;cancelAllPointers();lastTime=0;accumulator=0;if(audioContext)audioContext.suspend().catch(function(){});},resume:function(){familyPaused=false;lastTime=0;accumulator=0;if(!learningLocked&&sound&&audioContext)audioContext.resume().catch(function(){});}});
+  if (window.FamilyV2) FamilyV2.fontReady.then(function () { render(elapsed); });
   makeUniverse('solar'); resize(); scale = Math.min(width, height) / 680; requestAnimationFrame(tick);
   learningGate = LearningGate.mount({gameId:'orbit-lab',onLock:function(){
     learningLocked=true;cancelAllPointers();lastTime=0;accumulator=0;

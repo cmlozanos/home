@@ -1,0 +1,2 @@
+PASS Rubik R scramble: 8 animated steps, completion and points
+PASS Rubik storage denied: editing and solving remain usable

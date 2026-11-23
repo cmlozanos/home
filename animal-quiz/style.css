@@ -27,3 +27,19 @@ html.family-v2 body{background:var(--family-page);color:var(--family-ink)}
 .family-v2 [data-family-setting]{width:auto;gap:8px;padding:8px 12px}
 /* Status feedback is never an input target; don't block letter keys underneath. */
 #feedback{pointer-events:none}
+
+/* Native typography is the same linked school face, including UA form defaults. */
+html body,html body *{font-family:var(--native-font,"Family School"),cursive!important;font-synthesis:none}
+html[data-native-motion="false"] *,html[data-native-motion="false"] *::before,html[data-native-motion="false"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+/* A field-guide display: the original animal SVG remains the only subject. */
+html[data-native-theme] .animal-card{background:radial-gradient(ellipse at 36% 24%,#fffdf0 0,#e9edce 48%,#b7cea6 100%);box-shadow:inset 0 2px 0 #fff8,inset 0 -8px 0 #56754b24,0 14px 24px #1d41321c;border:6px solid #fbf5dd}
+html[data-native-theme] .animal-card:before{content:"";position:absolute;inset:11px;border:1px solid #78935b40;border-radius:40%;pointer-events:none}
+html[data-native-theme] .animal-card>svg{position:relative}
+html[data-native-theme] .profile-card{background:linear-gradient(155deg,#fffdf5,#e8eddb);box-shadow:inset 0 2px #fff,0 5px #a8bca0,0 12px 22px #244c3220;border:0}
+html[data-native-theme] .option,html[data-native-theme] .letter-key{box-shadow:inset 0 2px #ffffff60,0 3px 0 #68866b45}
+html[data-native-theme] .option.correct{box-shadow:inset 0 0 0 3px #588451,0 3px #588451}
+html[data-native-theme] .option.wrong{box-shadow:inset 0 0 0 3px #c07b53,0 3px #c07b53}
+html[data-native-theme=dark] .animal-card{background:radial-gradient(ellipse at 36% 24%,#465e61,#263c4e 65%,#1b303d);border-color:#42545d;box-shadow:inset 0 2px #b7cdd32b,0 12px 24px #07172260}
+html[data-native-theme=dark] .profile-card{background:linear-gradient(145deg,#35485c,#202f43);box-shadow:inset 0 2px #ffffff15,0 5px #111f30,0 12px 22px #07172260}
+html[data-native-theme=dark] .profile-mark{color:#c1dfc5}html[data-native-theme=dark] .profile-card[data-profile=full] .profile-mark{color:#f1c694}
+html[data-native-theme=dark] .profile-score{color:#f4d990}

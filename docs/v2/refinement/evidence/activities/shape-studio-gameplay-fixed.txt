@@ -1,0 +1,4 @@
+shape-studio: 1280x800 fits all levels; gameplay, score, native settings and theme OK
+shape-studio: 1024x600 fits all levels; gameplay, score, native settings and theme OK
+shape-studio: 360x740 fits all levels; gameplay, score, native settings and theme OK
+shape-studio: 740x360 fits all levels; gameplay, score, native settings and theme OK

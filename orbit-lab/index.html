@@ -25,7 +25,7 @@
 
       <h1>Crea tu universo</h1>
       <p>Toca, lanza y descubre la gravedad.</p>
-      <button id="start" class="start" aria-label="Jugar y crear mi universo"><svg viewBox="0 0 24 24"><path d="m8 4 12 8-12 8z"/></svg><span>EXPLORAR</span></button>
+      <button id="start" class="start" aria-label="Jugar y crear mi universo"><svg viewBox="0 0 24 24"><path d="m8 4 12 8-12 8z"/></svg><span>Explorar</span></button>
       <button id="resume" class="resume" hidden aria-label="Continuar mi universo guardado">↺ Mi universo</button>
 
     </section>
@@ -49,20 +49,20 @@
         <button id="habitat" aria-label="Mostrar zona habitable" aria-pressed="false">🌱</button>
       </div>
       <nav class="palette" aria-label="Elige un cuerpo celeste">
-        <button data-body="ocean" class="body-button selected" aria-label="Planeta océano" aria-pressed="true"><span class="mini-planet ocean"></span><span class="body-label">OCÉANO</span></button>
-        <button data-body="rock" class="body-button" aria-label="Planeta rocoso" aria-pressed="false"><span class="mini-planet rock"></span><span class="body-label">ROCA</span></button>
-        <button data-body="giant" class="body-button" aria-label="Gigante con anillos" aria-pressed="false"><span class="mini-planet giant"></span><span class="body-label">GIGANTE</span></button>
-        <button data-body="comet" class="body-button" aria-label="Cometa" aria-pressed="false"><span class="mini-planet comet"></span><span class="body-label">COMETA</span></button>
-        <button data-body="star" class="body-button" aria-label="Estrella" aria-pressed="false"><span class="mini-planet star"></span><span class="body-label">ESTRELLA</span></button>
-        <button data-body="nebula" class="body-button" aria-label="Nebulosa" aria-pressed="false"><span class="mini-planet nebula"></span><span class="body-label">NEBULOSA</span></button>
-        <button data-body="blackhole" class="body-button" aria-label="Agujero negro" aria-pressed="false"><span class="mini-planet blackhole"></span><span class="body-label">AGUJERO</span></button>
+        <button data-body="ocean" class="body-button selected" aria-label="Planeta océano" aria-pressed="true"><span class="mini-planet ocean"></span><span class="body-label">Océano</span></button>
+        <button data-body="rock" class="body-button" aria-label="Planeta rocoso" aria-pressed="false"><span class="mini-planet rock"></span><span class="body-label">Roca</span></button>
+        <button data-body="giant" class="body-button" aria-label="Gigante con anillos" aria-pressed="false"><span class="mini-planet giant"></span><span class="body-label">Gigante</span></button>
+        <button data-body="comet" class="body-button" aria-label="Cometa" aria-pressed="false"><span class="mini-planet comet"></span><span class="body-label">Cometa</span></button>
+        <button data-body="star" class="body-button" aria-label="Estrella" aria-pressed="false"><span class="mini-planet star"></span><span class="body-label">Estrella</span></button>
+        <button data-body="nebula" class="body-button" aria-label="Nebulosa" aria-pressed="false"><span class="mini-planet nebula"></span><span class="body-label">Nebulosa</span></button>
+        <button data-body="blackhole" class="body-button" aria-label="Agujero negro" aria-pressed="false"><span class="mini-planet blackhole"></span><span class="body-label">Agujero</span></button>
       </nav>
     </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <section id="templates" class="dialog-backdrop" hidden>
       <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="template-title">
         <button id="close-templates" class="icon-button close" aria-label="Volver a mi universo">×</button>
-        <span class="eyebrow">EMPIEZA UNA NUEVA AVENTURA</span><h2 id="template-title">Elige tu universo</h2>
+        <span class="eyebrow">Empieza una nueva aventura</span><h2 id="template-title">Elige tu universo</h2>
         <div class="template-grid">
           <button data-template="solar" aria-label="Crear sistema solar"><span>☀<i>●</i></span><strong>Sistema solar</strong></button>
           <button data-template="binary" aria-label="Crear dos estrellas gemelas"><span>☀ ☀</span><strong>Estrellas gemelas</strong></button>
@@ -76,10 +76,10 @@
     <section id="help-dialog" class="dialog-backdrop" hidden>
       <div class="dialog help-dialog" role="dialog" aria-modal="true" aria-labelledby="help-title">
         <button id="close-help" class="icon-button close" aria-label="Cerrar ayuda">×</button>
-        <span class="eyebrow">PARA PEQUEÑOS EXPLORADORES</span><h2 id="help-title">Tu universo, a tu manera</h2>
-        <div class="help-gestures"><span>☝<small>TOCA · CREA</small></span><span>↗<small>ARRASTRA · LANZA</small></span><span>☝☝<small>JUGAD JUNTOS</small></span></div>
+        <span class="eyebrow">Para pequeños exploradores</span><h2 id="help-title">Tu universo, a tu manera</h2>
+        <div class="help-gestures"><span>☝<small>Toca · crea</small></span><span>↗<small>Arrastra · lanza</small></span><span>☝☝<small>Jugad juntos</small></span></div>
         <p>Une planetas, alimenta estrellas y observa sus transformaciones. Los cuerpos muy masivos pueden colapsar en agujeros negros. Las nebulosas vuelven a formar estrellas y planetas.</p>
-        <div class="help-gestures"><span>☝<small>MUEVE Y LANZA</small></span><span>⌖<small>FIJA</small></span><span>↻<small>PON EN ÓRBITA</small></span></div>
+        <div class="help-gestures"><span>☝<small>Mueve y lanza</small></span><span>⌖<small>Fija</small></span><span>↻<small>Pon en órbita</small></span></div>
         <p>Usa ● para cambiar el tamaño. Toca un cuerpo con ⌖ para fijarlo; después ↻ crea una órbita protegida alrededor de la estrella cercana. 🌱 muestra dónde puede aparecer vida. Si un planeta sigue siendo habitable, puede llegar a enviar naves a otros mundos.</p>
         <details><summary>Cómo funciona la simulación</summary><p>Las colisiones conservan masa y movimiento. Los radios sólidos coinciden con los de colisión; los halos y anillos son decorativos. La evolución, la vida y el colapso usan tiempos y umbrales acelerados de juego, no una escala astronómica real. Dos planetas pequeños no crean por sí solos un agujero negro. Se admiten hasta 24 cuerpos y 10 contactos, sujetos a lo que permita la pantalla.</p><a href="STELLAR_AUDIT.md">Funciones documentadas y adaptación</a></details>
         <button id="install" class="install-button" hidden>↓ Instalar Órbita</button>

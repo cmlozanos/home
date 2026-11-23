@@ -1,0 +1,9 @@
+
+Running 4 tests using 1 worker
+
+  ✓  1 [tablet] › tests/orbit-refinement.spec.cjs:3:1 › orbit Home preserves universe without simulation or point gains (14.0s)
+  ✓  2 [tablet] › tests/orbit-refinement.spec.cjs:14:1 › orbit scene follows theme and effective viewport while preserving linked text (4.5s)
+  ✓  3 [phone-landscape] › tests/orbit-refinement.spec.cjs:3:1 › orbit Home preserves universe without simulation or point gains (4.0s)
+  ✓  4 [phone-landscape] › tests/orbit-refinement.spec.cjs:14:1 › orbit scene follows theme and effective viewport while preserving linked text (1.9s)
+
+  4 passed (29.6s)

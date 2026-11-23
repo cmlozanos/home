@@ -1,3 +1,27 @@
+
+// Native presentation follows the public API; attributes cover older/offline shells.
+(function () {
+  var root = document.documentElement, appearance = {};
+  var dark = window.matchMedia('(prefers-color-scheme: dark)');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function sync(event) {
+    if (event && event.detail) appearance = event.detail;
+    var api = window.FamilyV2;
+    var theme = api && typeof api.theme === 'function' ? api.theme() :
+      appearance.theme || root.getAttribute('data-family-theme') || (dark.matches ? 'dark' : 'light');
+    var motion = api && typeof api.motionAllowed === 'function' ? api.motionAllowed() :
+      appearance.motion !== false && !root.classList.contains('family-no-motion') && !reduced.matches;
+    root.setAttribute('data-native-theme', theme);
+    root.setAttribute('data-native-motion', String(motion && !reduced.matches));
+    root.style.setProperty('--native-font', '"' + (api && api.fontFamily || 'Family School') + '"');
+  }
+  window.addEventListener('familyv2:appearance', sync);
+  new MutationObserver(function () { sync(); }).observe(root, {attributes:true, attributeFilter:['data-family-theme','class']});
+  if (dark.addEventListener) { dark.addEventListener('change', sync); reduced.addEventListener('change', sync); }
+  else { dark.addListener(sync); reduced.addListener(sync); }
+  sync();
+}());
+
 // Keep touch holds inside the game; preserve desktop menus and editable fields.
 (function () {
   var lastTouch = -Infinity;
@@ -88,13 +112,19 @@
   ];
   var level = 0, selected = null, placed = [], current = [], sound = false, audio, drag = null, ignoreClickUntil = 0, completed = [], installEvent, finishTimer, feedbackTimer, previousFocus;
   try { var saved = JSON.parse(localStorage.getItem('shape-studio-progress') || '[]'); if (Array.isArray(saved)) completed = saved.filter(function (n) { return n === 0 || n === 1 || n === 2; }); } catch (_) {}
-  function art(shape, outline) { return '<svg viewBox="0 0 100 100" aria-hidden="true"><g class="geometry" fill="' + (outline ? '#d6d1c1' : level === 2 ? '#d8a65c' : shape.color) + '" stroke="' + (outline ? '#a6ad99' : '#4b514024') + '" stroke-width="' + (outline ? '2' : '1.5') + '"' + (outline ? ' stroke-dasharray="4 4"' : '') + '>' + shape.shape + '</g>' + (outline ? '' : '<g fill="none" stroke="#fff5df" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".58">' + shape.detail + '</g>') + '</svg>'; }
+  var materialId = 0;
+  function art(shape, outline) {
+    var color = level === 2 ? '#d8a65c' : shape.color, id = 'inlay-' + (++materialId);
+    var finish = '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#ffffff" stop-opacity=".48"/><stop offset=".42" stop-color="' + color + '"/><stop offset="1" stop-color="#000000" stop-opacity=".16"/></linearGradient></defs>';
+    var body = '<g class="geometry" fill="' + (outline ? '#d6d1c1' : color) + '" stroke="' + (outline ? '#a6ad99' : '#4b514055') + '" stroke-width="' + (outline ? '2' : '1.5') + '"' + (outline ? ' stroke-dasharray="4 4"' : '') + '>' + shape.shape + '</g>';
+    return '<svg viewBox="0 0 100 100" aria-hidden="true">' + (outline ? '' : finish) + body + (outline ? '' : '<g fill="url(#' + id + ')" pointer-events="none">' + shape.shape + '</g><g fill="none" stroke="#fff5df" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".58">' + shape.detail + '</g>') + '</svg>';
+  }
   function chime(frequency) { if (learningLocked || familyPaused || !sound) return; try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); var oscillator = audio.createOscillator(), gain = audio.createGain(); oscillator.connect(gain); gain.connect(audio.destination); oscillator.frequency.setValueAtTime(frequency, audio.currentTime); gain.gain.setValueAtTime(.065, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .18); oscillator.start(); oscillator.stop(audio.currentTime + .2); } catch (_) {} }
   function update() { $('progress').innerHTML = current.map(function (_, i) { return '<span class="' + (i < placed.length ? 'filled' : '') + '" aria-hidden="true">◆</span>'; }).join(''); $('progress').setAttribute('aria-label', placed.length + ' de ' + current.length + ' formas colocadas'); $('saved').textContent = completed.length ? '★ '.repeat(completed.length) : '◇ ◇ ◇'; }
   function cancelDrag() { if (!drag) return; var active = drag; drag = null; active.ghost.remove(); active.button.classList.remove('dragging'); try { active.button.releasePointerCapture(active.pointer); } catch (_) {} }
   function start(nextLevel) {
     roundId++;
-    cancelDrag(); learningTimers.clear(finishTimer); learningTimers.clear(feedbackTimer); level = nextLevel; selected = null; placed = []; current = shapes.slice(0, [4,6,8][level]); $('win').hidden = true; $('slots').innerHTML = ''; $('tray').innerHTML = ''; document.body.dataset.level = level; $('scene-name').textContent = ['EL JARDÍN', 'LA ALDEA', 'EL TALLER DORADO'][level];
+    cancelDrag(); learningTimers.clear(finishTimer); learningTimers.clear(feedbackTimer); level = nextLevel; selected = null; placed = []; current = shapes.slice(0, [4,6,8][level]); $('win').hidden = true; $('slots').innerHTML = ''; $('tray').innerHTML = ''; document.body.dataset.level = level; $('scene-name').textContent = ['El jardín', 'La aldea', 'El taller dorado'][level];
     ShapeStudio.shuffle(current).forEach(function (shape) { var slot = document.createElement('button'); slot.className = 'slot'; slot.dataset.shape = shape.id; slot.setAttribute('aria-label', 'Hueco: ' + shape.name); slot.innerHTML = art(shape, true) + '<span class="slot-check" aria-hidden="true">✓</span>'; slot.addEventListener('click', function () { if (selected) attempt(selected, shape.id); else { $('status').textContent = 'Primero elige una pieza.'; $('tray').classList.add('nudge'); learningTimers.set(function () { $('tray').classList.remove('nudge'); }, 400); } }); $('slots').appendChild(slot); });
     ShapeStudio.shuffle(current).forEach(function (shape) { var piece = document.createElement('button'); piece.className = 'piece'; piece.dataset.shape = shape.id; piece.setAttribute('aria-label', 'Pieza: ' + shape.name); piece.setAttribute('aria-pressed', 'false'); piece.innerHTML = art(shape, false); piece.addEventListener('click', function () { if (Date.now() < ignoreClickUntil) return; select(shape.id); }); piece.addEventListener('pointerdown', function (event) { beginDrag(event, piece, shape.id); }); $('tray').appendChild(piece); });
     document.querySelectorAll('.levels [data-level]').forEach(function (button) { button.setAttribute('aria-pressed', Number(button.dataset.level) === level ? 'true' : 'false'); }); $('status').textContent = 'Lleva cada forma a su silueta.'; update();

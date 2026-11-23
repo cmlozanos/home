@@ -1,0 +1,7 @@
+
+Running 2 tests using 1 worker
+
+  ✓  1 [tablet] › tests/racing-finish.spec.cjs:6:3 › nitro-highway: finishes a real race with keyboard and opens next circuit (24.1s)
+  ✓  2 [tablet] › tests/racing-finish.spec.cjs:6:3 › pocket-karts: finishes a real race with keyboard and opens next circuit (24.7s)
+
+  2 passed (50.2s)

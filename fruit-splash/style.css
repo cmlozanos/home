@@ -22,3 +22,16 @@ html.family-v2,html.family-v2 body{height:var(--family-height,100vh);overflow:vi
 /* Family Home and adult controls remain reachable during a manual/game-over pause. */
 .family-v2 .toolbar{z-index:6}
 .family-v2 [data-family-setting]{width:auto;gap:8px;padding:8px 12px}
+
+/* Native typography is the same linked school face, including UA form defaults. */
+html body,html body *{font-family:var(--native-font,"Family School"),cursive!important;font-synthesis:none}
+html[data-native-motion="false"] *,html[data-native-motion="false"] *::before,html[data-native-motion="false"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+/* Juicy enamel controls keep the orchard canvas visible. */
+html[data-native-theme] .mode{background:linear-gradient(140deg,#fffff1,#dfead0);box-shadow:inset 0 2px #fff,0 4px #9bb587,0 8px 14px #224b3020}
+html[data-native-theme] .mode.selected{background:linear-gradient(140deg,#ebf7bf,#bcd782);box-shadow:inset 0 2px #fff9,0 5px #6f9250}
+html[data-native-theme] .play-button{background:linear-gradient(155deg,#ffcc9f,#f7a079);box-shadow:inset 0 2px #ffe4c4,0 6px #b96b4f,0 10px 18px #6d3e2420}
+html[data-native-theme] .eyebrow,html[data-native-theme] .subtitle{color:#3c6648}
+html[data-native-theme=dark] .mode{background:linear-gradient(140deg,#405c58,#233e43);color:#eef3d6;box-shadow:inset 0 2px #fff2,0 4px #102a32}
+html[data-native-theme=dark] .mode.selected{background:linear-gradient(140deg,#dcebab,#aac87c);color:#243e2c}
+html[data-native-theme=dark] .score,html[data-native-theme=dark] .progress,html[data-native-theme=dark] .harvest,html[data-native-theme=dark] .swipe-hint,html[data-native-theme=dark] .eyebrow,html[data-native-theme=dark] .subtitle{color:#edf4d3}
+html[data-native-theme=dark] .swipe-line{border-color:#edf4d3}

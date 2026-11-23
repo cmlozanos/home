@@ -31,3 +31,23 @@ html.family-v2 .icon-button,html.family-v2 .round,html.family-v2 .direction,html
 
 /* Keep the session/Home/Adult shell reachable from the native menu overlay. */
 [data-family-slot]{position:relative;z-index:10001}
+
+/* Native typography is the same linked school face, including UA form defaults. */
+html body,html body *{font-family:var(--native-font,"Family School"),cursive!important;font-synthesis:none}
+html[data-native-motion="false"] *,html[data-native-motion="false"] *::before,html[data-native-motion="false"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+/* A joiner's tray: clear geometric inlays, not altered silhouettes. */
+html[data-native-theme] .puzzle-panel{background:repeating-linear-gradient(3deg,#81623e08 0 2px,transparent 2px 13px),linear-gradient(130deg,#efe4c9,#d9c79d);box-shadow:inset 0 0 0 7px #fbf2d6,inset 0 0 0 9px #baab8250,0 6px 0 #b09b72,0 12px 24px #64513620;border:0}
+html[data-native-theme] .tray-panel{background:linear-gradient(135deg,#fffcf1,#e9d8b7);box-shadow:inset 0 2px #fff,0 5px #beaa85}
+html[data-native-theme] .piece{background:linear-gradient(145deg,#fffef6,#e8d9bd);box-shadow:inset 0 2px #fff,0 4px #b6a17b,0 7px 9px #55443120;border:0}
+html[data-native-theme] .piece[aria-pressed=true]{background:#fff1bc;box-shadow:0 0 0 3px #52795a,0 5px #a28e64}
+html[data-native-theme] .slot:not(.placed) .geometry{fill:#b3a583;stroke:#6f7154}
+html[data-native-theme] .panel-caption{color:#536447;letter-spacing:.05em}
+html[data-native-theme=dark] .puzzle-panel{background:repeating-linear-gradient(3deg,#b6d0da07 0 2px,transparent 2px 13px),linear-gradient(130deg,#354954,#23323f);box-shadow:inset 0 0 0 7px #425662,inset 0 0 0 9px #162a3640,0 6px #132330;border:0}
+html[data-native-theme=dark] .tray-panel{background:linear-gradient(135deg,#3d4d5a,#243341);box-shadow:inset 0 2px #ffffff20,0 5px #132330}
+html[data-native-theme=dark] .piece{background:linear-gradient(145deg,#4d5c63,#2a3c4b);box-shadow:inset 0 2px #ffffff25,0 4px #132330}
+html[data-native-theme=dark] .piece[aria-pressed=true]{background:#52665b;box-shadow:0 0 0 3px #d9e2ac,0 5px #132330}
+html[data-native-theme=dark] .slot:not(.placed) .geometry{fill:#182a38;stroke:#b4c4bd}
+html[data-native-theme=dark] .panel-caption,html[data-native-theme=dark] .gesture{color:#d1ded0}
+
+/* Native help must sit above the reachable family toolbar, including its close target. */
+#help-panel,#help-dialog{z-index:10002}

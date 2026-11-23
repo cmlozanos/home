@@ -1,0 +1,59 @@
+little-atelier: 1280x800 fits all levels; gameplay, score, native settings and theme OK
+little-atelier: 1024x600 fits all levels; gameplay, score, native settings and theme OK
+little-atelier: 360x740 fits all levels; gameplay, score, native settings and theme OK
+locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('#close-help')[22m
+[2m    - locator resolved to <button id="close-help" data-icon="close" aria-label="Cerrar ayuda" class="round close-dialog">…</button>[22m
+[2m  - attempting click action[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is visible, enabled and stable[22m
+[2m      - scrolling into view if needed[22m
+[2m      - done scrolling[22m
+[2m      - <family-v2-shell data-theme="light" data-version="2.0.0">…</family-v2-shell> from <div class="app">…</div> subtree intercepts pointer events[22m
+[2m    - retrying click action[22m
+[2m    - waiting 20ms[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is visible, enabled and stable[22m
+[2m      - scrolling into view if needed[22m
+[2m      - done scrolling[22m
+[2m      - <family-v2-shell data-theme="light" data-version="2.0.0">…</family-v2-shell> from <div class="app">…</div> subtree intercepts pointer events[22m
+[2m    - retrying click action[22m
+[2m      - waiting 100ms[22m
+[2m    58 × waiting for element to be visible, enabled and stable[22m
+[2m       - element is visible, enabled and stable[22m
+[2m       - scrolling into view if needed[22m
+[2m       - done scrolling[22m
+[2m       - <family-v2-shell data-theme="light" data-version="2.0.0">…</family-v2-shell> from <div class="app">…</div> subtree intercepts pointer events[22m
+[2m     - retrying click action[22m
+[2m       - waiting 500ms[22m
+
+    at /Users/carlos.lozanosoto/personal/repositories/home/little-atelier/tools/check-v2-browser.cjs:143:41 {
+  log: [
+    "  - waiting for locator('#close-help')",
+    '    - locator resolved to <button id="close-help" data-icon="close" aria-label="Cerrar ayuda" class="round close-dialog">…</button>',
+    '  - attempting click action',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is visible, enabled and stable',
+    '      - scrolling into view if needed',
+    '      - done scrolling',
+    '      - <family-v2-shell data-theme="light" data-version="2.0.0">…</family-v2-shell> from <div class="app">…</div> subtree intercepts pointer events',
+    '    - retrying click action',
+    '    - waiting 20ms',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is visible, enabled and stable',
+    '      - scrolling into view if needed',
+    '      - done scrolling',
+    '      - <family-v2-shell data-theme="light" data-version="2.0.0">…</family-v2-shell> from <div class="app">…</div> subtree intercepts pointer events',
+    '    - retrying click action',
+    '      - waiting 100ms',
+    '    58 × waiting for element to be visible, enabled and stable',
+    '       - element is visible, enabled and stable',
+    '       - scrolling into view if needed',
+    '       - done scrolling',
+    '       - <family-v2-shell data-theme="light" data-version="2.0.0">…</family-v2-shell> from <div class="app">…</div> subtree intercepts pointer events',
+    '     - retrying click action',
+    '       - waiting 500ms'
+  ],
+  name: 'TimeoutError'
+}

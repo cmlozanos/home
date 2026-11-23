@@ -44,3 +44,20 @@ html.family-v2 footer{line-height:1.2}html.family-v2 footer .leaf{font-size:18px
 
 /* Keep the session/Home/Adult shell reachable from the native menu overlay. */
 [data-family-slot]{position:relative;z-index:10001}
+
+/* Native typography is the same linked school face, including UA form defaults. */
+html body,html body *{font-family:var(--native-font,"Family School"),cursive!important;font-synthesis:none}
+html[data-native-motion="false"] *,html[data-native-motion="false"] *::before,html[data-native-motion="false"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+/* Botanical cards: embossed linen backs, warm illustrated paper faces. */
+html[data-native-theme] .back{background:repeating-linear-gradient(0deg,#ffffff07 0 1px,transparent 1px 4px),linear-gradient(135deg,#48775e,#234d3b);color:#c5d6a0;box-shadow:inset 0 2px #ffffff42,inset 0 -3px #092b3370,0 5px 0 #17392d,0 10px 14px #15382728}
+html[data-native-theme] .back:after{border:1px solid #dddf9d70;box-shadow:inset 0 0 0 3px #143b2b30}
+html[data-native-theme] .face{background:radial-gradient(ellipse at 35% 20%,#fffdf2,#eee0bb);box-shadow:inset 0 2px #fff,0 5px 0 #ae9b6e}
+html[data-native-theme] .matched .face{background:radial-gradient(ellipse at 35% 20%,#f1f6d9,#b9d398);box-shadow:inset 0 0 0 3px #66824b,0 4px #577243}
+html[data-native-theme] .match-mark{background:#244d37;color:#fff5cf;box-shadow:0 1px 3px #17392d60}
+html[data-native-theme=dark] .back{background:repeating-linear-gradient(0deg,#ffffff06 0 1px,transparent 1px 4px),linear-gradient(135deg,#355c63,#1b3543);color:#c3d9bd;box-shadow:inset 0 2px #a9c8d530,0 5px #101f2f,0 10px 16px #07172260}
+html[data-native-theme=dark] .face{background:radial-gradient(ellipse at 35% 20%,#e9e5d2,#aabbaf);box-shadow:inset 0 2px #fff8,0 5px #465c5e}
+html[data-native-theme=dark] .matched .face{background:linear-gradient(140deg,#d6e5c2,#8ca887)}
+html[data-native-theme=dark] .instruction,html[data-native-theme=dark] footer{color:#c0cfca}
+
+/* Native help must sit above the reachable family toolbar, including its close target. */
+#help-panel,#help-dialog{z-index:10002}

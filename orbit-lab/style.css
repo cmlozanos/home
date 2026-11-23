@@ -25,3 +25,9 @@ html.family-v2,html.family-v2 body,.family-v2 #app{height:var(--family-height,10
 @media(max-height:520px) and (orientation:landscape){.family-v2 .workbench{bottom:72px}.family-v2 .body-button{height:52px}.family-v2 .welcome{top:22%;max-width:70%}.family-v2 h1{margin:4px 0;font-size:28px}.family-v2 .welcome p{margin:4px 0}.family-v2 .start{margin-top:8px;padding:10px 20px}.family-v2 .resume{position:static;padding:8px}}
 .family-v2 [data-family-setting]{width:auto;gap:8px;padding:8px 12px}
 .family-v2 .body-label{max-width:100%;overflow-wrap:anywhere;text-align:center;line-height:1.4;letter-spacing:0}.family-v2 .body-button{padding:5px}
+/* Celestial instruments stay tactile and legible in both scene palettes. */
+.family-v2 .palette{box-shadow:0 8px 24px #07132322,inset 0 1px 0 #ffffff35}
+.family-v2 .mini-planet{box-shadow:inset -4px -4px 7px #06132b55,inset 2px 2px 4px #ffffff55}
+.family-v2 .body-button.selected{box-shadow:inset 0 0 0 2px #79bbbd77}
+.family-v2[data-family-theme=dark] .start{background:#94e3ce;color:#123b3d;box-shadow:0 8px 22px #0003}
+.family-v2 .body-label{font-size:11px}

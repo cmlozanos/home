@@ -26,3 +26,23 @@ html.family-v2 .icon-button,html.family-v2 .round,html.family-v2 .direction,html
 
 /* Keep the session/Home/Adult shell reachable from the native menu overlay. */
 [data-family-slot]{position:relative;z-index:10001}
+
+/* Native typography is the same linked school face, including UA form defaults. */
+html body,html body *{font-family:var(--native-font,"Family School"),cursive!important;font-synthesis:none}
+html[data-native-motion="false"] *,html[data-native-motion="false"] *::before,html[data-native-motion="false"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+/* The desk changes with the room light; the child's paper/export never does. */
+html[data-native-theme] body{background:repeating-linear-gradient(4deg,#91633d09 0 2px,transparent 2px 19px),linear-gradient(115deg,#f6ecda,#e6d3b8)}
+html[data-native-theme] .paper-wrap{border-color:#fffaf0;box-shadow:0 2px 0 #c4b492,0 9px 0 #cbb99755,0 16px 25px #503d2928}
+html[data-native-theme] .paper-corner{display:block;background:repeating-linear-gradient(90deg,#ffffff18 0 2px,transparent 2px 5px),#b5c0a4cc}
+html[data-native-theme] .tools{background:repeating-linear-gradient(0deg,#8a674909 0 1px,transparent 1px 6px),linear-gradient(135deg,#f2e5cc,#dfc9a6);box-shadow:inset 0 2px #fff9,0 4px 0 #b8a17e}
+html[data-native-theme] .swatch{box-shadow:inset 0 2px #ffffff90,inset 0 -3px #0002,0 2px #5e513444}
+html[data-native-theme] .swatch.active{box-shadow:inset 0 2px #ffffff90,inset 0 -3px #0002,0 0 0 3px #355447}
+html[data-native-theme] .tool.active{box-shadow:inset 0 2px #fff,0 2px #897954}
+html[data-native-theme=dark] body{background:repeating-linear-gradient(4deg,#c7c7c907 0 2px,transparent 2px 19px),linear-gradient(115deg,#283c4a,#182734)}
+html[data-native-theme=dark] .paper-wrap{border-color:#b7b8a9;box-shadow:0 3px #51606a,0 9px #111e2a80,0 16px 25px #07121e80}
+html[data-native-theme=dark] .tools{background:linear-gradient(135deg,#354953,#243440);box-shadow:inset 0 2px #fff2,0 4px #11202c}
+html[data-native-theme=dark] .tool{background:#405460;color:#f1eddb}html[data-native-theme=dark] .tool.active{border-color:#e4cf8b;background:#52645f;box-shadow:none}
+html[data-native-theme=dark] .swatch.active,html[data-native-theme=dark] .background.active{outline:2px solid #ead9a4;outline-offset:2px}
+
+/* Native help must sit above the reachable family toolbar, including its close target. */
+#help-panel,#help-dialog{z-index:10002}

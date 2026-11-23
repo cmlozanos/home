@@ -1,0 +1,11 @@
+fruit-splash: cache activation preserves every other game.
+orbit-lab: cache activation preserves every other game.
+memory-garden: cache activation preserves every other game.
+shape-studio: cache activation preserves every other game.
+little-atelier: cache activation preserves every other game.
+maze-meadow: cache activation preserves every other game.
+nitro-highway: cache activation preserves every other game.
+pocket-karts: cache activation preserves every other game.
+pulse-path: cache activation preserves every other game.
+animal-quiz: cache activation preserves every other game.
+rubik-solver: cache activation preserves every other game.

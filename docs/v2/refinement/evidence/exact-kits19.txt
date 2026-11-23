@@ -1,0 +1,20 @@
+node tools/check-refinement-kits.mjs animal-quiz nitro-highway pocket-karts pulse-path fruit-splash orbit-lab memory-garden shape-studio little-atelier maze-meadow rubik-solver ../games/little-chef-academy ../games/burbujas ../games/buscaminas ../banana-party ../jump-the-car ../fancy-jumping-car ../world-of-joy ../turbo-loop-legends/public
+animal-quiz: exact local school-font/theme/motion bundle
+nitro-highway: exact local school-font/theme/motion bundle
+pocket-karts: exact local school-font/theme/motion bundle
+pulse-path: exact local school-font/theme/motion bundle
+fruit-splash: exact local school-font/theme/motion bundle
+orbit-lab: exact local school-font/theme/motion bundle
+memory-garden: exact local school-font/theme/motion bundle
+shape-studio: exact local school-font/theme/motion bundle
+little-atelier: exact local school-font/theme/motion bundle
+maze-meadow: exact local school-font/theme/motion bundle
+rubik-solver: exact local school-font/theme/motion bundle
+../games/little-chef-academy: exact local school-font/theme/motion bundle
+../games/burbujas: exact local school-font/theme/motion bundle
+../games/buscaminas: exact local school-font/theme/motion bundle
+../banana-party: exact local school-font/theme/motion bundle
+../jump-the-car: exact local school-font/theme/motion bundle
+../fancy-jumping-car: exact local school-font/theme/motion bundle
+../world-of-joy: exact local school-font/theme/motion bundle
+../turbo-loop-legends/public: exact local school-font/theme/motion bundle

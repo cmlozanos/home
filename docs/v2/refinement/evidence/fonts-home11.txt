@@ -1,0 +1,16 @@
+
+Running 11 tests using 1 worker
+
+  ✓   1 [tablet] › tests/v2/typography.spec.cjs:3:25 › animal-quiz: every visible native text uses the linked school font (1.9s)
+  ✓   2 [tablet] › tests/v2/typography.spec.cjs:3:25 › nitro-highway: every visible native text uses the linked school font (1.8s)
+  ✓   3 [tablet] › tests/v2/typography.spec.cjs:3:25 › pocket-karts: every visible native text uses the linked school font (2.5s)
+  ✓   4 [tablet] › tests/v2/typography.spec.cjs:3:25 › pulse-path: every visible native text uses the linked school font (8.1s)
+  ✓   5 [tablet] › tests/v2/typography.spec.cjs:3:25 › fruit-splash: every visible native text uses the linked school font (3.4s)
+  ✓   6 [tablet] › tests/v2/typography.spec.cjs:3:25 › orbit-lab: every visible native text uses the linked school font (3.1s)
+  ✓   7 [tablet] › tests/v2/typography.spec.cjs:3:25 › memory-garden: every visible native text uses the linked school font (5.5s)
+  ✓   8 [tablet] › tests/v2/typography.spec.cjs:3:25 › shape-studio: every visible native text uses the linked school font (1.1s)
+  ✓   9 [tablet] › tests/v2/typography.spec.cjs:3:25 › little-atelier: every visible native text uses the linked school font (1.7s)
+  ✓  10 [tablet] › tests/v2/typography.spec.cjs:3:25 › maze-meadow: every visible native text uses the linked school font (1.3s)
+  ✓  11 [tablet] › tests/v2/typography.spec.cjs:3:25 › rubik-solver: every visible native text uses the linked school font (739ms)
+
+  11 passed (33.9s)

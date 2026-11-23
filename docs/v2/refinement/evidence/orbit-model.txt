@@ -1,0 +1,15 @@
+node --check family-v2/family.js
+node --check learning-gate.js
+node --check game.js
+node --check physics.js
+node --check life.js
+node --check vendor/gravity.js
+node --check sw.js
+node tools/check.mjs
+✓ 12 orbital periods stable: 218.985–220.000 world units
+✓ Momentum, collision mass/momentum, dense 24-body stability, Chrome 95 API checks, PWA icons
+✓ Visible-rim and swept collisions, chain mergers, ignition, collapse and black-hole accretion
+✓ Accelerated stellar stages and four mass-dependent remnants, nebula condensation, legacy saves, size and lock helpers
+✓ Scaled-body orbital placement clears the true collision rims.
+node tools/check-life.mjs
+✓ Habitability, six life stages, colony ships, loss of conditions and black-hole darkness.

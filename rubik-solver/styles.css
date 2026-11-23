@@ -1272,3 +1272,24 @@ html.family-v2{--bg:var(--family-page);--panel:var(--family-panel);--text:var(--
 .family-v2 .orientation-alert{display:block}
 @media(max-height:500px) and (orientation:landscape){.family-v2 .row>.col-12:first-child>.card-panel{display:grid;grid-template-columns:1fr 1fr;gap:4px}.family-v2 .row>.col-12:first-child>.card-panel>.section-heading{grid-column:2;grid-row:1;align-self:center}.family-v2 .mode-grid{grid-column:1;grid-row:1}.family-v2 #manualInputPanel,.family-v2 #cameraInputPanel{grid-column:1/-1}.family-v2 .mode-icon{display:none}.family-v2 .mode-card{padding:4px}.family-v2 .mode-card strong{font-size:9px}.family-v2 .mode-card{min-height:44px}}
 .family-v2 .help-panel{background:var(--family-panel);color:var(--family-ink)}
+
+/* Native typography is the same linked school face, including UA form defaults. */
+html body,html body *{font-family:var(--native-font,"Family School"),cursive!important;font-synthesis:none}
+html[data-native-motion="false"] *,html[data-native-motion="false"] *::before,html[data-native-motion="false"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+/* Satin ABS cubies and a lit tabletop: preserve all six actual sticker colors. */
+html[data-native-theme] .cube-viewer{background:radial-gradient(ellipse at 38% 20%,#fffdf1,#e0e8ee 70%);box-shadow:inset 0 2px #fff,0 6px 16px #233e611a;border:1px solid #bfcbd5}
+html[data-native-theme] .cubie-side{box-shadow:inset 0 2px 2px #ffffff80,inset 2px 0 1px #ffffff35,inset 0 -4px 3px #0004;}
+html[data-native-theme] .cubie-sticker{filter:none}
+html[data-native-theme] .cubie-sticker:before,html[data-native-theme] .editor-cubie-sticker:not(.empty):before{content:"";position:absolute;inset:2px;pointer-events:none;border-radius:inherit;background:linear-gradient(135deg,#ffffff42,transparent 44%,#0000000a);}
+html[data-native-theme] .editor-cubie-sticker.selected-face{border-color:#264e68;box-shadow:inset 0 0 0 2px #fff8,inset 0 -4px 3px #0004}
+html[data-native-theme=dark] .cube-viewer{background:radial-gradient(ellipse at 38% 20%,#395166,#17293b 70%);border-color:#425b70;box-shadow:inset 0 2px #ffffff20,0 6px 20px #07121e60}
+html[data-native-theme=dark] .editor-cubie-sticker.selected-face{border-color:#d9e6f4}
+
+/* Layer turns explain the solution, rather than decorating it: never hide them. */
+html[data-native-motion="false"] .solution-turning-layer{animation:layerTurn var(--turn-duration,1785ms) cubic-bezier(.22,.85,.2,1) both!important}
+
+html[data-native-theme] .eyebrow,html[data-native-theme] .tray-label{text-transform:none;letter-spacing:0}
+html[data-native-theme=light] .validation-box.ok{color:#24533c;background:#e0f1df;border-color:#7ca489}
+html[data-native-theme=dark] .validation-box.ok{color:#d8f0d7;background:#24483f;border-color:#6b9980}
+html[data-native-theme=light] .validation-box.warn{color:#725019;background:#fff0ce;border-color:#b88e40}
+html[data-native-theme=light] .validation-box.error{color:#842f36;background:#ffe2df;border-color:#ba6d6d}

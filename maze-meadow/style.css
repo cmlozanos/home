@@ -26,3 +26,16 @@ html.family-v2 .icon-button,html.family-v2 .round,html.family-v2 .direction,html
 
 /* Keep the session/Home/Adult shell reachable from the native menu overlay. */
 [data-family-slot]{position:relative;z-index:10001}
+
+/* Native typography is the same linked school face, including UA form defaults. */
+html body,html body *{font-family:var(--native-font,"Family School"),cursive!important;font-synthesis:none}
+html[data-native-motion="false"] *,html[data-native-motion="false"] *::before,html[data-native-motion="false"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+/* A miniature garden bed, lit by the same day/night setting as the room. */
+html[data-native-theme] .garden{background:repeating-linear-gradient(90deg,#69845608 0 1px,transparent 1px 7px),linear-gradient(145deg,#e5edcc,#b8cea3);box-shadow:inset 0 2px #fff8,inset 0 -6px #607b4c25,0 5px #8b9f75,0 12px 20px #40523a20;border-color:#becda6}
+html[data-native-theme] .direction{box-shadow:inset 0 2px #fff6,0 4px #839b7455}
+html[data-native-theme] .level.active{box-shadow:inset 0 2px #fff5,0 3px #426044}
+html[data-native-theme=dark] .garden{background:repeating-linear-gradient(90deg,#a2c0c207 0 1px,transparent 1px 7px),linear-gradient(145deg,#304d50,#1e333f);box-shadow:inset 0 2px #fff2,inset 0 -6px #0b212855,0 5px #142833;border-color:#476363}
+html[data-native-theme=dark] .garden-bar{color:#e3e8cc}
+
+/* Native help must sit above the reachable family toolbar, including its close target. */
+#help-panel,#help-dialog{z-index:10002}

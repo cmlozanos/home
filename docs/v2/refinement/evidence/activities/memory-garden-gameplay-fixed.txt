@@ -1,0 +1,4 @@
+memory-garden: 1280x800 fits all levels; gameplay, score, native settings and theme OK
+memory-garden: 1024x600 fits all levels; gameplay, score, native settings and theme OK
+memory-garden: 360x740 fits all levels; gameplay, score, native settings and theme OK
+memory-garden: 740x360 fits all levels; gameplay, score, native settings and theme OK

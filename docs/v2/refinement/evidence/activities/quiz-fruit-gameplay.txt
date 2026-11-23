@@ -1,0 +1,13 @@
+
+Running 8 tests using 1 worker
+
+  ✓  1 [tablet] › tests/animal-quiz.spec.cjs:39:1 › animal quiz keeps independent local profiles and accepts full accented words (3.8s)
+  ✓  2 [tablet] › tests/animal-quiz.spec.cjs:70:1 › animal quiz increases repetition after a wrong answer without removing stars (4.3s)
+  ✓  3 [tablet] › tests/games.spec.cjs:28:1 › fruit: real swipe scores, pause freezes, resume and retry work (5.0s)
+  ✓  4 [tablet] › tests/games.spec.cjs:50:1 › fruit: three difficulty choices and two independent fingers (3.9s)
+  ✓  5 [phone-landscape] › tests/animal-quiz.spec.cjs:39:1 › animal quiz keeps independent local profiles and accepts full accented words (5.5s)
+  ✓  6 [phone-landscape] › tests/animal-quiz.spec.cjs:70:1 › animal quiz increases repetition after a wrong answer without removing stars (4.5s)
+  ✓  7 [phone-landscape] › tests/games.spec.cjs:28:1 › fruit: real swipe scores, pause freezes, resume and retry work (8.9s)
+  ✓  8 [phone-landscape] › tests/games.spec.cjs:50:1 › fruit: three difficulty choices and two independent fingers (8.5s)
+
+  8 passed (47.1s)

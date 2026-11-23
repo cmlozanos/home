@@ -1,0 +1,4 @@
+maze-meadow: 1280x800 fits all levels; gameplay, score, native settings and theme OK
+maze-meadow: 1024x600 fits all levels; gameplay, score, native settings and theme OK
+maze-meadow: 360x740 fits all levels; gameplay, score, native settings and theme OK
+maze-meadow: 740x360 fits all levels; gameplay, score, native settings and theme OK

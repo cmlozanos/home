@@ -1,3 +1,27 @@
+
+// Native presentation follows the public API; attributes cover older/offline shells.
+(function () {
+  var root = document.documentElement, appearance = {};
+  var dark = window.matchMedia('(prefers-color-scheme: dark)');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function sync(event) {
+    if (event && event.detail) appearance = event.detail;
+    var api = window.FamilyV2;
+    var theme = api && typeof api.theme === 'function' ? api.theme() :
+      appearance.theme || root.getAttribute('data-family-theme') || (dark.matches ? 'dark' : 'light');
+    var motion = api && typeof api.motionAllowed === 'function' ? api.motionAllowed() :
+      appearance.motion !== false && !root.classList.contains('family-no-motion') && !reduced.matches;
+    root.setAttribute('data-native-theme', theme);
+    root.setAttribute('data-native-motion', String(motion && !reduced.matches));
+    root.style.setProperty('--native-font', '"' + (api && api.fontFamily || 'Family School') + '"');
+  }
+  window.addEventListener('familyv2:appearance', sync);
+  new MutationObserver(function () { sync(); }).observe(root, {attributes:true, attributeFilter:['data-family-theme','class']});
+  if (dark.addEventListener) { dark.addEventListener('change', sync); reduced.addEventListener('change', sync); }
+  else { dark.addListener(sync); reduced.addListener(sync); }
+  sync();
+}());
+
 // Keep touch holds inside the game; preserve desktop menus and editable fields.
 (function () {
   var lastTouch = -Infinity;

@@ -1,0 +1,14 @@
+PASS animal-quiz 1280x800: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS fruit-splash 1280x800: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS memory-garden 1280x800: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS shape-studio 1280x800: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS little-atelier 1280x800: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS maze-meadow 1280x800: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS rubik-solver 1280x800: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS animal-quiz 740x360: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS fruit-splash 740x360: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS memory-garden 740x360: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS shape-studio 740x360: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS little-atelier 740x360: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS maze-meadow 740x360: day/night, computed linked font, motion/API contract, geometry and unchanged native saves
+PASS rubik-solver 740x360: day/night, computed linked font, motion/API contract, geometry and unchanged native saves

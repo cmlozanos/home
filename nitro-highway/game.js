@@ -17,6 +17,18 @@
   var H = Highway, $ = function (id) { return document.getElementById(id); }, canvas = $('road'), ctx = canvas.getContext('2d');
   var selectedCar = 0, selectedTrack = 0, s = H.make(0, 0), input = { assist: true }, running = false, paused = false, blocked = true, familyPaused = false, sound = false, audio, gate;
   var w = 800, h = 600, last = 0, accumulator = 0, shown = false, pointerKeys = {}, keyboardKeys = {};
+  function sceneFont(size) {
+    return size + 'px "' + (window.FamilyV2 && FamilyV2.fontFamily || 'Family School') + '", cursive';
+  }
+  // The native scene also works without the optional family shell.
+  function nightScene() {
+    return window.FamilyV2 && typeof FamilyV2.theme === 'function'
+      ? FamilyV2.theme() === 'dark' : document.documentElement.getAttribute('data-family-theme') === 'dark';
+  }
+  function decorativeMotion() {
+    return window.FamilyV2 && typeof FamilyV2.motionAllowed === 'function'
+      ? FamilyV2.motionAllowed() : !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
   function resize() { w = innerWidth; h = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--family-height')) || innerHeight; var d = Math.min(1, devicePixelRatio || 1); canvas.width = Math.round(w * d); canvas.height = Math.round(h * d); ctx.setTransform(d, 0, 0, d, 0, 0); }
   function clearInput() { var assist = input.assist; input = { assist: assist }; pointerKeys = {}; keyboardKeys = {}; document.querySelectorAll('[data-input]').forEach(function (b) { b.classList.toggle('held', !!input[b.dataset.input]); }); }
   function allowed() { if (gate) gate.check(); return !blocked; }
@@ -45,41 +57,92 @@
   function car(x, y, size, color, boost, tilt) {
     ctx.save(); ctx.translate(x, y); ctx.rotate(tilt || 0); ctx.scale(size / 120, size / 120);
     ctx.fillStyle = '#07162566'; ctx.beginPath(); ctx.ellipse(0, 6, 64, 13, 0, 0, Math.PI * 2); ctx.fill();
-    if (boost) { polygon([[-34, 1], [-21, 1], [-27, 38 + Math.sin(s.time * 35) * 10]], '#ff7b3a'); polygon([[21, 1], [34, 1], [27, 38 + Math.cos(s.time * 35) * 10]], '#ff7b3a'); polygon([[-30, 0], [-24, 0], [-27, 23]], '#fff1a9'); polygon([[24, 0], [30, 0], [27, 23]], '#fff1a9'); }
+    if (boost) { polygon([[-34, 1], [-21, 1], [-27, 38 + (decorativeMotion() ? Math.sin(s.time * 35) * 10 : 0)]], '#ff7b3a'); polygon([[21, 1], [34, 1], [27, 38 + (decorativeMotion() ? Math.cos(s.time * 35) * 10 : 0)]], '#ff7b3a'); polygon([[-30, 0], [-24, 0], [-27, 23]], '#fff1a9'); polygon([[24, 0], [30, 0], [27, 23]], '#fff1a9'); }
     ctx.fillStyle = '#0b1525'; ctx.fillRect(-56, -29, 16, 35); ctx.fillRect(40, -29, 16, 35);
     polygon([[-58, 0], [-53, -31], [-36, -42], [-26, -64], [26, -64], [36, -42], [53, -31], [58, 0]], color);
     polygon([[-29, -42], [-21, -59], [21, -59], [29, -42]], '#15384b');
     polygon([[-21, -57], [18, -57], [23, -49], [-25, -49]], '#81c4d7');
     polygon([[-50, -29], [-32, -36], [32, -36], [50, -29], [42, -21], [-42, -21]], '#ffffff25');
+    polygon([[-52, -30], [-36, -40], [-29, -62], [-25, -43], [-42, -25], [-48, -2], [-57, -2]], '#ffffff40');
+    polygon([[30, -40], [51, -30], [58, 0], [42, -3]], '#101e3c55');
     ctx.fillStyle = '#152330'; ctx.fillRect(-45, -9, 90, 8); ctx.fillRect(-34, -21, 68, 5); ctx.fillStyle = '#ffefbb'; ctx.fillRect(-48, -18, 18, 5); ctx.fillRect(30, -18, 18, 5);
     ctx.fillStyle = '#071928'; ctx.fillRect(-45, -39, 90, 5); ctx.fillStyle = '#ffffff70'; ctx.fillRect(-25, -64, 50, 3); ctx.restore();
   }
   function draw() {
-    var track = H.tracks[s.track], gradient = ctx.createLinearGradient(0, 0, 0, h); gradient.addColorStop(0, track.sky); gradient.addColorStop(1, '#e8eeee'); ctx.fillStyle = gradient; ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = s.track === 2 ? '#fff3ce' : '#fff3c3'; ctx.beginPath(); ctx.arc(w * .78, h * .25, Math.min(w, h) * .065, 0, Math.PI * 2); ctx.fill();
-    if (s.track === 2) { for (var city = 0; city < 15; city++) { var cx = city * w / 14, bh = 30 + (city * 37 % 90); ctx.fillStyle = city % 2 ? '#233a54' : '#314d69'; ctx.fillRect(cx, h * .5 - bh, w / 17, bh); ctx.fillStyle = '#ffe9a680'; for (var wy = h * .5 - bh + 8; wy < h * .5; wy += 13) ctx.fillRect(cx + 7, wy, 4, 5); } }
-    else { polygon([[0, h * .52], [0, h * .44], [w * .1, h * .34], [w * .23, h * .46], [w * .35, h * .29], [w * .52, h * .48], [w * .7, h * .37], [w, h * .47], [w, h * .52]], s.track ? '#b57061' : '#6bafac'); }
-    ctx.fillStyle = track.ground; ctx.fillRect(0, h * .5, w, h * .5);
+    var track = H.tracks[s.track], night = nightScene();
+    var gradient = ctx.createLinearGradient(0, 0, 0, h * .56);
+    gradient.addColorStop(0, night ? '#081529' : '#559bc8');
+    gradient.addColorStop(.8, night ? '#33415c' : '#bde0e6');
+    gradient.addColorStop(1, night ? '#d3997c' : '#f8e4bd');
+    ctx.fillStyle = gradient; ctx.fillRect(0, 0, w, h);
+    if (night) { ctx.fillStyle = '#dcecff'; for (var st = 0; st < 27; st++) ctx.fillRect((st * 173 % 997) / 997 * w, (st * 47 % 157) / 1000 * h + 15, 1.5, 1.5); }
+    ctx.fillStyle = night ? '#e4edeb' : '#fff0bb'; ctx.beginPath(); ctx.arc(w * .78, h * .25, Math.min(w, h) * .055, 0, Math.PI * 2); ctx.fill();
+    // Three opaque ridgelines provide depth without blur or postprocessing.
+    for (var ridge = 0; ridge < 3; ridge++) {
+      var horizon = h * (.47 + ridge * .025);
+      ctx.beginPath(); ctx.moveTo(0, h * .55);
+      for (var peak = -1; peak < 12; peak++) {
+        var rx = peak * w / 10;
+        ctx.lineTo(rx, horizon - (24 + (peak * peak * 17 + ridge * 31) % 65) * (ridge + 1) / 2);
+      }
+      ctx.lineTo(w, h * .55); ctx.closePath();
+      ctx.fillStyle = night ? ['#46516a','#303f54','#1b3041'][ridge] : s.track === 1 ? ['#c4a393','#b28675','#956e60'][ridge] : ['#91b7bb','#699b9d','#477e80'][ridge]; ctx.fill();
+    }
+    if (s.track === 2) for (var city = 0; city < 18; city++) {
+      var cityX = city * w / 17, bh = 24 + city * 37 % 80;
+      ctx.fillStyle = night ? '#18283e' : '#647e90'; ctx.fillRect(cityX, h * .51 - bh, w / 24, bh);
+      ctx.fillStyle = night ? '#ffe4a3' : '#bcd4dc';
+      for (var wy = h * .51 - bh + 8; wy < h * .5; wy += 13) ctx.fillRect(cityX + 5, wy, 4, 5);
+    }
+    ctx.fillStyle = night ? ['#233c3e','#55443e','#26383d'][s.track] : track.ground; ctx.fillRect(0, h * .51, w, h * .49);
     function bend(z) { return (Math.sin((s.z + z) / 2100) - Math.sin(s.z / 2100) - Math.cos(s.z / 2100) * z / 2100) * 420 * track.curve; }
     // Camera sits behind the player: objects at race distance zero meet its wheels.
     function point(z) { return H.project({ x: bend(z), y: 0, z: z + 1000 }, s.x * 1100, 620, 0, 1, w, h, 1100); }
     for (var z = 10000; z > -550; z -= 250) {
       var far = point(z), near = point(z - 250), stripe = Math.floor((s.z + z) / 300) % 2;
       polygon([[far.x - far.w * 1.10, far.y], [far.x + far.w * 1.10, far.y], [near.x + near.w * 1.10, near.y], [near.x - near.w * 1.10, near.y]], stripe ? '#fff2d1' : '#e37566');
-      polygon([[far.x - far.w, far.y], [far.x + far.w, far.y], [near.x + near.w, near.y], [near.x - near.w, near.y]], stripe ? track.road : '#465867');
+      polygon([[far.x - far.w, far.y], [far.x + far.w, far.y], [near.x + near.w, near.y], [near.x - near.w, near.y]], night ? (stripe ? '#283642' : '#2c3b47') : (stripe ? '#58616a' : '#5b646d'));
       if (stripe) [-.33, .33].forEach(function (lane) { polygon([[far.x + far.w * (lane - .008), far.y], [far.x + far.w * (lane + .008), far.y], [near.x + near.w * (lane + .008), near.y], [near.x + near.w * (lane - .008), near.y]], '#f7efdccc'); });
+      // Roadside reflectors, guardrails and planted verges share road perspective.
+      [-1, 1].forEach(function (side) {
+        polygon([[far.x + side * far.w * 1.15, far.y - far.w * .025], [far.x + side * far.w * 1.15, far.y - far.w * .045], [near.x + side * near.w * 1.15, near.y - near.w * .045], [near.x + side * near.w * 1.15, near.y - near.w * .025]], night ? '#6d8994' : '#bac9c7');
+        if (z % 750 !== 0 || far.w < 5) return;
+        var ex = far.x + side * far.w * 1.32, eh = far.w * .14;
+        ctx.fillStyle = '#d8ded1'; ctx.fillRect(ex, far.y - eh, Math.max(2, far.w * .013), eh);
+        ctx.fillStyle = side < 0 ? '#ff8a68' : '#fff0ae'; ctx.fillRect(ex, far.y - eh, Math.max(2, far.w * .013), eh * .25);
+        if (s.track !== 2) {
+          var treeX = far.x + side * far.w * 1.7;
+          polygon([[treeX - eh * .65, far.y], [treeX, far.y - eh * 2.7], [treeX + eh * .65, far.y]], night ? '#182f32' : s.track === 1 ? '#8c644d' : '#285a50');
+          polygon([[treeX, far.y - eh * 2.7], [treeX + eh * .65, far.y], [treeX + eh * .12, far.y]], night ? '#284147' : '#4a7b60');
+        }
+      });
     }
     var objects = s.traffic.map(function (r) { return { z: r.z, x: r.x, color: r.color }; }).concat(s.ramps.filter(function (r) { return !r.used; }).map(function (r) { return { z: r.z, x: r.x, ramp: true }; }));
-    objects.sort(function (a, b) { return b.z - a.z; }); objects.forEach(function (r) { var d = r.z - s.z; if (d < -80 || d > 9500) return; var p = point(d), x = p.x + r.x * p.w; if (r.ramp) { var width = p.w * .28; polygon([[x - width, p.y], [x + width, p.y], [x + width * .65, p.y - width * .7], [x - width * .65, p.y - width * .7]], '#ffce65'); ctx.strokeStyle = '#fff8d0'; ctx.lineWidth = Math.max(1, width * .12); ctx.beginPath(); ctx.moveTo(x, p.y - 4); ctx.lineTo(x, p.y - width * .5); ctx.stroke(); } else car(x, p.y, p.w * .32, r.color, false, 0); });
+    objects.sort(function (a, b) { return b.z - a.z; }); objects.forEach(function (r) { var d = r.z - s.z; if (d < -80 || d > 9500) return; var p = point(d), x = p.x + r.x * p.w; if (r.ramp) {
+      var width = p.w * .28, top = p.y - width * .7;
+      polygon([[x - width, p.y], [x + width, p.y], [x + width * .65, top], [x - width * .65, top]], night ? '#bb873e' : '#dba14c');
+      polygon([[x - width, p.y], [x - width * .65, top], [x - width * .65, top + width * .22]], '#765537');
+      ctx.strokeStyle = '#fff0ae'; ctx.lineWidth = Math.max(1, width * .055);
+      ctx.beginPath(); ctx.moveTo(x - width, p.y); ctx.lineTo(x - width * .65, top); ctx.lineTo(x + width * .65, top); ctx.lineTo(x + width, p.y); ctx.stroke();
+      for (var arrow = 0; arrow < 3; arrow++) {
+        var ay = p.y - width * (.15 + arrow * .18), aw = width * (.56 - arrow * .07);
+        ctx.beginPath(); ctx.moveTo(x - aw, ay); ctx.lineTo(x, ay - width * .12); ctx.lineTo(x + aw, ay); ctx.stroke();
+      }
+    } else car(x, p.y, p.w * .32, r.color, false, 0); });
     var lift = s.flight ? Math.sin(Math.PI * s.flight / s.jumpTime) * Math.min(h * .20, 95) : 0;
+    if (lift) { ctx.fillStyle = '#07182650'; ctx.beginPath(); ctx.ellipse(w / 2, h * .82, Math.min(65, w * .09), 9, 0, 0, Math.PI * 2); ctx.fill(); }
     car(w / 2, h * .81 - lift, Math.min(155, w * .20), H.cars[s.car].color, s.boosted, ((input.left ? -1 : 0) + (input.right ? 1 : 0)) * .035);
-    if (s.cool > 1.1) { ctx.fillStyle = '#ffd37722'; ctx.fillRect(0, 0, w, h); }
-    if (s.flight) { ctx.font = '28px "Family School", sans-serif'; ctx.fillStyle = '#fff4c3'; ctx.textAlign = 'center'; ctx.fillText('↗ ✨', w / 2, h * .35); }
+    if (s.cool > 1.1 && decorativeMotion()) { ctx.fillStyle = '#ffd37722'; ctx.fillRect(0, 0, w, h); }
+    if (s.flight) { ctx.font = sceneFont(28); ctx.fillStyle = '#fff4c3'; ctx.textAlign = 'center'; ctx.fillText('↗ ✨', w / 2, h * .35); }
   }
   function frame(now) { requestAnimationFrame(frame); if (gate) gate.check(); var dt = last ? Math.min(.08, (now - last) / 1000) : 0; last = now;
     if (!document.hidden && running && !paused && !blocked && !familyPaused) { accumulator += dt; while (accumulator >= 1 / 120) { var oldBumps = s.bumps, oldJumps = s.jumps; H.step(s, input, 1 / 120); if (s.bumps !== oldBumps) tone(140); if (s.jumps !== oldJumps) { tone(790); award('jump-' + s.track + '-' + s.jumps, 1); } accumulator -= 1 / 120; } if (s.finished && !shown) { shown = true; award('finish-' + s.track + '-' + s.car, 3); tone(880); result(true); } } else accumulator = 0;
     $('progress').value = s.z / H.tracks[s.track].length; $('energy').value = s.nitro; draw();
   }
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.FamilyV2 && FamilyV2.fontReady) FamilyV2.fontReady.then(function () { draw(); });
+  });
+  addEventListener('familyv2:appearance', function () { draw(); });
   // Family overlays are a separate pause reason: never clear a gate or manual pause.
   var raceInstance=0;
   function award(id, points) { id='race-'+raceInstance+':'+id; if (window.FamilyV2) { FamilyV2.touch(); FamilyV2.award(id, points); } }

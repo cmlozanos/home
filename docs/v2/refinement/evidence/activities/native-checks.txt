@@ -1,0 +1,56 @@
+
+=== animal-quiz ===
+node --check family-v2/family.js
+node --check quiz-core.js
+node --check learning-gate.js
+node --check game.js
+node --check sw.js
+node tools/check.cjs
+Animal Quiz: 20 original questions, 40 writing paths, accents, weighting, trophies, independent local profiles and PWA verified.
+
+=== fruit-splash ===
+node --check family-v2/family.js
+node --check learning-gate.js
+node --check game.js
+node --check core.js
+node --check sw.js
+node tools/check.cjs
+Fruit Splash: swipe collision and launch geometry checks passed.
+
+=== memory-garden ===
+node --check learning-gate.js
+node --check core.js
+node --check game.js
+node --check sw.js
+node tools/check.cjs
+Memory Garden: deck, pair locking, completion, shuffle and offline shell checks passed.
+Family V2: local assets, version 2.0.0 and exact offline URLs verified.
+
+=== shape-studio ===
+node --check learning-gate.js
+node --check core.js
+node --check game.js
+node --check sw.js
+node tools/check.cjs
+Shape Studio: drop hit-tests, geometry matching, locking, levels and offline shell checks passed.
+Family V2: local assets, version 2.0.0 and exact offline URLs verified.
+
+=== little-atelier ===
+node --check learning-gate.js
+node tools/check.cjs
+Atelier: normalized stroke, tap dots, invalid saves, bounded history, syntax and offline assets verified.
+Family V2: local assets, version 2.0.0 and exact offline URLs verified.
+
+=== maze-meadow ===
+node --check learning-gate.js
+node tools/check.cjs
+Meadow: 300 mazes verify connectivity, determinism, walls, legal hint routes; assets and Chrome95 syntax checks pass.
+Family V2: local assets, version 2.0.0 and exact offline URLs verified.
+
+=== rubik-solver ===
+node --check app.js
+node --check solver-worker.js
+node --check sw.js
+node --check family-v2/family.js
+node tools/check.cjs
+Rubik: solved model, local assets, version and isolated cache verified.
